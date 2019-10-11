@@ -1,0 +1,31 @@
+{
+  "name": "fourze",
+  "version": "1.0.3",
+  "description": "nodejs restful framework",
+  "main": "dist/index.js",
+  "scripts": {
+    "prepare": "babel ./src --presets babel-preset-env --out-dir ./dist",
+    "start": "babel-node example/src/index.js"
+  },
+  "author": "Kritsu",
+  "license": "MIT",
+  "email": "kritsu@qq.com",
+  "keyword": [
+    "restful",
+    "web",
+    "node"
+  ],
+  "files": [
+    "src/",
+    "dist/"
+  ],
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1"
+  },
+  "peerDependencies": {
+    "ejs": "^2.6.1",
+    "jade": "^1.11.0",
+    "markdown-it": "8.4.2"
+  }
+}
