@@ -10,20 +10,20 @@ import defaultContentTypes from './contentTypes'
  **/
 import logger from '../util/logger'
 
-const defaultPages= {
+const defaultPages = {
     "/404": path.resolve(__dirname, './pages/404.html')
 }
 
-export class Renderer extends Middleware{
+export class Renderer extends Middleware {
     constructor({
                     baseUrl = path.resolve(process.cwd(), "./public"),
                     indexName = 'index',
                     indexes = [],
                     engines = [],
-                    pages={},
+                    pages = {},
                     contentTypes
-                }={}) {
-        super("renderer")
+                } = {}) {
+        super("renderer", 1)
         this.baseUrl = baseUrl
         logger.info(`Renderer initialize start ${baseUrl}.`)
         this.indexName = indexName
@@ -41,8 +41,8 @@ export class Renderer extends Middleware{
     }
 
     use(...engines) {
-        for(let engine of engines) {
-            for(let suffix of engine.suffixes){
+        for (let engine of engines) {
+            for (let suffix of engine.suffixes) {
                 this.indexes.unshift(`${this.indexName}.${suffix}`)
             }
             this.engines.unshift(engine)
@@ -57,7 +57,7 @@ export class Renderer extends Middleware{
 
 
     match(url) {
-        let p =this.pages[url]|| path.join(this.baseUrl, url)
+        let p = this.pages[url] || path.join(this.baseUrl, url)
         if (!fs.existsSync(p)) {
             return null
         }
@@ -77,16 +77,16 @@ export class Renderer extends Middleware{
 
     getContentType(file) {
         for (let contentType in this.contentTypes) {
-            let pattern=this.contentTypes[contentType]
-            if(pattern.test(file)){
+            let pattern = this.contentTypes[contentType]
+            if (pattern.test(file)) {
                 return contentType
             }
         }
         return null
     }
 
-    render(file){
-        for(let engine of this.engines) {
+    render(file) {
+        for (let engine of this.engines) {
             for (let suffix of engine.suffixes) {
                 if (file.endsWith(suffix)) {
                     return engine.render(file)
@@ -96,7 +96,7 @@ export class Renderer extends Middleware{
         return fs.readFileSync(file)
     }
 
-    next({path,response}) {
+    next({path, response}) {
         let file = this.match(path)
         if (file) {
             let contentType = this.getContentType(file)

@@ -1,14 +1,15 @@
 import logger from './util/logger'
 import {Middleware} from "./middleware"
+
 /**
  * 路由器
  * @param path 上下文
  * @param routes 路由
  * @constructor
  */
-export class Router extends Middleware{
-    constructor({path="/", routes=[], returnTypes}={}) {
-        super("router")
+export class Router extends Middleware {
+    constructor({path = "/", routes = [], returnTypes} = {}) {
+        super("router", 0)
         this.path = path;
         this.routes = [];
         this.returnTypes = Object.assign({}, returnTypes, defaultReturnTypes)
@@ -20,10 +21,9 @@ export class Router extends Middleware{
             app[method] = (path, handle) => this.push({path, method, handle})
         }
         app.request = (path, handle) => this.push({path, method: "all", handle})
-        app.on("next", context => this.next(context))
     }
 
-    next({data,path,request,response}) {
+    next({data, path, request, response}) {
         const method = request.method.toLowerCase()
         for (let route of this.routes) {
             const matchedResults = path.match(route.pattern)
@@ -46,15 +46,17 @@ export class Router extends Middleware{
                             result = convert ? convert(result) : result
                             let write = route.write || returnType.write || defaultWrite
                             write(response, result, returnType)
+                            response.end()
                         }
                     }
                     let params = Object.assign({}, pathParams, request.params, data)
                     let args = Object.assign({}, params, {request, response, resolve})
-                    let result = handle instanceof Function ? handle(args) : handle
+                    let result = typeof handle === "function" ? handle(args) : handle
                     if (result instanceof Promise) {
-                        return result.then(resolve)
+                        result.then(resolve)
+                    } else {
+                        resolve(result)
                     }
-                    resolve(result)
                 }
                 return false
             }
@@ -63,7 +65,7 @@ export class Router extends Middleware{
     }
 
 
-    push(route){
+    push(route) {
         let routePath = `${this.path}/${route.path}`.replace(/\/+/g, "/")
         let pattern = `^${routePath.replace(/({\w+})/g, '\(\[a-zA-Z0-9-\\s\]\+\)')}$`
         let pathParams = routePath.match(/{(\w+)}/g);
@@ -75,7 +77,7 @@ export class Router extends Middleware{
             method: (route.method || "all").toLowerCase(),
             returnType: (route.returnType || "json").toLowerCase()
         }
-        if(mapping.method!=='all'&&!requestMethods.includes(mapping.method)){
+        if (mapping.method !== 'all' && !requestMethods.includes(mapping.method)) {
             logger.error(`not support request method [${mapping.method}] in ${mapping.path}`)
             return false
         }
@@ -86,15 +88,15 @@ export class Router extends Middleware{
 }
 
 
-const defaultReturnTypes= {
-    text:{
-        headers:{
-            "Content-Type":"text/plain;charset=utf-8"
+const defaultReturnTypes = {
+    text: {
+        headers: {
+            "Content-Type": "text/plain;charset=utf-8"
         }
     },
-    html:{
-        headers:{
-            "Content-Type":"text/html;charset=utf-8"
+    html: {
+        headers: {
+            "Content-Type": "text/html;charset=utf-8"
         }
     },
     json: {
@@ -103,18 +105,18 @@ const defaultReturnTypes= {
         },
         convert: JSON.stringify
     },
-    image:{
-        headers:{
-            "Content-Type":"image/png"
+    image: {
+        headers: {
+            "Content-Type": "image/png"
         },
-        encoding:"binary"
+        encoding: "binary"
     }//,
     //template
 }
 
-const requestMethods=["get","post","put","patch","delete","options"]
+const requestMethods = ["get", "post", "put", "patch", "delete", "options"]
 
-function defaultWrite(response,result,options={}) {
+function defaultWrite(response, result, options = {}) {
     let headers = options.headers || {}
     let encoding = options.encoding || "utf-8"
     for (let key in headers) {
@@ -123,7 +125,7 @@ function defaultWrite(response,result,options={}) {
     response.write(result, encoding)
 }
 
-function error(response,message,code) {
+function error(response, message, code) {
     response.statusCode = code
     defaultWrite(response, `${code}:${message}`)
 }

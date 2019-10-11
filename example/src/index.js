@@ -6,7 +6,12 @@ let app = new Server()
 app.use(filter,router)
 app.listen(8081)
 
-app.request("/api/test",["java"])
+
+
+
+app.request("/api/test",()=>{
+    return Promise.resolve(["HelloWorld"])
+})
 
 app.on("ready",()=>{
     console.log("Server is Ready")

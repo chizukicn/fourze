@@ -7,26 +7,25 @@ import {Middleware} from './middleware'
  **/
 export class Filter extends Middleware {
     constructor({chains}) {
-        super("filter")
+        super("filter", -1)
         if (chains.length > 0) {
             chains.sort((a, b) => a.order - b.order)
-            let {name, order, handle} = chains.pop()
-            this.name = name
-            this.order = order
+            let {pattern, handle} = chains.pop()
+            this.pattern = pattern
             this.handle = handle
             this.$next = new Filter({chains})
         }
     }
 
     bind(app) {
-        super.bind(app);
+
     }
 
 
     next(context) {
         const {path, request, response} = context
 
-        const {handle=()=>{}, $next} = this
+        const {handle = new Function, $next} = this
 
         //判断是否跳转了
         let nexted = false
@@ -34,7 +33,7 @@ export class Filter extends Middleware {
         const next = () => {
             nexted = true
             if ($next && $next.next) {
-                $next.next(context)
+                return $next.next(context)
             }
             return nexted
         }
@@ -43,10 +42,9 @@ export class Filter extends Middleware {
             handle(request, response, next)
             return nexted
             //没有跳转,停止递归
-        } else {
-            //不符合条件,跳过
-            return next()
         }
+        //不符合条件,跳过
+        return next()
     }
 
 //在尾端添加一个filter
@@ -61,7 +59,6 @@ export class Filter extends Middleware {
 //
 //插入一个filter
     insert(filter, match) {
-        match = match || (({name}) => filter.name === name)
         this.each(f => {
             if (match(f)) {
                 let {$next} = f

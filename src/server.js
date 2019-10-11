@@ -2,19 +2,19 @@ import http from 'http'
 import logger from './util/logger'
 import url from "url"
 import querystring from 'querystring'
+import {Middleware} from "./middleware"
+
 /***
  @author kritsu
  @date 2018/12/5 14:42
  **/
 
-const X_WWW_FORM_URLENCODED="application/x-www-form-urlencoded"
-const FORM_DATA="application/form-data"
-
-
+const X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded"
+const FORM_DATA = "application/form-data"
 
 
 export class Server {
-    constructor({host = "localhost", port = 8080,middlewares=[]}={}) {
+    constructor({host = "localhost", port = 8080, middlewares = []} = {}) {
         this.host = host
         this.port = port
         this.middlewares = middlewares
@@ -24,23 +24,27 @@ export class Server {
 
     use(...middlewares) {
         for (let middleware of middlewares) {
+            if (!middleware instanceof Middleware) {
+                continue
+            }
             this['$' + middleware.name] = middleware
             if (!this.middlewares.includes(middleware)) {
                 middleware.bind && middleware.bind(this)
                 this.middlewares.push(middleware)
             }
         }
+        this.middlewares.sort((a, b) => a.order - b.order)
         return this
     }
 
-    parseData(request,callback) {
-        let contentType=request.headers["content-type"]||X_WWW_FORM_URLENCODED
+    parseData(request, callback) {
+        let contentType = request.headers["content-type"] || X_WWW_FORM_URLENCODED
         let data = ""
         request.on("data", chunk => data += chunk)
         request.on("end", () => {
             switch (contentType) {
                 case X_WWW_FORM_URLENCODED:
-                    data=querystring.parse(data)
+                    data = querystring.parse(data)
                     break
                 case FORM_DATA:
                     break
@@ -50,25 +54,25 @@ export class Server {
     }
 
 
-    on(name,listener) {
+    on(name, listener) {
         let l = this.listeners[name] || []
         l.push(listener)
         this.listeners[name] = l
     }
 
-    emit(name,args) {
+    emit(name, args) {
         let l = this.listeners[name] || []
         l.forEach(h => h(args))
     }
 
 
-    listen(port,host) {
+    listen(port, host) {
         this.port = port || this.port
         this.host = host || this.host
         if (!this.server) {
             this.server = http.createServer((request, response) => {
-                this.emit("request",{request,response})
-                this.parseData(request,data=>{
+                this.emit("request", {request, response})
+                this.parseData(request, data => {
                     let path = decodeURI(url.parse(request.url).pathname)
                     this.handle({request, response, path, data})
                 })
@@ -84,12 +88,20 @@ export class Server {
         return this
     }
 
-    handle({request,response,path,data}) {
+    handle({request, response, path, data}) {
         const app = this
         const context = Object.assign({path, data, request, response, app})
-        app.emit("next", context)
-        response.end()
-        app.emit("end")
+        let miss = false
+        for (let middleware of this.middlewares) {
+            miss = middleware.next(context)
+            if (!miss) {
+                console.log(middleware)
+                break
+            }
+        }
+        if (miss) {
+            response.end()
+        }
     }
 
 

@@ -3,11 +3,11 @@ import {Filter} from "../../../src"
 export default new Filter({
     chains: [
         {
-            pattern:"/index.html",
-            order: 1,
+            pattern:"/api/test",
             handle(req, rep, next) {
                 console.log("this is filter 1")
-                next()
+                rep.write("HelloWorld")
+                rep.end()
             }
         }
     ]

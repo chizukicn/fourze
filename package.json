@@ -1,6 +1,6 @@
 {
   "name": "fourze",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "nodejs restful framework",
   "main": "dist/index.js",
   "scripts": {
