@@ -14,7 +14,7 @@ const FORM_DATA = "application/form-data"
 
 
 export class Server {
-    constructor({host = "localhost", port = 8080, middlewares = []} = {}) {
+    constructor({host, port = 8080, middlewares = []} = {}) {
         this.host = host
         this.port = port
         this.middlewares = middlewares
@@ -81,7 +81,7 @@ export class Server {
 
         if (this.server) {
             this.server.listen(this.port, this.host, () => {
-                logger.info(`http server listen at http://${this.host}:${this.port}`)
+                logger.info(`http server listen at http://${this.host || "localhost"}:${this.port}`)
                 this.emit("ready")
             })
         }
@@ -95,7 +95,6 @@ export class Server {
         for (let middleware of this.middlewares) {
             miss = middleware.next(context)
             if (!miss) {
-                console.log(middleware)
                 break
             }
         }

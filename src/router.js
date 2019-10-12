@@ -1,5 +1,7 @@
 import logger from './util/logger'
 import {Middleware} from "./middleware"
+import url from 'url'
+import querystring from 'querystring'
 
 /**
  * 路由器
@@ -49,8 +51,9 @@ export class Router extends Middleware {
                             response.end()
                         }
                     }
-                    let params = Object.assign({}, pathParams, request.params, data)
-                    let args = Object.assign({}, params, {request, response, resolve})
+                    let query = querystring.parse(url.parse(request.url).query)
+                    let params = Object.assign({}, query, pathParams, request.params, data)
+                    let args = Object.assign({}, params, {request, response, resolve, query})
                     let result = typeof handle === "function" ? handle(args) : handle
                     if (result instanceof Promise) {
                         result.then(resolve)
