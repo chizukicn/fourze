@@ -1,6 +1,7 @@
 export * from "./app"
 export * from "./element"
 export * from "./logger"
+export * from "./matcher"
 export * from "./mock"
 export * from "./shared"
 export * from "./types"

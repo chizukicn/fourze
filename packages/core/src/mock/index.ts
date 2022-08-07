@@ -1,5 +1,5 @@
 import { Fourze, isFourze } from "../app"
-import { defineRoute, FourzeRoute, isRoute } from "../shared"
+import { defineRoute, FourzeInstance, FourzeRoute, isRoute } from "../shared"
 import { createProxyFetch } from "./fetch"
 import { createProxyXHR } from "./xhr"
 
@@ -14,6 +14,12 @@ export function setupMock({ base, routes = [] }: MockOptions) {
         .flat()
         .filter(isRoute)
         .map(e => (e.base ? e : defineRoute({ ...e, base })))
-    globalThis.XMLHttpRequest = createProxyXHR(_routes)
-    globalThis.fetch = createProxyFetch(_routes)
+
+    const instance: FourzeInstance = {
+        routes: _routes,
+        interceptors: []
+    }
+
+    globalThis.XMLHttpRequest = createProxyXHR(instance)
+    globalThis.fetch = createProxyFetch(instance)
 }

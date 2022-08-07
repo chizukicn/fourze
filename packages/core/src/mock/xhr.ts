@@ -1,6 +1,7 @@
 import { Logger } from "../logger"
+import { createMatcher } from "../matcher"
 import type { FourzeRequest, FourzeRoute } from "../shared"
-import { createRequest, createResponse } from "../shared"
+import { createRequest, createResponse, FourzeInstance } from "../shared"
 import { HTTP_STATUS_CODES } from "./code"
 
 type XHR_RESPONSE_PROPERTY = "readyState" | "responseURL" | "status" | "statusText" | "responseType" | "response" | "responseText" | "responseXML"
@@ -121,7 +122,7 @@ interface MockXmlHttpRequest extends XMLHttpRequestEventTarget {
     removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void
 }
 
-export function createProxyXHR(routes: FourzeRoute[]) {
+export function createProxyXHR(instance: FourzeInstance) {
     const logger = new Logger("@fourze/mock")
     const MockXHR = function (this: MockXmlHttpRequest) {
         this.requestHeaders = {}
@@ -150,13 +151,15 @@ export function createProxyXHR(routes: FourzeRoute[]) {
         return this
     }
 
-    Object.defineProperty(MockXHR.prototype, "$routes", () => routes)
+    Object.defineProperty(MockXHR.prototype, "$routes", () => instance.routes)
 
     MockXHR.UNSENT = 0
     MockXHR.OPENED = 1
     MockXHR.HEADERS_RECEIVED = 2
     MockXHR.LOADING = 3
     MockXHR.DONE = 4
+
+    const dispatcher = createMatcher(instance)
 
     MockXHR.prototype.setRequestHeader = function (this: MockXmlHttpRequest, name: string, value: string) {
         if (!!this.$base) {
@@ -206,7 +209,7 @@ export function createProxyXHR(routes: FourzeRoute[]) {
             this.dispatchEvent(new Event(event.type))
         }
 
-        this.$route = routes.find(e => e.match(url.toString(), method))
+        this.$route = dispatcher.match(url.toString(), method)
         this.$base = null
 
         if (!this.$route) {
@@ -218,7 +221,7 @@ export function createProxyXHR(routes: FourzeRoute[]) {
             return
         }
 
-        logger.info("mock url ->", url, routes)
+        logger.info("mock url ->", url, instance.routes)
         this.request = createRequest({
             url: url.toString(),
             method,

@@ -127,7 +127,7 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
                 return transformCode(router)
             }
         },
-        async webpack() {
+        async webpack(compiler) {
             const port = options.server?.port ?? 7609
             const host = options.server?.host ?? "localhost"
             await app.listen(port, host)

@@ -1,5 +1,4 @@
-import type { FourzeBaseRoute, FourzeRequest, FourzeResponse, FourzeRoute, FourzeSetup } from "@fourze/core"
-import { defineFourze, defineRoute, isFourze, isRoute, Logger } from "@fourze/core"
+import { createMatcher, defineFourze, defineRoute, FourzeBaseRoute, FourzeRequest, FourzeResponse, FourzeRoute, FourzeSetup, isFourze, isRoute, Logger } from "@fourze/core"
 import type { FSWatcher } from "chokidar"
 import fs from "fs"
 import { join, resolve } from "path"
@@ -54,26 +53,47 @@ export function createRouter(params: FourzeRouterOptions | FourzeSetup): FourzeR
     const routes: FourzeBaseRoute[] = Array.from(options.routes ?? [])
     const logger = new Logger("@fourze/router")
 
-    const router = async function (request: FourzeRequest, response: FourzeResponse, next?: () => void | Promise<void>) {
-        const dispatchers = router.routes.map(e => e.dispatch)
+    function getRoutes() {
+        return routes
+            .concat(
+                Array.from(moduleNames)
+                    .map(modName => {
+                        const mod = require.cache[modName]
+                        const instance = mod?.exports?.default ?? mod?.exports
+                        if (isFourze(instance)) {
+                            return instance.routes
+                        }
+                        if (Array.isArray(instance) && instance.some(isRoute)) {
+                            return instance
+                        }
+                        if (isRoute(instance)) {
+                            return instance
+                        }
+                        return []
+                    })
+                    .flat()
+            )
+            .map(e => (e.base ? e : defineRoute({ ...e, base })))
+            .sort((a, b) => {
+                if (b.path.startsWith(a.path)) {
+                    return 1
+                }
+                return b.path.localeCompare(a.path)
+            }) as FourzeRoute[]
+    }
 
-        const fn = async () => {
-            const dispatch = dispatchers.shift()
-            if (!!dispatch) {
-                await dispatch(request, response, fn)
-            }
+    const matcher = createMatcher({
+        get routes() {
+            return getRoutes()
         }
+    })
 
-        await fn()
-
-        if (response.matched) {
-            logger.info("request match", request.method, request.url)
-            if (!response.writableEnded) {
-                response.end(response.result)
-            }
-        } else {
-            await next?.()
+    const router = async function (this: FourzeRouter, req: FourzeRequest, res: FourzeResponse, next?: () => void | Promise<void>) {
+        const route = matcher.match(req)
+        if (route) {
+            return route.dispatch(req, res, next)
         }
+        await next?.()
     } as FourzeRouter
 
     router.load = async function (this: FourzeRouter, moduleName: string = rootDir) {
@@ -223,7 +243,7 @@ export function createRouter(params: FourzeRouterOptions | FourzeSetup): FourzeR
         return this
     }
 
-    Object.defineProperties(router, {
+    return Object.defineProperties(router, {
         name: {
             get() {
                 return "FourzeRouter"
@@ -241,35 +261,8 @@ export function createRouter(params: FourzeRouterOptions | FourzeSetup): FourzeR
         },
         routes: {
             get() {
-                return routes
-                    .concat(
-                        Array.from(moduleNames)
-                            .map(modName => {
-                                const mod = require.cache[modName]
-                                const instance = mod?.exports?.default ?? mod?.exports
-                                if (isFourze(instance)) {
-                                    return instance.routes
-                                }
-                                if (Array.isArray(instance) && instance.some(isRoute)) {
-                                    return instance
-                                }
-                                if (isRoute(instance)) {
-                                    return instance
-                                }
-                                return []
-                            })
-                            .flat()
-                    )
-                    .map(e => (e.base ? e : defineRoute({ ...e, base })))
-                    .sort((a, b) => {
-                        if (b.path.startsWith(a.path)) {
-                            return 1
-                        }
-                        return b.path.localeCompare(a.path)
-                    })
+                return getRoutes()
             }
         }
     })
-
-    return router
 }

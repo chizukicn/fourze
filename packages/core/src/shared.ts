@@ -6,6 +6,8 @@ import { version as FOURZE_VERSION } from "../package.json"
 export { FOURZE_VERSION }
 
 const FOURZE_ROUTE_SYMBOL = Symbol("FourzeRoute")
+const FOURZE_INTERCEPTOR_SYMBOL = Symbol("FourzeInterceptor")
+
 export interface FourzeRequest extends IncomingMessage {
     url: string
     method?: string
@@ -49,7 +51,7 @@ export interface FourzeRoute extends FourzeBaseRoute {
     match: (url: string, method?: string) => boolean
 }
 
-export type FourzeHandle = (request: FourzeRequest, response: FourzeResponse) => any | Promise<any>
+export type FourzeHandle<R = any> = (request: FourzeRequest, response: FourzeResponse) => R | Promise<R>
 
 export type FourzeDispatch = (request: FourzeRequest, response: FourzeResponse, next?: () => void | Promise<void>) => void | Promise<void>
 
@@ -148,11 +150,75 @@ export function defineRoute(route: FourzeBaseRoute): FourzeRoute {
     }
 }
 
+export type FourzeInterceptorHandler = (request: FourzeRequest, response: FourzeResponse, handle: FourzeHandle) => any | Promise<any>
+
+export interface FourzeBaseInterceptor extends FourzeInterceptorHandler {
+    base?: string
+}
+
+export interface FourzeInterceptor {
+    handle: FourzeInterceptorHandler
+    base?: string
+    [FOURZE_INTERCEPTOR_SYMBOL]: true
+}
+
+export function defineInterceptor(base: string, interceptor: FourzeBaseInterceptor): FourzeInterceptor
+
+export function defineInterceptor(interceptor: FourzeBaseInterceptor): FourzeInterceptor
+
+export function defineInterceptor(interceptor: DefineFourzeInterceptor): FourzeInterceptor
+
+export function defineInterceptor(param0: string | DefineFourzeInterceptor | FourzeBaseInterceptor, param1?: FourzeBaseInterceptor) {
+    const base = typeof param0 === "string" ? param0 : param0.base
+
+    const interceptor = {
+        base,
+        handle:
+            param1 ?? typeof param0 === "string"
+                ? param1
+                : typeof param0 == "function"
+                ? param0
+                : async (request: FourzeRequest, response: FourzeResponse, handle: FourzeHandle) => {
+                      await param0.before?.(request, response)
+                      const result = await handle(request, response)
+                      await param0.after?.(request, response)
+                      return result
+                  }
+    } as FourzeInterceptor
+
+    Object.defineProperty(interceptor, "base", {
+        get() {
+            return base
+        }
+    })
+
+    Object.defineProperty(interceptor, FOURZE_INTERCEPTOR_SYMBOL, {
+        get() {
+            return true
+        }
+    })
+    return interceptor
+}
+
+export type DefineFourzeInterceptor = {
+    base?: string
+    before?: FourzeHandle<void>
+    handle?: FourzeHandle<any>
+    after?: FourzeHandle<void>
+}
+
+export interface FourzeInstance {
+    routes: FourzeRoute[]
+    interceptors?: FourzeInterceptor[]
+}
+
 const FOURZE_RESPONSE_SYMBOL = Symbol("FourzeResponse")
 
 export function createResponse(res?: FourzeBaseResponse) {
     const response = (res ?? {
         headers: {},
+        writableEnded: false,
+        matched: false,
         setHeader(name: string, value: string) {
             if (this.hasHeader(name)) {
                 this.headers[name] += `,${value}`
@@ -239,4 +305,8 @@ export function isFourzeResponse(obj: any): obj is FourzeResponse {
 
 export function isFourzeRequest(obj: any): obj is FourzeRequest {
     return !!obj && !!obj[FOURZE_REQUEST_SYMBOL]
+}
+
+export function isFourzeInterceptor(interceptor: any): interceptor is FourzeInterceptor {
+    return !!interceptor && !!interceptor[FOURZE_INTERCEPTOR_SYMBOL]
 }

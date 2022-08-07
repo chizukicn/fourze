@@ -17,6 +17,7 @@ export default defineConfig({
             dir: path.resolve(__dirname, "mock"),
             filePattern: [".ts$", ".js$"],
             hmr: true,
+            mock: true,
             logLevel: "info"
         })
     ]
