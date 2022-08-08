@@ -14,6 +14,11 @@ export default defineFourze(fourze => {
         }
     ])
 
+    fourze.hook(async (req, res, handle) => {
+        await handle(req, res)
+        res.result = successResponseWrap(res.result)
+    })
+
     const handleSearch: FourzeHandle = async (req, res) => {
         const num = Number(req.params.name ?? 0)
         const phone: number = req.body.phone ?? 1
@@ -26,7 +31,7 @@ export default defineFourze(fourze => {
             }
             rs[str] = `${new Date().toString()} ---- ${phone}`
         }
-        return successResponseWrap(rs)
+        return rs
     }
 
     fourze("POST:http://test.com/Search/:name", handleSearch)

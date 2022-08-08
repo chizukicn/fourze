@@ -1,7 +1,7 @@
 import { Logger } from "../logger"
-import { createMatcher } from "../matcher"
+import { FourzeRouter } from "../router"
 import type { FourzeRequest, FourzeRoute } from "../shared"
-import { createRequest, createResponse, FourzeInstance } from "../shared"
+import { createRequest, createResponse } from "../shared"
 import { HTTP_STATUS_CODES } from "./code"
 
 type XHR_RESPONSE_PROPERTY = "readyState" | "responseURL" | "status" | "statusText" | "responseType" | "response" | "responseText" | "responseXML"
@@ -122,7 +122,7 @@ interface MockXmlHttpRequest extends XMLHttpRequestEventTarget {
     removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void
 }
 
-export function createProxyXHR(instance: FourzeInstance) {
+export function createProxyXHR(router: FourzeRouter) {
     const logger = new Logger("@fourze/mock")
     const MockXHR = function (this: MockXmlHttpRequest) {
         this.requestHeaders = {}
@@ -151,15 +151,13 @@ export function createProxyXHR(instance: FourzeInstance) {
         return this
     }
 
-    Object.defineProperty(MockXHR.prototype, "$routes", () => instance.routes)
+    Object.defineProperty(MockXHR.prototype, "$routes", () => router.routes)
 
     MockXHR.UNSENT = 0
     MockXHR.OPENED = 1
     MockXHR.HEADERS_RECEIVED = 2
     MockXHR.LOADING = 3
     MockXHR.DONE = 4
-
-    const dispatcher = createMatcher(instance)
 
     MockXHR.prototype.setRequestHeader = function (this: MockXmlHttpRequest, name: string, value: string) {
         if (!!this.$base) {
@@ -209,7 +207,7 @@ export function createProxyXHR(instance: FourzeInstance) {
             this.dispatchEvent(new Event(event.type))
         }
 
-        this.$route = dispatcher.match(url.toString(), method)
+        this.$route = router.match(url.toString(), method)
         this.$base = null
 
         if (!this.$route) {
@@ -221,7 +219,7 @@ export function createProxyXHR(instance: FourzeInstance) {
             return
         }
 
-        logger.info("mock url ->", url, instance.routes)
+        logger.info("mock url ->", url, router.routes)
         this.request = createRequest({
             url: url.toString(),
             method,
@@ -255,11 +253,9 @@ export function createProxyXHR(instance: FourzeInstance) {
             this.status = 200
             this.statusText = HTTP_STATUS_CODES[200]
 
-            const route = this.$route!
-
             const response = createResponse()
 
-            await route.dispatch(this.request, response)
+            await router(this.request, response)
 
             this.response = response.result
 

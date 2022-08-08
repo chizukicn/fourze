@@ -1,18 +1,10 @@
-import { createRequest, createResponse, FourzeRequest, FourzeResponse, FOURZE_VERSION, Logger } from "@fourze/core"
+import { CommonMiddleware, createRequest, createResponse, FourzeMiddleware, FourzeRequest, FourzeResponse, FOURZE_VERSION, Logger } from "@fourze/core"
 import EventEmitter from "events"
 import type { IncomingMessage, OutgoingMessage, Server } from "http"
 import http from "http"
 import https from "https"
 import { AddressInfo } from "net"
 
-export interface CommonMiddleware {
-    (req: IncomingMessage, res: OutgoingMessage, next?: () => void | Promise<void>): void | Promise<void>
-}
-
-export interface FourzeMiddleware {
-    (req: FourzeRequest, res: FourzeResponse, next?: () => void | Promise<void>): void | Promise<void>
-    name?: string
-}
 export interface FourzeAppOptions {
     port?: number
     server?: Server

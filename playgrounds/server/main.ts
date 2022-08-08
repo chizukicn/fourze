@@ -2,11 +2,11 @@ import comporession from "compression"
 import ejs from "ejs"
 
 import { FourzeRequest, FourzeResponse } from "@fourze/core"
-import { CommonMiddleware, createApp, createRenderer, createRouter, FourzeRendererContext } from "@fourze/server"
+import { CommonMiddleware, createApp, createHotRouter, createRenderer, FourzeRendererContext } from "@fourze/server"
 import fs from "fs"
 import path from "path"
 
-const router = createRouter(route => {
+const router = createHotRouter(route => {
     route("GET:/hello", () => {
         return {
             msg: "hello router 1"
@@ -14,7 +14,7 @@ const router = createRouter(route => {
     })
 })
 
-const router2 = createRouter(route => {
+const router2 = createHotRouter(route => {
     route("GET:/test/hello", () => {
         return {
             msg: "hello router 2"

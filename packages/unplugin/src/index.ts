@@ -1,7 +1,7 @@
 import { FourzeBaseRoute, Logger } from "@fourze/core"
 import { createUnplugin } from "unplugin"
 
-import { createApp, createRouter, FourzeProxyOption, FourzeRouter } from "@fourze/server"
+import { createApp, createHotRouter, FourzeHotRouter, FourzeProxyOption } from "@fourze/server"
 import { mockJs } from "./mock"
 
 const PLUGIN_NAME = "unplugin-fourze"
@@ -65,7 +65,7 @@ export interface UnpluginFourzeOptions {
 
     timeout?: number | string | [number, number]
 
-    transformCode?: (router: FourzeRouter) => string
+    transformCode?: (router: FourzeHotRouter) => string
 }
 
 export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
@@ -92,7 +92,7 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
 
     const routes = Array.from(options.routes ?? [])
 
-    const router = createRouter({
+    const router = createHotRouter({
         base,
         dir,
         pattern,

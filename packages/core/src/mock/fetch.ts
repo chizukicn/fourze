@@ -1,5 +1,5 @@
-import { createMatcher } from "../matcher"
-import { createRequest, createResponse, FourzeInstance, FourzeRequest, FourzeResponse } from "../shared"
+import { FourzeRouter } from "../router"
+import { createRequest, createResponse, FourzeRequest, FourzeResponse } from "../shared"
 
 const originalFetch = globalThis.fetch
 
@@ -73,9 +73,7 @@ class ProxyFetchResponse implements Response {
     }
 }
 
-export function createProxyFetch(instance: FourzeInstance) {
-    const dispatcher = createMatcher(instance)
-
+export function createProxyFetch(router: FourzeRouter) {
     return async (input: RequestInfo | URL, init?: RequestInit) => {
         let url: string
         let method: string = "GET"
@@ -90,7 +88,7 @@ export function createProxyFetch(instance: FourzeInstance) {
             body = input.body ?? init?.body ?? {}
         }
 
-        const route = dispatcher.match(url, method)
+        const route = router.match(url, method)
 
         if (route) {
             const headers: Record<string, string[]> = {}
@@ -105,7 +103,7 @@ export function createProxyFetch(instance: FourzeInstance) {
             headers["X-Request-With"] = ["Fourze Fetch Proxy"]
             const request = createRequest({ url, method, body, headers })
             const response = createResponse()
-            await route.dispatch(request, response)
+            await router(request, response)
             return new ProxyFetchResponse(request, response)
         }
         return originalFetch(input, init)

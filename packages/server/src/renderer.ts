@@ -1,10 +1,9 @@
-import { defineFourzeComponent, FourzeComponent, FourzeRequest, FourzeResponse, isFourzeComponent, Logger } from "@fourze/core"
+import { defineFourzeComponent, FourzeComponent, FourzeMiddleware, FourzeRequest, FourzeResponse, isFourzeComponent, Logger } from "@fourze/core"
 import { createHash } from "crypto"
 import { build } from "esbuild"
 import fs from "fs"
 import mime from "mime"
 import path from "path"
-import type { FourzeMiddleware } from "./app"
 
 export interface FourzeRendererOptions {
     /**

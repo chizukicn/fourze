@@ -1,8 +1,7 @@
-import { createMatcher, defineFourze, defineRoute, FourzeBaseRoute, FourzeRequest, FourzeResponse, FourzeRoute, FourzeSetup, isFourze, isRoute, Logger } from "@fourze/core"
+import { createRouter, defineFourze, defineRoute, FourzeBaseRoute, FourzeHook, FourzeRoute, FourzeRouter, FourzeSetup, isFourze, isFourzeHook, isRoute, Logger } from "@fourze/core"
 import type { FSWatcher } from "chokidar"
 import fs from "fs"
 import { join, resolve } from "path"
-import type { FourzeMiddleware } from "./app"
 import { createRenderer } from "./renderer"
 
 export interface FourzeRouterOptions {
@@ -11,10 +10,11 @@ export interface FourzeRouterOptions {
     watcher?: FSWatcher
     pattern?: (string | RegExp)[]
     routes?: FourzeBaseRoute[]
+    hooks?: FourzeHook[]
     moduleNames?: string[]
 }
 
-export interface FourzeRouter extends FourzeMiddleware {
+export interface FourzeHotRouter extends FourzeRouter {
     name: string
     load(): Promise<boolean>
     load(moduleName: string): Promise<boolean>
@@ -42,7 +42,7 @@ export interface FourzeProxyOption extends Omit<FourzeBaseRoute, "handle"> {
     target?: string
 }
 
-export function createRouter(params: FourzeRouterOptions | FourzeSetup): FourzeRouter {
+export function createHotRouter(params: FourzeRouterOptions | FourzeSetup): FourzeHotRouter {
     const options: FourzeRouterOptions = typeof params == "function" ? defineFourze(params) : params
 
     const base = (options.base = options.base ?? "/")
@@ -51,28 +51,17 @@ export function createRouter(params: FourzeRouterOptions | FourzeSetup): FourzeR
     const moduleNames = new Set(Array.from(options.moduleNames ?? []))
 
     const routes: FourzeBaseRoute[] = Array.from(options.routes ?? [])
+    const hooks: FourzeHook[] = Array.from(options.hooks ?? [])
     const logger = new Logger("@fourze/router")
 
+    const extraRoutesMap = new Map<string, FourzeBaseRoute[]>()
+    const extraHooksMap = new Map<string, FourzeHook[]>()
+
     function getRoutes() {
+        const extras: FourzeBaseRoute[] = Array.from(extraRoutesMap.values()).flat()
+
         return routes
-            .concat(
-                Array.from(moduleNames)
-                    .map(modName => {
-                        const mod = require.cache[modName]
-                        const instance = mod?.exports?.default ?? mod?.exports
-                        if (isFourze(instance)) {
-                            return instance.routes
-                        }
-                        if (Array.isArray(instance) && instance.some(isRoute)) {
-                            return instance
-                        }
-                        if (isRoute(instance)) {
-                            return instance
-                        }
-                        return []
-                    })
-                    .flat()
-            )
+            .concat(extras)
             .map(e => (e.base ? e : defineRoute({ ...e, base })))
             .sort((a, b) => {
                 if (b.path.startsWith(a.path)) {
@@ -82,21 +71,20 @@ export function createRouter(params: FourzeRouterOptions | FourzeSetup): FourzeR
             }) as FourzeRoute[]
     }
 
-    const matcher = createMatcher({
+    function getHooks() {
+        return hooks.concat(Array.from(extraHooksMap.values()).flat())
+    }
+
+    const router = createRouter({
         get routes() {
             return getRoutes()
+        },
+        get hooks() {
+            return getHooks()
         }
-    })
+    }) as FourzeHotRouter
 
-    const router = async function (this: FourzeRouter, req: FourzeRequest, res: FourzeResponse, next?: () => void | Promise<void>) {
-        const route = matcher.match(req)
-        if (route) {
-            return route.dispatch(req, res, next)
-        }
-        await next?.()
-    } as FourzeRouter
-
-    router.load = async function (this: FourzeRouter, moduleName: string = rootDir) {
+    router.load = async function (this: FourzeHotRouter, moduleName: string = rootDir) {
         if (!fs.existsSync(moduleName)) {
             return false
         }
@@ -111,13 +99,35 @@ export function createRouter(params: FourzeRouterOptions | FourzeSetup): FourzeR
 
         const loadJsModule = async (f: string) => {
             delete require.cache[f]
+
             const mod = require(f)
-            const route = mod?.exports?.default ?? mod?.default ?? mod?.exports
-            if (isFourze(route) || isRoute(route) || (Array.isArray(route) && route.some(isRoute))) {
-                moduleNames.add(f)
+            const instance = mod?.default ?? mod
+            const extras: FourzeBaseRoute[] = []
+            const hooks: FourzeHook[] = []
+
+            const fn = (ins: any) => {
+                if (isFourze(ins)) {
+                    extras.push(...ins.routes)
+                    hooks.push(...ins.hooks)
+                } else if (Array.isArray(ins)) {
+                    ins.forEach(fn)
+                } else if (isRoute(ins)) {
+                    extras.push(ins)
+                } else if (isFourzeHook(ins)) {
+                    hooks.push(ins)
+                }
+            }
+
+            fn(instance)
+
+            extraRoutesMap.set(f, extras)
+            extraHooksMap.set(f, hooks)
+
+            console.log(extras, hooks)
+            if (extras.length > 0 || hooks.length > 0) {
                 return true
             }
-            logger.error(`find not route with "${f}" `, route)
+            logger.error(`find not route with "${f}" `)
             return false
         }
 
@@ -168,7 +178,7 @@ export function createRouter(params: FourzeRouterOptions | FourzeSetup): FourzeR
         return false
     }
 
-    router.watch = function watch(this: FourzeRouter, dir?: string | FSWatcher, customWatcher?: FSWatcher) {
+    router.watch = function (this: FourzeHotRouter, dir?: string | FSWatcher, customWatcher?: FSWatcher) {
         let watchDir: string
         let watcher: FSWatcher | undefined = undefined
 
@@ -216,13 +226,14 @@ export function createRouter(params: FourzeRouterOptions | FourzeSetup): FourzeR
         return this
     }
 
-    router.remove = function (this: FourzeRouter, moduleName: string) {
+    router.remove = function (this: FourzeHotRouter, moduleName: string) {
         moduleNames.delete(moduleName)
+        extraRoutesMap.delete(moduleName)
         delete require.cache[moduleName]
         return this
     }
 
-    router.proxy = function (this: FourzeRouter, p: string | FourzeProxyOption) {
+    router.proxy = function (this: FourzeHotRouter, p: string | FourzeProxyOption) {
         let path: string
         let dir: string
         let renderBase = base
@@ -257,11 +268,6 @@ export function createRouter(params: FourzeRouterOptions | FourzeSetup): FourzeR
         moduleNames: {
             get() {
                 return Array.from(moduleNames)
-            }
-        },
-        routes: {
-            get() {
-                return getRoutes()
             }
         }
     })

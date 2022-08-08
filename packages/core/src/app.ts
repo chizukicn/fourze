@@ -1,16 +1,4 @@
-import {
-    DefineFourzeInterceptor,
-    defineInterceptor,
-    defineRoute,
-    FourzeBaseInterceptor,
-    FourzeBaseRoute,
-    FourzeHandle,
-    FourzeInterceptor,
-    FourzeRoute,
-    FOURZE_METHODS,
-    isRoute,
-    RequestMethod
-} from "./shared"
+import { DefineFourzeHook, defineFourzeHook, defineRoute, FourzeBaseHook, FourzeBaseRoute, FourzeHandle, FourzeHook, FourzeRoute, FOURZE_METHODS, isRoute, RequestMethod } from "./shared"
 export interface FourzeOptions {
     base?: string
     setup?: FourzeSetup
@@ -29,11 +17,13 @@ export interface Fourze extends FourzeRequestFunctions {
     (route: FourzeBaseRoute): Fourze
     (routes: FourzeBaseRoute[]): Fourze
     (fourze: Fourze): Fourze
-    addInterceptor(interceptor: FourzeBaseInterceptor): Fourze
-    addInterceptor(interceptor: DefineFourzeInterceptor): Fourze
-    addInterceptor(base: string, interceptor: FourzeBaseInterceptor): Fourze
+    hook(hook: FourzeBaseHook): Fourze
+    hook(hook: DefineFourzeHook): Fourze
+    hook(base: string, hook: FourzeBaseHook): Fourze
+    apply(fourze: Fourze): Fourze
 
     readonly routes: FourzeRoute[]
+    readonly hooks: FourzeHook[]
 }
 
 const FOURZE_SYMBOL = Symbol("FourzeInstance")
@@ -54,7 +44,7 @@ export function defineFourze(options: FourzeOptions | FourzeBaseRoute[] | Fourze
     const base = isOption ? options.base : undefined
     const setup = isOption ? options.setup : isSetup ? options : undefined
     const routes = (isOption ? options.routes : isRoutes ? options : []) ?? []
-    const interceptors = [] as FourzeInterceptor[]
+    const hooks: FourzeHook[] = []
 
     const fourze = function (this: Fourze, param0: string | FourzeBaseRoute | FourzeBaseRoute[] | Fourze, param1: string | FourzeHandle, param2?: FourzeHandle) {
         if (isFourze(param0)) {
@@ -84,11 +74,16 @@ export function defineFourze(options: FourzeOptions | FourzeBaseRoute[] | Fourze
         return this
     } as Fourze
 
-    //@todo
-    //@ts-ignore
-    fourze.addInterceptor = function (...args: Parameters<typeof defineInterceptor>) {
-        const interceptor = defineInterceptor(...args)
-        interceptors.push(interceptor)
+    fourze.hook = function (...args: [string, FourzeBaseHook] | [FourzeBaseHook] | [DefineFourzeHook]) {
+        const hook = defineFourzeHook(...(args as Parameters<typeof defineFourzeHook>))
+        hooks.push(hook)
+        return this
+    }
+
+    fourze.apply = function (instance: Fourze) {
+        if (isFourze(instance)) {
+            routes.push(...instance.routes)
+        }
         return this
     }
 
@@ -106,6 +101,12 @@ export function defineFourze(options: FourzeOptions | FourzeBaseRoute[] | Fourze
                 })
             }
         },
+        hooks: {
+            get() {
+                return hooks
+            }
+        },
+
         ...Object.fromEntries(
             FOURZE_METHODS.map(method => [
                 method,
