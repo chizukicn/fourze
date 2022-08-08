@@ -4,7 +4,7 @@ import fs from "fs"
 import { join, resolve } from "path"
 import { createRenderer } from "./renderer"
 
-export interface FourzeRouterOptions {
+export interface FourzeHotRouterOptions {
     base?: string
     dir?: string
     watcher?: FSWatcher
@@ -42,8 +42,8 @@ export interface FourzeProxyOption extends Omit<FourzeBaseRoute, "handle"> {
     target?: string
 }
 
-export function createHotRouter(params: FourzeRouterOptions | FourzeSetup): FourzeHotRouter {
-    const options: FourzeRouterOptions = typeof params == "function" ? defineFourze(params) : params
+export function createHotRouter(params: FourzeHotRouterOptions | FourzeSetup): FourzeHotRouter {
+    const options: FourzeHotRouterOptions = typeof params == "function" ? defineFourze(params) : params
 
     const base = (options.base = options.base ?? "/")
     const rootDir = resolve(process.cwd(), options.dir ?? "./routes")
