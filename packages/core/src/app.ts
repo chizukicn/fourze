@@ -1,8 +1,9 @@
-import { DefineFourzeHook, defineFourzeHook, defineRoute, FourzeBaseHook, FourzeBaseRoute, FourzeHandle, FourzeHook, FourzeRoute, FOURZE_METHODS, isRoute, RequestMethod } from "./shared"
+import { DefineFourzeHook, defineFourzeHook, defineRoute, FourzeBaseHook, FourzeBaseRoute, FourzeHandle, FourzeHook, FourzeRoute, FOURZE_METHODS, isFourzeHook, isRoute, RequestMethod } from "./shared"
 export interface FourzeOptions {
     base?: string
     setup?: FourzeSetup
     routes?: FourzeBaseRoute[]
+    hooks?: FourzeBaseHook[]
 }
 
 export type FourzeSetup = (fourze: Fourze) => void | FourzeBaseRoute[]
@@ -17,13 +18,14 @@ export interface Fourze extends FourzeRequestFunctions {
     (route: FourzeBaseRoute): Fourze
     (routes: FourzeBaseRoute[]): Fourze
     (fourze: Fourze): Fourze
+    hook(hook: FourzeHook): Fourze
     hook(hook: FourzeBaseHook): Fourze
     hook(hook: DefineFourzeHook): Fourze
     hook(base: string, hook: FourzeBaseHook): Fourze
     apply(fourze: Fourze): Fourze
 
-    readonly routes: FourzeRoute[]
     readonly hooks: FourzeHook[]
+    readonly routes: FourzeRoute[]
 }
 
 const FOURZE_SYMBOL = Symbol("FourzeInstance")
@@ -49,6 +51,7 @@ export function defineFourze(options: FourzeOptions | FourzeBaseRoute[] | Fourze
     const fourze = function (this: Fourze, param0: string | FourzeBaseRoute | FourzeBaseRoute[] | Fourze, param1: string | FourzeHandle, param2?: FourzeHandle) {
         if (isFourze(param0)) {
             routes.push(...param0.routes)
+            hooks.push(...param0.hooks)
         } else if (Array.isArray(param0)) {
             routes.push(...param0)
         } else if (typeof param0 === "object") {
@@ -74,9 +77,13 @@ export function defineFourze(options: FourzeOptions | FourzeBaseRoute[] | Fourze
         return this
     } as Fourze
 
-    fourze.hook = function (...args: [string, FourzeBaseHook] | [FourzeBaseHook] | [DefineFourzeHook]) {
-        const hook = defineFourzeHook(...(args as Parameters<typeof defineFourzeHook>))
-        hooks.push(hook)
+    fourze.hook = function (...args: [string, FourzeBaseHook] | [FourzeBaseHook] | [DefineFourzeHook] | [FourzeHook]) {
+        if (args.length === 1 && isFourzeHook(args[0])) {
+            hooks.push(args[0])
+        } else {
+            const hook = defineFourzeHook(...(args as Parameters<typeof defineFourzeHook>))
+            hooks.push(hook)
+        }
         return this
     }
 

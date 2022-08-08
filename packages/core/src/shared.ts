@@ -176,6 +176,7 @@ export interface FourzeMiddleware {
     (req: FourzeRequest, res: FourzeResponse, next?: () => void | Promise<void>): void | Promise<void>
     name?: string
 }
+
 const FOURZE_RESPONSE_SYMBOL = Symbol("FourzeResponse")
 
 export function createResponse(res?: FourzeBaseResponse) {
