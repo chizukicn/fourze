@@ -19,7 +19,7 @@
         "play:vite-mock": "pnpm build &&  pnpm -r --filter=./playgrounds/vite dev --mode mock",
         "play:vue-cli": "pnpm stub &&  pnpm -r --filter=./playgrounds/vue-cli dev",
         "play:server": "pnpm -r --filter=./playgrounds/server dev",
-        "play:nuxt": "pnpm build &&  pnpm -r --filter=./playgrounds/nuxt-app dev",
+        "play:nuxt": "pnpm stub &&  pnpm -r --filter=./playgrounds/nuxt-app dev",
         "play:nuxt-mock": "pnpm build &&  pnpm -r --filter=./playgrounds/nuxt-app preview",
         "build:vite-mock": "pnpm build &&  pnpm -r --filter=./playgrounds/vite build --mode mock",
         "test": "pnpm stub && vitest",

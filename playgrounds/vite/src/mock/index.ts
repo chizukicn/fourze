@@ -1,4 +1,4 @@
-import { defineFourze, FourzeHandle, randomInt } from "@fourze/core"
+import { defineFourze, FourzeHandle, randomDate, randomInt } from "@fourze/core"
 import dayjs from "dayjs"
 import fs from "fs"
 import path from "path"
@@ -31,14 +31,14 @@ export default defineFourze(fourze => {
             for (let j = 0; j < len; j++) {
                 str += keymap[randomInt(0, keymap.length - 1)]
             }
-            rs[str] = `---[${dayjs().format("YYYY-MM-DD HH:mm:ss")}] ---- ${phone}`
+            rs[str] = `---[${dayjs(randomDate("2022-07-09", "2024-08-12")).format("YYYY-MM-DD HH:mm:ss")}] ---- ${phone}`
         }
         return rs
     }
 
-    fourze("POST http://test.com/Search/:name", handleSearch)
+    fourze("POST http://test.com/Search/{name}", handleSearch)
 
-    fourze("POST /search/:name", handleSearch)
+    fourze("POST /search/{name}", handleSearch)
 
     fourze("/img/a.jpg", async (req, res) => {
         const f = await fs.promises.readFile(path.resolve(__dirname, "./test.jpg"))

@@ -77,6 +77,7 @@ export function createHotRouter(options: FourzeHotRouterOptions = {}): FourzeHot
     const base = (options.base = options.base)
     const delay = options.delay ?? 0
     const rootDir = resolve(process.cwd(), options.dir ?? "routes")
+
     const pattern = transformPattern(options.pattern ?? [".ts", ".js"])
     const moduleNames = new Set(Array.from(options.moduleNames ?? []))
 
@@ -86,8 +87,10 @@ export function createHotRouter(options: FourzeHotRouterOptions = {}): FourzeHot
 
     const extraModuleMap = new Map<string, Fourze[]>()
 
-    const router = createRouter(() => {
+    const router = createRouter(async () => {
+        await router.load()
         const allModules = modules.concat(Array.from(extraModuleMap.values()).flat())
+
         return {
             base,
             modules: allModules,

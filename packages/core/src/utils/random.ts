@@ -1,4 +1,3 @@
-import dayjs from "dayjs"
 import type { MaybeDate } from "maybe-types"
 
 export function randomInt(tmp: string): number
@@ -38,9 +37,9 @@ export function randomDate(start: MaybeDate, end?: MaybeDate): Date {
         end = start
         start = new Date()
     }
-    const startDate = dayjs(start)
-    const endDate = dayjs(end)
-    return startDate.add(randomInt(endDate.diff(startDate, "day")), "day").toDate()
+    const startDate = new Date(start)
+    const endDate = new Date(end)
+    return new Date(randomInt(startDate.getTime(), endDate.getTime()))
 }
 
 export function randomBoolean(): boolean {

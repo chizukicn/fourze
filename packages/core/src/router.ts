@@ -120,6 +120,7 @@ export function createRouter(params: FourzeRouterOptions | Fourze[] | MaybeAsync
             await router.setup()
 
             const [route, matches] = router.match(url, method, true)
+            logger.info("request allow ->", method, url)
 
             if (route && matches) {
                 const activeHooks = router.hooks.filter(e => !e.base || url.startsWith(e.base))
@@ -182,7 +183,7 @@ export function createRouter(params: FourzeRouterOptions | Fourze[] | MaybeAsync
         }
 
         if (response.matched) {
-            logger.info("request match", request.method, request.url)
+            logger.info("request match ->", method, url)
             if (!response.writableEnded) {
                 if (!!response.result && !response.hasHeader("Content-Type")) {
                     response.json(response.result)

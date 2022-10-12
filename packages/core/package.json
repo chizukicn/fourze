@@ -15,7 +15,7 @@
     "author": "chizuki",
     "license": "MIT",
     "dependencies": {
-        "dayjs": "^1.11.4",
+        "consola": "^2.15.3",
         "minimatch": "^5.1.0",
         "query-string": "^7.1.1"
     },

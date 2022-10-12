@@ -1,4 +1,4 @@
-import { createLogger, DelayMsType, FourzeMockRouterOptions } from "@fourze/core"
+import { createLogger, DelayMsType, FourzeMockRouterOptions, setLoggerLevel } from "@fourze/core"
 import { createUnplugin } from "unplugin"
 
 import { createFourzeServer, createHotRouter, FourzeHotRouter, FourzeProxyOption } from "@fourze/server"
@@ -85,7 +85,7 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
 
     const logger = createLogger("@fourze/vite")
 
-    logger.setLevel(options.logLevel ?? "off")
+    setLoggerLevel(options.logLevel ?? "off")
 
     const proxy = Array.isArray(options.proxy)
         ? options.proxy
@@ -111,11 +111,6 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
 
     return {
         name: PLUGIN_NAME,
-        async buildStart() {
-            await router.load()
-            logger.info("buildStart", router.routes)
-        },
-
         resolveId(id) {
             if (isClientID(id)) {
                 return id
@@ -165,6 +160,7 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
                     router.watch(watcher)
                 }
                 const app = createFourzeServer()
+                app.use(base, router)
 
                 if (options.server?.port) {
                     try {
@@ -176,8 +172,6 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
                     middlewares.use(app)
                     logger.info("Fourze middleware was installed!")
                 }
-
-                app.use(base, router)
             }
         }
     }

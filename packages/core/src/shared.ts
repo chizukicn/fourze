@@ -287,16 +287,19 @@ export function createResponse(options: FourzeResponseOptions) {
         data = typeof data == "string" ? data : JSON.stringify(data)
         this.result = data
         this.setHeader("Content-Type", "application/json")
+        this.end(data)
     }
 
     response.binary = function (data: any) {
         this.result = data
         this.setHeader("Content-Type", "application/octet-stream")
+        this.end(data)
     }
 
     response.image = function (data: any) {
         this.result = data
         this.setHeader("Content-Type", "image/jpeg")
+        this.end(data)
     }
 
     response.text = function (data: string) {

@@ -1,4 +1,4 @@
-import dayjs from "dayjs"
+import consola, { Consola } from "consola"
 
 export const LOGGER_LEVELS = {
     TRACE: 0,
@@ -11,19 +11,13 @@ export const LOGGER_LEVELS = {
     OFF: Number.MAX_VALUE
 }
 
-export interface FourzeLogger extends Logger {
-    level: number
-}
-
-function now() {
-    return dayjs().format("YYYY-MM-DD HH:mm:ss")
-}
+export interface FourzeLogger extends Consola {}
 
 const loggerStore = new Map<string, FourzeLogger>()
 
 export function createLogger(scope: string) {
     if (!loggerStore.has(scope)) {
-        const logger = new Logger(scope)
+        const logger = consola.withScope(scope)
         loggerStore.set(scope, logger)
     }
     return loggerStore.get(scope)!
@@ -32,48 +26,14 @@ export function createLogger(scope: string) {
 export function setLoggerLevel(level: number | string, scope?: string) {
     if (!scope) {
         loggerStore.forEach(logger => {
-            logger.setLevel(level)
+            // logger.level = level
+            // logger.setLevel(level)
         })
     } else {
         const logger = loggerStore.get(scope)
         if (logger) {
-            logger.setLevel(level)
-        }
-    }
-}
-
-class Logger {
-    level: number = LOGGER_LEVELS.INFO
-
-    readonly scope: string
-
-    constructor(scope: string) {
-        this.scope = scope
-    }
-    setLevel(level: number | string) {
-        this.level = typeof level === "string" ? LOGGER_LEVELS[level as keyof typeof LOGGER_LEVELS] : level
-    }
-    info(...args: any[]) {
-        this.log(LOGGER_LEVELS.INFO, ...args)
-    }
-    debug(...args: any[]) {
-        this.log(LOGGER_LEVELS.DEBUG, ...args)
-    }
-    warn(...args: any[]) {
-        this.log(LOGGER_LEVELS.WARN, ...args)
-    }
-    error(...args: any[]) {
-        this.log(LOGGER_LEVELS.ERROR, ...args)
-    }
-    fatal(...args: any[]) {
-        this.log(LOGGER_LEVELS.FATAL, ...args)
-    }
-    trace(...args: any[]) {
-        this.log(LOGGER_LEVELS.TRACE, ...args)
-    }
-    log(level: number, ...args: any[]) {
-        if (level >= this.level) {
-            console.log(`[${now()}] [${this.scope}]`, ...args)
+            // logger.level =
+            //   logger.setLevel(level)
         }
     }
 }
