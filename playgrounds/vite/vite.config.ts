@@ -2,6 +2,8 @@ import fourze from "@fourze/vite"
 import vue from "@vitejs/plugin-vue"
 import jsx from "@vitejs/plugin-vue-jsx"
 import visualizer from "rollup-plugin-visualizer"
+import uncomponents from "unplugin-vue-components"
+
 import { defineConfig } from "vite"
 import windicss from "vite-plugin-windicss"
 
@@ -27,6 +29,9 @@ export default defineConfig({
             open: false,
             gzipSize: true,
             brotliSize: true
+        }),
+        uncomponents.vite({
+            resolvers: []
         })
     ]
 })

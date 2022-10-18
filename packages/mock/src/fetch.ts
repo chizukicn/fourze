@@ -100,7 +100,7 @@ export function createProxyFetch(router: FourzeMockRouter) {
                 headers
             })
             if (response.matched) {
-                logger.success(`Found route by [${method}] ${url}`)
+                logger.success(`Found route by [${method}] ${url}`, body)
                 return new ProxyFetchResponse(response)
             }
             logger.warn(`Not found route, fallback to original [${method}] -> "${url}"`)

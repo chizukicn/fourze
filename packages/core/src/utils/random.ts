@@ -46,8 +46,14 @@ export function randomBoolean(): boolean {
     return Math.random() > 0.5
 }
 
-export function randomItem<T>(source: T[]): T {
-    return source[randomInt(source.length)]
+export function randomItem<T>(source: T[]): T
+
+export function randomItem<T, U>(source: T[], callback: (value: T, index: number, array: T[]) => U): U
+
+export function randomItem<T, U = T>(source: T[], callback?: (value: T, index: number, array: T[]) => U): U {
+    callback = callback ?? (value => value as any)
+    const index = randomInt(source.length)
+    return callback(source[index], index, source)
 }
 
 export function randomArray<T>(callback: (index: number) => T, minLength: number, maxLength: number): T[]
@@ -61,4 +67,14 @@ export function randomArray<T>(callback: (index: number) => T, minLength: number
         },
         (v, k) => callback(k)
     )
+}
+
+export function randomUnique<T>(source: Iterable<T>) {
+    const store = Array.from(source)
+    return () => {
+        return randomItem(store, (value, index, arr) => {
+            arr.splice(index, 1)
+            return value
+        })
+    }
 }

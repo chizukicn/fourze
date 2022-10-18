@@ -411,21 +411,19 @@ export function createRequest(options: FourzeRequestOptions) {
         parseBooleans: true
     })
 
-    const contentType = headers["content-type"]
+    const contentType = headers["content-type"] ?? headers["Content-Type"] ?? "application/json"
 
-    if (contentType) {
-        if (typeof options.body === "string") {
-            if (contentType.startsWith("application/json")) {
-                options.body = JSON.parse(options.body)
-            } else if (contentType.startsWith("application/x-www-form-urlencoded")) {
-                options.body = parse(options.body)
-            }
+    if (typeof options.body === "string") {
+        if (contentType.startsWith("application/json")) {
+            options.body = JSON.parse(options.body)
+        } else if (contentType.startsWith("application/x-www-form-urlencoded")) {
+            options.body = parse(options.body)
         }
+    }
 
-        if (contentType.startsWith("multipart/form-data")) {
-            const boundary = contentType.split("=")[1]
-            options.body = decodeFormData(options.body, boundary)
-        }
+    if (contentType.startsWith("multipart/form-data")) {
+        const boundary = contentType.split("=")[1]
+        options.body = decodeFormData(options.body, boundary)
     }
 
     return {

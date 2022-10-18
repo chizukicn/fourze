@@ -1,35 +1,43 @@
-import { defineFourze, FourzeHandle, jsonWrapperHook, randomDate, randomInt } from "@fourze/core"
-import dayjs from "dayjs"
+import { defineFourze, FourzeHandle, jsonWrapperHook, PolyfillFile, randomArray, randomDate, randomInt, randomItem } from "@fourze/core"
 import fs from "fs"
 import path from "path"
-import { successResponseWrap } from "../utils/setup-mock"
-import { PolyfillFile } from "./../../../../packages/core/src/polyfill/form-data"
+import { slicePage, successResponseWrap } from "../utils/setup-mock"
 
-const keymap = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+interface Pagination {
+    page: number
+    pageSize: number
+}
 
 export default defineFourze(fourze => {
     const cache: Record<string, any> = {}
 
     fourze.hook(jsonWrapperHook((data, req, res) => successResponseWrap(data, req.url)))
 
-    const handleSearch: FourzeHandle = async (req, res) => {
-        const num = Number(req.params.name ?? 0)
-        const phone: number = req.body.phone ?? 1
-        const rs: Record<string, string> = {}
-        for (let i = 0; i < num + phone; i++) {
-            const len = 10
-            let str = ""
-            for (let j = 0; j < len; j++) {
-                str += keymap[randomInt(0, keymap.length - 1)]
+    // person names
+
+    const data = randomArray<UserInfo>(
+        value => {
+            return {
+                id: `${randomInt(100, 999)}${String(value).padStart(4, "0")}`,
+                username: randomItem(["Zhangsan", "Lisi", "Wangwu", "Zhaoliu", "Yan7", "Jack", "Rose", "Tom", "Jerry", "Henry", "Nancy"]),
+                phone: randomInt("13000000000-19999999999"),
+                address: "",
+                createdTime: randomDate("2020-01-01", "2021-01-01"),
+                allow: randomItem(["fetch", "xhr"])
             }
-            rs[str] = `---[${dayjs(randomDate("2022-07-09", "2024-08-12")).format("YYYY-MM-DD HH:mm:ss")}] ---- ${phone}`
-        }
-        return rs
+        },
+        40,
+        80
+    )
+
+    const handleSearch: FourzeHandle<PagingData<UserInfo>> = async req => {
+        const { page = 1, pageSize = 10 } = req.query as Pagination
+        const { name = "" } = req.params
+        const items = data.filter(item => item.username.includes(name))
+        return slicePage(items, { page, pageSize })
     }
 
-    fourze("POST http://test.com/Search/{name}", handleSearch)
-
-    fourze("POST /search/{name}", handleSearch)
+    fourze("GET /search/{name}", handleSearch)
 
     fourze("/img/avatar.jpg", async (req, res) => {
         let avatarPath = path.resolve(__dirname, ".tmp/avatar.jpg")

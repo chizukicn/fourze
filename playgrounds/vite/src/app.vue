@@ -6,8 +6,7 @@
             <div class="flex space-x-4 items-center">
                 <img :style="{ width: '120px' , height:'120px' }" :src="avatarUrl" />
                 <div>
-                    <button class="bg-light-blue-400 text-white py-1 px-2 hover:bg-opacity-60"
-                        @click="upload">Upload</button>
+                    <Button @click="upload">Upload</Button>
                 </div>
 
             </div>
@@ -18,25 +17,15 @@
                 <div class=" font-bold py-2 text-2xl text-light-blue-400">XHR/FETCH GET</div>
 
                 <div class="flex space-x-4 py-2 items-center">
-                    <button class="bg-light-blue-400 text-white py-1 px-2 hover:bg-opacity-60"
-                        @click="handleFetch">Fetch</button>
-                    <button class="bg-light-blue-400 text-white py-1 px-2 hover:bg-opacity-60"
-                        @click="handleAxios">Axios</button>
-                    <button class="bg-light-blue-400 text-white py-1 px-2 hover:bg-opacity-60"
-                        @click="handleJQuery">JQuery</button>
+                    <Button @click="handleFetch">Fetch</Button>
+                    <Button @click="handleAxios">Axios</Button>
+                    <Button @click="handleJQuery">JQuery</Button>
                 </div>
-                <div class="flex space-x-4 ">
-                    <textarea readonly :value="jsonResult" class="bg-gray-200 h-100 p-2 w-120"></textarea>
-                    <div class="w-100">
-                        <div v-show="time" class="text-lg text-light-blue-400">loading time:{{time}}ms</div>
-                        <div v-show="serverDelay> 0" class="text-lg text-light-blue-400">server delay:{{serverDelay}}ms
-                        </div>
-                        <div v-show="time - serverDelay> 0" class="text-lg text-light-blue-400">response time:{{time -
-                        serverDelay}}ms
-                        </div>
-                    </div>
-
+                <div class="w-100">
+                    <div v-show="time" class="text-lg text-light-blue-400">loading time:{{time}}ms</div>
                 </div>
+                <Table :data="result.items" :columns="columns" row-key="id">
+                </Table>
             </div>
 
             <div>
@@ -53,18 +42,16 @@ import axios from "axios"
 import $ from "jquery"
 import type { MaybeAsyncFunction } from "maybe-types"
 import { computed, ref } from "vue"
+import Table from "./components/base/table"
+import { TableColumns } from "./components/hooks/table"
 
-export interface ResponseData {
-    code: number
-    data: any
-    msg: string
-}
+
 
 const t = ref(0)
 
-const avatarUrl = computed(() => {
-    return "/api/img/avatar.jpg?t=" + t.value
-})
+const avatarUrl = computed(() =>
+    `/api/img/avatar.jpg?t=${t.value} `
+)
 
 
 function upload() {
@@ -87,19 +74,39 @@ function upload() {
 }
 
 
-const result = ref<any>()
+const keyword = ref("")
 
-const jsonResult = computed(() => {
-    return JSON.stringify(result.value, null, 4)
+const result = ref<PagingData<UserInfo>>({
+    items: [],
+    totalCount: 0,
+    totalPageCount: 0,
+    currentPageIndex: 1,
+    pageSize: 10,
+    nextIndex: 2,
+    previousIndex: 0,
+    startIndex: 1
 })
 
+const columns: TableColumns<UserInfo> = [
+    {
+        dataIndex: "username",
+        title: "username"
+    },
+    {
+        dataIndex: "phone",
+        title: "phone"
+    },
+    {
+        dataIndex: "address",
+        title: "address"
+    }
+]
 
 const startTime = ref(0)
 const endTime = ref(0)
 
 const now = useNow()
 
-const serverDelay = ref(0)
 
 const time = computed(() => {
     if (endTime.value === 0) {
@@ -112,23 +119,22 @@ const time = computed(() => {
 })
 
 const recoding = (fn: MaybeAsyncFunction<void>) => {
-    return async () => {
+    return async (...args: any[]) => {
         startTime.value = Date.now()
         endTime.value = 0
-        serverDelay.value = 0
         try {
-            await fn()
+            return await fn(...args)
         } catch (error) {
             result.value = error
+        } finally {
+            endTime.value = Date.now()
         }
-        endTime.value = Date.now()
     }
 }
 
 const handleFetch = recoding(async () => {
-    result.value = await fetch(`/api/search/${Math.floor(Math.random() * 9)}`, { method: "post", body: JSON.stringify({ phone: 2 }) })
+    result.value = await fetch(`/api/search/${keyword.value}`)
         .then(r => {
-            serverDelay.value = Number(r.headers.get("Fourze-Delay"))
             return r.json()
         })
         .then(r => r.data)
@@ -136,20 +142,17 @@ const handleFetch = recoding(async () => {
 
 
 const handleAxios = recoding(async () => {
-    const rs = await axios.post(`/api/search/${Math.floor(Math.random() * 9)}`, { phone: 2 })
-    serverDelay.value = Number(rs.headers["fourze-delay"])
+    const rs = await axios.get(`/api/search/${keyword.value}`)
     result.value = rs.data.data
 })
 
 
 const handleJQuery = recoding(async () => {
     await $.ajax({
-        url: `/api/search/${Math.floor(Math.random() * 9)}`,
-        type: "post",
-        data: JSON.stringify({ phone: 2 }),
+        url: `/api/search/${keyword.value}`,
+        type: "get",
         contentType: "application/json",
-        success: (data, status, jqXHR) => {
-            serverDelay.value = Number(jqXHR.getResponseHeader("Fourze-Delay"))
+        success: (data) => {
             result.value = data.data
         }
     })
