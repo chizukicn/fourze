@@ -1,7 +1,7 @@
-import { computed, ComputedRef, inject, onDeactivated, PropType, Ref, renderSlot } from "vue"
+import { computed, ComputedRef, inject, onDeactivated, PropType, renderSlot } from "vue"
 import { defineHooks } from "../define"
-import { AciveClassSymbol, ChangeActiveSymbol, DisabledSymbol, InitSymbol, IsActiveSymbol, ItemClassSymbol, Option, UnactiveSymbol } from "./constants"
 import { BaseType, ClassType, valuePropType } from "../types"
+import { AciveClassSymbol, ChangeActiveSymbol, DisabledSymbol, InitSymbol, IsActiveSymbol, ItemClassSymbol, Option, UnactiveSymbol } from "./constants"
 
 export const itemProps = {
     value: {

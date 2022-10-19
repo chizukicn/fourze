@@ -24,7 +24,7 @@ export interface TableColumn<R extends Record<string, any> = any> extends Record
     dataIndex: keyof R | string
     headerStyle?: CSSProperties | string
     cellClass?: string | string[] | ((record: R) => string | string[])
-    render?: (options: TableRenderOptions<R>) => VNode
+    render?: (options: TableRenderOptions<R>) => VNode | string | JSX.Element
     width?: string | number
     align?: "left" | "center" | "right"
 }

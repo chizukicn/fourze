@@ -21,7 +21,6 @@ export default defineFourze(fourze => {
                 id: `${randomInt(100, 999)}${String(value).padStart(4, "0")}`,
                 username: randomItem(["Zhangsan", "Lisi", "Wangwu", "Zhaoliu", "Yan7", "Jack", "Rose", "Tom", "Jerry", "Henry", "Nancy"]),
                 phone: randomInt("13000000000-19999999999"),
-                address: "",
                 createdTime: randomDate("2020-01-01", "2021-01-01"),
                 allow: randomItem(["fetch", "xhr"])
             }

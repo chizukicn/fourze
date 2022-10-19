@@ -1,7 +1,7 @@
-import { BaseType, classPropType, valuePropType } from "../types"
 import { computed, PropType, provide, reactive, Ref, watch } from "vue"
-import { AciveClassSymbol, ChangeActiveSymbol, DisabledSymbol, InitSymbol, IsActiveSymbol, ItemClassSymbol, ModelValueSymbol, Option, UnactiveSymbol } from "./constants"
-import { defineHooks } from "@/components/hooks/define"
+import { defineHooks } from "../define"
+import { BaseType, classPropType, valuePropType } from "../types"
+import { AciveClassSymbol, ChangeActiveSymbol, DisabledSymbol, InitSymbol, IsActiveSymbol, ItemClassSymbol, Option, UnactiveSymbol } from "./constants"
 
 export const listProps = {
     modelValue: {

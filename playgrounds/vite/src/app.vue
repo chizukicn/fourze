@@ -16,32 +16,35 @@
             <div>
                 <div class=" font-bold py-2 text-2xl text-light-blue-400">XHR/FETCH GET</div>
 
-                <div class="flex space-x-4 py-2 items-center">
-                    <Button @click="handleFetch">Fetch</Button>
-                    <Button @click="handleAxios">Axios</Button>
-                    <Button @click="handleJQuery">JQuery</Button>
-                </div>
-                <div class="w-100">
-                    <div v-show="time" class="text-lg text-light-blue-400">loading time:{{time}}ms</div>
-                </div>
-                <Table :data="result.items" :columns="columns" row-key="id">
-                </Table>
+                <Selection item-class="px-4 py-1 select-none cursor-pointer" active-class="bg-light-blue-300 text-white"
+                    unactive-class="text-light-blue-300" v-model="args.type" class="flex space-x-4 py-2 items-center">
+                    <Item value="fetch">Fetch</Item>
+                    <Item value="axios">Axios</Item>
+                    <Item value="jquery">JQuery</Item>
+                </Selection>
+                <Loading :loading="isLoading">
+                    <Table :data="state.items" :columns="columns" row-key="id" />
+                    <Pagination @change="execute()" :total-page="state.totalPageCount" v-model:page="args.page">
+                    </Pagination>
+                </Loading>
             </div>
 
-            <div>
-                <div class=" font-bold py-2 text-2xl text-light-blue-400">XHR/FETCH POST</div>
-            </div>
+
         </div>
 
     </div>
 </template>
 
-<script setup lang="ts">
-import { useNow } from "@vueuse/core"
+<script setup lang="tsx">
+import { useAsyncState } from "@vueuse/core"
 import axios from "axios"
+import dayjs from "dayjs"
 import $ from "jquery"
-import type { MaybeAsyncFunction } from "maybe-types"
-import { computed, ref } from "vue"
+import { computed, reactive, ref, watch } from "vue"
+import Button from "./components/base/button.vue"
+import Item from "./components/base/item.vue"
+import Loading from "./components/base/loading.vue"
+import Selection from "./components/base/selection.vue"
 import Table from "./components/base/table"
 import { TableColumns } from "./components/hooks/table"
 
@@ -55,12 +58,12 @@ const avatarUrl = computed(() =>
 
 
 function upload() {
-    const file = document.createElement("input")
-    file.type = "file"
-    file.onchange = async (e) => {
-        if (file.files) {
+    const fileElement = document.createElement("input")
+    fileElement.type = "file"
+    fileElement.onchange = async (e) => {
+        if (fileElement.files) {
             const formData = new FormData()
-            formData.append("file", file.files[0])
+            formData.append("file", fileElement.files[0])
             formData.append("name", "avatar")
             await axios.post("/api/upload/avatar", formData, {
                 headers: {
@@ -70,13 +73,84 @@ function upload() {
             t.value = new Date().getTime()
         }
     }
-    file.click()
+    fileElement.click()
 }
 
 
-const keyword = ref("")
+const args = reactive({
+    type: "fetch" as "fetch" | "axios" | "jquery",
+    keyword: "",
+    page: 1
+})
 
-const result = ref<PagingData<UserInfo>>({
+
+const columns: TableColumns<UserInfo> = [
+    {
+        dataIndex: "username",
+        title: "User Name",
+        width: 160
+    },
+    {
+        dataIndex: "phone",
+        title: "Phone",
+        width: 160
+    },
+    {
+        dataIndex: "createdTime",
+        title: "Created Time",
+        width: 160,
+        render({ record }) {
+            return dayjs(record.createdTime).format("YYYY-MM-DD HH:mm:ss")
+        }
+    },
+    {
+        dataIndex: "operation",
+        title: "Operation",
+        width: 160,
+        render({ record }) {
+            return <div>
+                <Button size="small">Edit</Button>
+                <Button size="small" type="danger">Delete</Button>
+            </div>
+        }
+    }
+]
+
+
+const handleFetch = async () => {
+    return fetch(`/api/search/${args.keyword}?page=${args.page}`)
+        .then(r => r.json())
+        .then(r => r.data)
+}
+
+
+const handleAxios = async () => {
+    return axios.get(`/api/search/${args.keyword}`, { params: { page: args.page } }).then(r => r.data.data)
+}
+
+
+const handleJQuery = async () => {
+    return $.ajax({
+        url: `/api/search/${args.keyword}`,
+        type: "get",
+        contentType: "application/json",
+        data: {
+            page: args.page
+        }
+    }).then(r => r.data)
+}
+
+
+const { state, isLoading, execute } = useAsyncState<PagingData<UserInfo>>(() => {
+    switch (args.type) {
+        case "axios":
+            return handleAxios()
+        case "fetch":
+            return handleFetch()
+        case "jquery":
+            return handleJQuery()
+    }
+}, {
     items: [],
     totalCount: 0,
     totalPageCount: 0,
@@ -85,79 +159,10 @@ const result = ref<PagingData<UserInfo>>({
     nextIndex: 2,
     previousIndex: 0,
     startIndex: 1
-})
-
-const columns: TableColumns<UserInfo> = [
-    {
-        dataIndex: "username",
-        title: "username"
-    },
-    {
-        dataIndex: "phone",
-        title: "phone"
-    },
-    {
-        dataIndex: "address",
-        title: "address"
-    }
-]
-
-const startTime = ref(0)
-const endTime = ref(0)
-
-const now = useNow()
+}, { resetOnExecute: false })
 
 
-const time = computed(() => {
-    if (endTime.value === 0) {
-        if (startTime.value == 0) {
-            return 0
-        }
-        return now.value.getTime() - startTime.value
-    }
-    return endTime.value - startTime.value
-})
-
-const recoding = (fn: MaybeAsyncFunction<void>) => {
-    return async (...args: any[]) => {
-        startTime.value = Date.now()
-        endTime.value = 0
-        try {
-            return await fn(...args)
-        } catch (error) {
-            result.value = error
-        } finally {
-            endTime.value = Date.now()
-        }
-    }
-}
-
-const handleFetch = recoding(async () => {
-    result.value = await fetch(`/api/search/${keyword.value}`)
-        .then(r => {
-            return r.json()
-        })
-        .then(r => r.data)
-})
-
-
-const handleAxios = recoding(async () => {
-    const rs = await axios.get(`/api/search/${keyword.value}`)
-    result.value = rs.data.data
-})
-
-
-const handleJQuery = recoding(async () => {
-    await $.ajax({
-        url: `/api/search/${keyword.value}`,
-        type: "get",
-        contentType: "application/json",
-        success: (data) => {
-            result.value = data.data
-        }
-    })
-
-})
+watch(args, () => execute())
 
 
 

@@ -1,10 +1,11 @@
+<script lang="tsx">
 /**
  *  集合
  */
 
 import { defineComponent, renderSlot } from "vue"
 
-import { listProps, useSelectionList } from "@/components/hooks/selection/list"
+import { listProps, useSelectionList } from "../hooks/selection/list"
 
 export default defineComponent({
     name: "i-selection",
@@ -19,3 +20,5 @@ export default defineComponent({
         }
     }
 })
+
+</script>

@@ -7,12 +7,17 @@ export {}
 
 declare module "@vue/runtime-core" {
     export interface GlobalComponents {
+        Base: typeof import("./src/components/base/index.vue")["default"]
         Button: typeof import("./src/components/base/button.vue")["default"]
         IconClose: typeof import("./src/components/base/icon/icon-close.vue")["default"]
         IconDrag: typeof import("./src/components/base/icon/icon-drag.vue")["default"]
         IconMinus: typeof import("./src/components/base/icon/icon-minus.vue")["default"]
         IconPlus: typeof import("./src/components/base/icon/icon-plus.vue")["default"]
+        Item: typeof import("./src/components/base/item.vue")["default"]
+        Loading: typeof import("./src/components/base/loading.vue")["default"]
+        Pagination: typeof import("./src/components/base/pagination.vue")["default"]
         RouterLink: typeof import("vue-router")["RouterLink"]
         RouterView: typeof import("vue-router")["RouterView"]
+        Selection: typeof import("./src/components/base/selection.vue")["default"]
     }
 }

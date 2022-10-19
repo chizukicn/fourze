@@ -22,7 +22,6 @@ declare global {
         id: string
         username: string
         phone: number
-        address: string
         createdTime: MaybeDate
     }
 }

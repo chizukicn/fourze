@@ -1,5 +1,6 @@
-import { itemProps, useSelectionItem } from "@/components/hooks/selection/item"
+<script lang="tsx">
 import { defineComponent } from "vue"
+import { itemProps, useSelectionItem } from "../hooks/selection/item"
 
 export default defineComponent({
     name: "i-item",
@@ -14,3 +15,5 @@ export default defineComponent({
         )
     }
 })
+
+</script>
