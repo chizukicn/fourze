@@ -1,6 +1,6 @@
 export * from "./app"
 export * from "./element"
-export * from "./hooks"
+export * from "./endpoints"
 export * from "./logger"
 export * from "./polyfill"
 export * from "./router"

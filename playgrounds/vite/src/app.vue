@@ -12,19 +12,34 @@
             </div>
         </div>
 
-        <div class="flex space-x-8 mt-8">
+        <div>
             <div>
-                <div class=" font-bold py-2 text-2xl text-light-blue-400">XHR/FETCH GET</div>
-
-                <Selection item-class="px-4 py-1 select-none cursor-pointer" active-class="bg-light-blue-300 text-white"
-                    unactive-class="text-light-blue-300" v-model="args.type" class="flex space-x-4 py-2 items-center">
-                    <Item value="fetch">Fetch</Item>
-                    <Item value="axios">Axios</Item>
-                    <Item value="jquery">JQuery</Item>
-                </Selection>
-                <Loading :loading="isLoading">
-                    <Table :data="state.items" :columns="columns" row-key="id" />
-                    <Pagination @change="execute()" :total-page="state.totalPageCount" v-model:page="args.page">
+                <div class=" font-bold mt-4 py-2 text-2xl text-light-blue-400">XHR/FETCH GET</div>
+                <div class="flex space-x-4 items-center">
+                    <div class="font-bold text-lg text-light-blue-400">Mock Data:</div>
+                    <Selection item-class="px-4 py-1 select-none cursor-pointer"
+                        active-class="bg-light-blue-300 text-white" unactive-class="text-light-blue-300"
+                        v-model="mockEnabled" class="flex space-x-4 items-center">
+                        <Item :value="true">Enable</Item>
+                        <Item :value="false">Disable</Item>
+                    </Selection>
+                </div>
+                <div class="flex space-x-4 mt-2 items-center">
+                    <div class="font-bold text-lg text-light-blue-400">Request Type:</div>
+                    <Selection item-class="px-4 py-1 select-none cursor-pointer"
+                        active-class="bg-light-blue-300 text-white" unactive-class="text-light-blue-300"
+                        v-model="args.type" class="flex space-x-4 items-center">
+                        <Item value="fetch">Fetch</Item>
+                        <Item value="axios">Axios</Item>
+                        <Item value="jquery">JQuery</Item>
+                    </Selection>
+                </div>
+                <Loading :loading="isLoading" class="mt-4 w-240">
+                    <div class="min-h-128 ">
+                        <Table :data="state.items" :columns="columns" row-key="id" />
+                    </div>
+                    <Pagination button-class="px-2 bg-light-blue-300 text-white cursor-pointer select-none"
+                        @change="execute()" :total-page="state.totalPageCount" v-model:page="args.page">
                     </Pagination>
                 </Loading>
             </div>
@@ -36,10 +51,12 @@
 </template>
 
 <script setup lang="tsx">
+import { getGlobalMockRouter } from "@fourze/mock"
 import { useAsyncState } from "@vueuse/core"
 import axios from "axios"
 import dayjs from "dayjs"
 import $ from "jquery"
+import querystring from "query-string"
 import { computed, reactive, ref, watch } from "vue"
 import Button from "./components/base/button.vue"
 import Item from "./components/base/item.vue"
@@ -49,12 +66,31 @@ import Table from "./components/base/table"
 import { TableColumns } from "./components/hooks/table"
 
 
-
 const t = ref(0)
 
 const avatarUrl = computed(() =>
     `/api/img/avatar.jpg?t=${t.value} `
 )
+
+const _mockEnabled = ref(!!getGlobalMockRouter()?.enabled)
+
+
+const mockEnabled = computed({
+    get() {
+        return _mockEnabled.value
+    },
+    set(value) {
+        const router = getGlobalMockRouter()
+        if (router) {
+            if (value) {
+                router.enable()
+            } else {
+                router.disable()
+            }
+        }
+        _mockEnabled.value = value
+    }
+})
 
 
 function upload() {
@@ -67,7 +103,8 @@ function upload() {
             formData.append("name", "avatar")
             await axios.post("/api/upload/avatar", formData, {
                 headers: {
-                    "Content-Type": "multipart/form-data"
+                    "Content-Type": "multipart/form-data",
+                    "X-Fourze-Mock": "off" // disable mock.
                 }
             })
             t.value = new Date().getTime()
@@ -104,52 +141,72 @@ const columns: TableColumns<UserInfo> = [
         }
     },
     {
+        dataIndex: "source",
+        title: "Source",
+        width: 160
+    },
+    {
         dataIndex: "operation",
         title: "Operation",
         width: 160,
         render({ record }) {
-            return <div>
+            return <div class="space-x-2">
                 <Button size="small">Edit</Button>
-                <Button size="small" type="danger">Delete</Button>
+                <Button size="small" class="bg-red-400" onClick={() => deleteById(record.id)}>Delete</Button>
             </div>
         }
     }
 ]
 
-
-const handleFetch = async () => {
-    return fetch(`/api/search/${args.keyword}?page=${args.page}`)
-        .then(r => r.json())
-        .then(r => r.data)
+interface RequestOptions {
+    url: string
+    method?: string
+    params?: Record<string, any>
+    type?: "jquery" | "fetch" | "axios"
+    data?: Record<string, any>
 }
 
+async function request(options: RequestOptions) {
+    const { url, method = "GET", params = {}, data = {}, type = "fetch" } = options
+    switch (type) {
 
-const handleAxios = async () => {
-    return axios.get(`/api/search/${args.keyword}`, { params: { page: args.page } }).then(r => r.data.data)
+        case "jquery":
+            return $.ajax({
+                url: querystring.stringifyUrl({
+                    url,
+                    query: params
+                }),
+                data,
+                method,
+            }).then(r => r.data)
+        case "axios":
+            return axios(url, {
+                method,
+                params,
+                data
+            }).then(r => r.data.data)
+        case "fetch":
+        default:
+            return await fetch(querystring.stringifyUrl({ url, query: params }), {
+                body: ["GET", "HEAD", "DELETE"].includes(method.toUpperCase()) ? undefined : JSON.stringify(data),
+                method
+            }).then(r => r.json()).then(r => r.data)
+    }
 }
 
-
-const handleJQuery = async () => {
-    return $.ajax({
-        url: `/api/search/${args.keyword}`,
-        type: "get",
-        contentType: "application/json",
-        data: {
-            page: args.page
-        }
-    }).then(r => r.data)
-}
 
 
 const { state, isLoading, execute } = useAsyncState<PagingData<UserInfo>>(() => {
-    switch (args.type) {
-        case "axios":
-            return handleAxios()
-        case "fetch":
-            return handleFetch()
-        case "jquery":
-            return handleJQuery()
-    }
+
+    return request({
+        url: `/api/item/list`,
+        params: {
+            page: args.page,
+            keyword: args.keyword
+        },
+        type: args.type,
+        method: "get"
+    }) as Promise<PagingData<UserInfo>>
 }, {
     items: [],
     totalCount: 0,
@@ -161,9 +218,17 @@ const { state, isLoading, execute } = useAsyncState<PagingData<UserInfo>>(() => 
     startIndex: 1
 }, { resetOnExecute: false })
 
+async function deleteById(id: string) {
+    await request({
+        url: `/api/item/${id}`,
+        type: args.type,
+        method: "DELETE",
+    })
+    await execute()
+}
 
-watch(args, () => execute())
 
+watch([args, mockEnabled], () => execute(), { deep: true })
 
 
 

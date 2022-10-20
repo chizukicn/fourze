@@ -1,10 +1,11 @@
 import type { IncomingMessage, OutgoingMessage, ServerResponse } from "http"
 import type { MaybePromise } from "maybe-types"
-import { parse, parseUrl } from "query-string"
+import qs from "query-string"
 
 import { version } from "../package.json"
 import { decodeFormData } from "./polyfill/form-data"
-import { flatHeaders, getHeaderRawValue } from "./polyfill/header"
+import { flatHeaders, getHeaderRawValue, getHeaderValue, PolyfillHeaderInit } from "./polyfill/header"
+import { PolyfillServerResponse } from "./polyfill/response"
 import { resolvePath } from "./utils"
 
 export const FOURZE_VERSION = version
@@ -16,23 +17,25 @@ const FOURZE_RESPONSE_SYMBOL = Symbol("FourzeResponse")
 
 export interface FourzeRequest extends IncomingMessage {
     url: string
+    method: string
+    headers: Record<string, string | string[] | undefined>
+
     route: FourzeRoute
     relativePath: string
-    query: Record<string, any>
+
     params: Record<string, any>
-    body: Record<string, any>
-    /**
-     *  {...query, ...params, ...body}
-     */
-    data: Record<string, any>
 
     meta: Record<string, any>
 
-    headers: Record<string, string | string[] | undefined>
+    readonly query: Record<string, any>
+
+    readonly body: Record<string, any>
+    /**
+     *  {...query, ...params, ...body}
+     */
+    readonly data: Record<string, any>
 
     readonly raw: string
-
-    readonly method: string
 
     readonly path: string
 
@@ -195,11 +198,6 @@ export interface FourzeMiddleware<T = void> {
     setup?: () => MaybePromise<void>
 }
 
-export interface FourzeSetupContext {
-    host: string
-    origin: string
-}
-
 export interface FourzeResponseOptions {
     url: string
     method: string
@@ -207,60 +205,7 @@ export interface FourzeResponseOptions {
 }
 
 export function createResponse(options: FourzeResponseOptions) {
-    const _headers: Record<string, string> = flatHeaders(options.response?.getHeaders() ?? {})
-
-    function createPolyfillResponse() {
-        return {
-            headers: {},
-            get writableEnded() {
-                return this._ended
-            },
-            _ended: false,
-            matched: false,
-            statusCode: 200,
-
-            end() {
-                this.statusCode = 200
-                this._ended = true
-            },
-
-            getHeaders() {
-                return _headers
-            },
-
-            getHeaderNames() {
-                return Object.keys(_headers)
-            },
-
-            hasHeader(name: string, value?: string | number) {
-                if (value) {
-                    const v = _headers[name]
-                    const arr = Array.isArray(v) ? v : v?.split(",") ?? []
-                    return arr.includes(String(value))
-                }
-                return !!_headers[name]
-            },
-
-            getHeader(name: string) {
-                const value = _headers[name]
-                return getHeaderRawValue(value)
-            },
-
-            setHeader(name: string, value: string | ReadonlyArray<string> | number) {
-                if (Array.isArray(value)) {
-                    value = value.join(",")
-                }
-                _headers[name] = value ? String(value) : ""
-                return this
-            },
-            removeHeader(name: string) {
-                delete _headers[name]
-                return this
-            }
-        }
-    }
-
-    const response = (options?.response ?? createPolyfillResponse()) as FourzeResponse
+    const response = (options?.response ?? new PolyfillServerResponse()) as FourzeResponse
 
     const _end = response.end.bind(response)
 
@@ -363,7 +308,7 @@ export function createResponse(options: FourzeResponseOptions) {
     return response
 }
 
-export interface FourzeRequestContextOptions {
+export interface FourzeContextOptions {
     url: string
     method?: string
     headers?: Record<string, string | string[] | number | undefined>
@@ -377,20 +322,21 @@ export interface FourzeContext {
     response: FourzeResponse
 }
 
-export function createRequestContext(options: FourzeRequestContextOptions) {
+export function createServiceContext(options: FourzeContextOptions) {
     const { url, method = "GET", headers = {}, body } = options
     const request = createRequest({
-        ...(options.request as Partial<FourzeRequest>),
         url,
         method,
         headers: flatHeaders(headers),
-        body
+        body,
+        request: options.request
     })
     const response = createResponse({
         url,
         method,
         response: options.response
     })
+
     return {
         request,
         response
@@ -400,24 +346,39 @@ export function createRequestContext(options: FourzeRequestContextOptions) {
 export interface FourzeRequestOptions {
     url: string
     method?: string
-    headers?: Record<string, string | string[] | number | undefined>
+    headers?: PolyfillHeaderInit
     body?: any
+    params?: Record<string, any>
+    request?: IncomingMessage
 }
 
 export function createRequest(options: FourzeRequestOptions) {
-    const headers = flatHeaders(options.headers)
+    const request = (options?.request ?? {
+        url: options.url,
+        method: options.method
+    }) as FourzeRequest
 
-    const { query, url: path } = parseUrl(options.url!, {
+    request.url = options.url ?? request.url
+    request.method = request.method ?? "GET"
+
+    const headers = {
+        ...flatHeaders(request.headers),
+        ...flatHeaders(options.headers)
+    }
+
+    request.headers = headers
+
+    const { query = {}, url: path } = qs.parseUrl(request.url, {
         parseBooleans: true
     })
 
-    const contentType = headers["content-type"] ?? headers["Content-Type"] ?? "application/json"
+    const contentType = getHeaderValue(headers, "content-type", "application/json")
 
     if (typeof options.body === "string") {
         if (contentType.startsWith("application/json")) {
             options.body = JSON.parse(options.body)
         } else if (contentType.startsWith("application/x-www-form-urlencoded")) {
-            options.body = parse(options.body)
+            options.body = qs.parse(options.body)
         }
     }
 
@@ -426,23 +387,42 @@ export function createRequest(options: FourzeRequestOptions) {
         options.body = decodeFormData(options.body, boundary)
     }
 
-    return {
-        relativePath: options.url,
+    request.params = options.params ?? {}
 
-        query: query,
-        body: {},
-        params: {},
-        data: {},
-        meta: {},
-        ...options,
-        headers,
-        get path() {
-            return path
+    Object.defineProperties(request, {
+        [FOURZE_REQUEST_SYMBOL]: {
+            get() {
+                return true
+            }
         },
-        get [FOURZE_REQUEST_SYMBOL]() {
-            return true
+        data: {
+            get() {
+                return {
+                    ...request.query,
+                    ...(request.body ?? {}),
+                    ...(request.params ?? {})
+                }
+            }
+        },
+        body: {
+            get() {
+                return options.body ?? {}
+            }
+        },
+        query: {
+            get() {
+                return query
+            }
+        },
+
+        path: {
+            get() {
+                return path
+            }
         }
-    } as FourzeRequest
+    })
+
+    return request
 }
 
 export function isFourzeResponse(obj: any): obj is FourzeResponse {

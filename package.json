@@ -15,7 +15,7 @@
     "scripts": {
         "build": "rimraf packages/*/dist && pnpm -r --filter=./packages/* build",
         "stub": "pnpm -r --filter=./packages/* --parallel run stub",
-        "play:vite": "pnpm stub &&  pnpm -r --filter=./playgrounds/vite dev",
+        "play:vite": "pnpm build &&  pnpm -r --filter=./playgrounds/vite dev",
         "play:vite-mock": "pnpm build &&  pnpm -r --filter=./playgrounds/vite dev --mode mock",
         "play:vue-cli": "pnpm stub &&  pnpm -r --filter=./playgrounds/vue-cli dev",
         "play:server": "pnpm -r --filter=./playgrounds/server dev",

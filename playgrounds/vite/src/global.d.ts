@@ -23,6 +23,7 @@ declare global {
         username: string
         phone: number
         createdTime: MaybeDate
+        source: string
     }
 }
 

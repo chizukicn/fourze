@@ -23,7 +23,12 @@ export default defineComponent({
     disabled: {
       type: Boolean,
       default: false
+    },
+    buttonClass: {
+      type: String,
+      default: ""
     }
+
   },
   setup(props, { emit }) {
     const page = computed({
@@ -69,11 +74,11 @@ export default defineComponent({
     return () => {
       return (
         <div class="flex space-x-1 h-10 w-full items-center justify-center">
-          <div icon="prev" disabled={page.value <= 1 || props.disabled} onClick={prev}>&lt;</div>
-          <span class="text-center w-8">
+          <div class={props.buttonClass} disabled={page.value <= 1 || props.disabled} onClick={prev}>&lt;</div>
+          <span class="text-center w-8 select-none">
             {page.value}/{totalPage.value}
           </span>
-          <div icon="next" disabled={page.value >= totalPage.value || props.disabled} onClick={next}>&gt;</div>
+          <div class={props.buttonClass} disabled={page.value >= totalPage.value || props.disabled} onClick={next}>&gt;</div>
         </div>
       )
     }

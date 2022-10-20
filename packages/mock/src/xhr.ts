@@ -1,6 +1,6 @@
 import { appendHeader, createLogger, flatHeaders, FourzeRoute, getHeader, getHeaderValue, toRawHeaders } from "@fourze/core"
 import { HTTP_STATUS_CODES } from "./code"
-import { FourzeMockRouter } from "./types"
+import { FourzeMockRouter } from "./shared"
 
 const XHR_EVENTS = "readystatechange loadstart progress abort error load timeout loadend".split(" ")
 

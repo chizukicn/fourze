@@ -23,6 +23,7 @@ export default defineConfig({
             base: "/api",
             filePattern: [".ts$", ".js$"],
             hmr: true,
+            mock: true,
             delay: "200-500"
         }),
         visualizer({

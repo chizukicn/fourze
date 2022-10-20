@@ -1,4 +1,4 @@
-import { CommonMiddleware, createLogger, createRequestContext, FourzeContext, FourzeLogger, FourzeMiddleware, FourzeNext, FOURZE_VERSION } from "@fourze/core"
+import { CommonMiddleware, createLogger, createServiceContext, FourzeContext, FourzeLogger, FourzeMiddleware, FourzeNext, FOURZE_VERSION } from "@fourze/core"
 import EventEmitter from "events"
 import type { IncomingMessage, OutgoingMessage, Server } from "http"
 import http from "http"
@@ -52,7 +52,7 @@ export function createServerContext(req: IncomingMessage, res: OutgoingMessage):
         })
 
         req.on("end", () => {
-            const context = createRequestContext({
+            const context = createServiceContext({
                 url: req.url!,
                 method: req.method ?? "GET",
                 headers: req.headers,
@@ -144,7 +144,7 @@ export function createFourzeServer(options: FourzeServerOptions = {}) {
                     await next()
                 } else if (!response.writableEnded) {
                     response.statusCode = 404
-                    response.end(`Cannot ${req.method ?? "GET"} ${req.url ?? "/"}`)
+                    response.end(`Cannot ${request.method} ${request.url ?? "/"}`)
                 }
             }
             app.emit("request", context)

@@ -2,7 +2,7 @@ import { createLogger, flatHeaders, FourzeLogger, FourzeResponse, getHeaderValue
 import type { ClientRequest, ClientRequestArgs, IncomingMessage, RequestOptions } from "http"
 import http from "http"
 import https from "https"
-import { FourzeMockRouter } from "./types"
+import { FourzeMockRouter } from "./shared"
 
 type RequestCallback = (res: IncomingMessage) => void
 

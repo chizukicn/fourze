@@ -1,5 +1,5 @@
 import { createLogger, flatHeaders, FourzeResponse, getHeaderValue, isString, isURL, PolyfillHeaders } from "@fourze/core"
-import { FourzeMockRouter } from "./types"
+import { FourzeMockRouter } from "./shared"
 
 class ProxyFetchResponse implements Response {
     readonly url: string

@@ -82,8 +82,8 @@ export function getHeaderKey(headers: Record<string, string>, key: string) {
     return getHeader(headers, key)[0]
 }
 
-export function getHeaderValue(headers: Record<string, string>, key: string) {
-    return getHeader(headers, key)[1]
+export function getHeaderValue(headers: Record<string, string>, key: string, defaultValue?: string) {
+    return getHeader(headers, key)?.[1] ?? defaultValue
 }
 
 export function getHeaderRawValue(value: PolyfillHeaderValue, options: TransformHeaderOptions = {}): string | undefined {

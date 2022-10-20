@@ -15,7 +15,11 @@ export interface FourzeMockRouterOptions extends FourzeRouterOptions {
     host?: string
 
     autoEnable?: boolean
+
+    global?: boolean
 }
+
+export const FOURZE_MOCK_ROUTER_SYMBOL = Symbol("FOURZE_MOCK_ROUTER_SYMBOL")
 
 export interface FourzeMockRouter extends FourzeRouter {
     originalFetch: typeof fetch
@@ -27,9 +31,17 @@ export interface FourzeMockRouter extends FourzeRouter {
     fetch: typeof fetch
     request: typeof http.request
 
+    enabled: boolean
+
     enable(): void
 
     disable(): void
 
     activeModes: FourzeMockRequestMode[]
+
+    [FOURZE_MOCK_ROUTER_SYMBOL]: true
+}
+
+declare global {
+    var __FOURZE_MOCK_ROUTER__: FourzeMockRouter
 }

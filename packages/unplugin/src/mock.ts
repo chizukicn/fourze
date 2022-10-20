@@ -5,8 +5,6 @@ import { normalizePath } from "@fourze/server"
 const TEMPORARY_FILE_SUFFIX = ".tmp.js"
 
 export function defaultMockCode(router: FourzeHotRouter, options: FourzeMockRouterOptions) {
-    const INJECT_KEY = "__FOURZE_MOCK_ROUTER__"
-
     let code = `import {createMockRouter} from "@fourze/mock"`
 
     const names: string[] = []
@@ -20,12 +18,13 @@ export function defaultMockCode(router: FourzeHotRouter, options: FourzeMockRout
         import ${names[i]} from "${modName}"`
     }
     code += `
-  globalThis.${INJECT_KEY} = createMockRouter({
+  createMockRouter({
     base:"${router.base}",
     modules:[${names.join(",")}].flat(),
     delay:${JSON.stringify(options.delay)},
     mode:${JSON.stringify(options.mode)},
-    allow:${JSON.stringify(options.allow)}
+    allow:${JSON.stringify(options.allow)},
+    global:true
   })`
     return code
 }

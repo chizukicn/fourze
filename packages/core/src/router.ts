@@ -1,21 +1,8 @@
 import { MaybeAsyncFunction, MaybePromise, MaybeRegex } from "maybe-types"
 import { defineFourze, Fourze, FourzeSetup, isFourze } from "./app"
-import { delayHook } from "./hooks"
+import { delayHook } from "./endpoints"
 import { createLogger } from "./logger"
-import {
-    createRequestContext,
-    defineRoute,
-    FourzeContext,
-    FourzeHook,
-    FourzeInstance,
-    FourzeMiddleware,
-    FourzeNext,
-    FourzeRequest,
-    FourzeRequestContextOptions,
-    FourzeResponse,
-    FourzeRoute,
-    FourzeSetupContext
-} from "./shared"
+import { createServiceContext, defineRoute, FourzeContext, FourzeContextOptions, FourzeHook, FourzeInstance, FourzeMiddleware, FourzeNext, FourzeRequest, FourzeResponse, FourzeRoute } from "./shared"
 import { asyncLock, DelayMsType, isMatch, relativePath, unique } from "./utils"
 
 export interface FourzeRouter extends FourzeMiddleware {
@@ -33,17 +20,18 @@ export interface FourzeRouter extends FourzeMiddleware {
      */
     isAllow(url: string): boolean
 
-    release(): void
+    refresh(): void
+
     setup(): MaybePromise<void>
+
     use(module: FourzeInstance): this
     use(setup: FourzeSetup): this
     use(path: string, setup: FourzeSetup): this
 
-    service(context: FourzeRequestContextOptions): Promise<FourzeContext>
+    service(context: FourzeContextOptions): Promise<FourzeContext>
 
     readonly routes: FourzeRoute[]
     readonly hooks: FourzeHook[]
-    readonly context: FourzeSetupContext
 
     readonly options: Required<FourzeRouterOptions>
 }
@@ -110,8 +98,6 @@ export function createRouter(params: FourzeRouterOptions | Fourze[] | MaybeAsync
 
     const logger = createLogger("@fourze/core")
 
-    let _context: FourzeSetupContext
-
     const router = async function (request: FourzeRequest, response: FourzeResponse, next?: FourzeNext) {
         const { path, method } = request
 
@@ -137,11 +123,6 @@ export function createRouter(params: FourzeRouterOptions | Fourze[] | MaybeAsync
                     request.relativePath = matches[matches.length - 2]
                 }
                 request.params = params
-                request.data = {
-                    ...request.body,
-                    ...request.query,
-                    ...request.params
-                }
 
                 request.meta = {
                     ...request.meta,
@@ -213,8 +194,8 @@ export function createRouter(params: FourzeRouterOptions | Fourze[] | MaybeAsync
         return []
     }
 
-    router.service = async function (this: FourzeRouter, options: FourzeRequestContextOptions) {
-        const { request, response } = createRequestContext(options)
+    router.service = async function (this: FourzeRouter, options: FourzeContextOptions) {
+        const { request, response } = createServiceContext(options)
         await this(request, response)
         return { request, response }
     }
@@ -230,7 +211,7 @@ export function createRouter(params: FourzeRouterOptions | Fourze[] | MaybeAsync
         }
 
         modules.add(module)
-        this.release()
+        this.refresh()
 
         return this
     }
@@ -309,7 +290,7 @@ export function createRouter(params: FourzeRouterOptions | Fourze[] | MaybeAsync
             }
         },
 
-        release: {
+        refresh: {
             get() {
                 return setupRouter.release
             }
@@ -322,11 +303,6 @@ export function createRouter(params: FourzeRouterOptions | Fourze[] | MaybeAsync
         hooks: {
             get() {
                 return Array.from(hooks)
-            }
-        },
-        context: {
-            get() {
-                return _context
             }
         }
     })
