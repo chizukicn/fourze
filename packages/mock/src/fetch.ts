@@ -1,4 +1,4 @@
-import { createLogger, flatHeaders, FourzeResponse, getHeaderValue, isString, isURL, PolyfillHeaders } from "@fourze/core"
+import { createLogger, flatHeaders, FourzeResponse, getHeaderValue, isString, isURL, normalizeRoute, PolyfillHeaders } from "@fourze/core"
 import { FourzeMockRouter } from "./shared"
 
 class ProxyFetchResponse implements Response {
@@ -100,15 +100,15 @@ export function createProxyFetch(router: FourzeMockRouter) {
                 headers
             })
             if (response.matched) {
-                logger.success(`Found route by [${method}] ${url}`, body)
+                logger.success(`Found route by -> ${normalizeRoute(url, method)}.`)
                 return new ProxyFetchResponse(response)
             }
-            logger.warn(`Not found route, fallback to original [${method}] -> "${url}"`)
+            logger.debug(`Not found route, fallback to original -> ${normalizeRoute(url, method)}.`)
             return originalFetch(input, init)
         }
 
         if (useMock === "off") {
-            logger.warn(`X-Fourze-Mock is off, fallback to original [${method}] -> "${url}"`)
+            logger.debug(`X-Fourze-Mock is off, fallback to original ${normalizeRoute(url, method)}.`)
             const res = await originalFetch(input, init)
             return res
         } else {

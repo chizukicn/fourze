@@ -1,4 +1,4 @@
-import { appendHeader, createLogger, flatHeaders, FourzeRoute, getHeader, getHeaderValue, toRawHeaders } from "@fourze/core"
+import { appendHeader, createLogger, flatHeaders, FourzeRoute, getHeader, getHeaderValue, normalizeRoute, toRawHeaders } from "@fourze/core"
 import { HTTP_STATUS_CODES } from "./code"
 import { FourzeMockRouter } from "./shared"
 
@@ -111,7 +111,6 @@ export function createProxyXMLHttpRequest(router: FourzeMockRouter) {
             if (!!this.$base) {
                 this.$base.setRequestHeader(name, value)
             }
-            console.log("setRequestHeader", name, value)
             appendHeader(this.requestHeaders, name, value)
         }
 
@@ -185,8 +184,6 @@ export function createProxyXMLHttpRequest(router: FourzeMockRouter) {
             this.dispatchEvent(new Event("readystatechange"))
             this.readyState = this.LOADING
 
-            console.log("url", url, this.requestHeaders)
-
             const { response } = await router.service({
                 url,
                 method,
@@ -197,7 +194,7 @@ export function createProxyXMLHttpRequest(router: FourzeMockRouter) {
             this.matched = !!response.matched
 
             if (this.matched) {
-                logger.success(`Found route by [${method}] -> "${url}"`)
+                logger.success(`Found route by -> ${normalizeRoute(url, method)}.`)
 
                 this.$base?.abort()
 
@@ -218,7 +215,7 @@ export function createProxyXMLHttpRequest(router: FourzeMockRouter) {
                 this.dispatchEvent(new Event("load"))
                 this.dispatchEvent(new Event("loadend"))
             } else {
-                logger.debug(`Not found route by [${method}] -> "${url}"`)
+                logger.debug(`Not found route by ${normalizeRoute(url, method)}.`)
                 this.originalSend(data)
             }
         }
@@ -228,7 +225,7 @@ export function createProxyXMLHttpRequest(router: FourzeMockRouter) {
             const { url, method } = this
 
             if (useMock === "off") {
-                logger.debug(`X-Fourze-Mock is off, fallback to original -> [${method}] ${url}`)
+                logger.debug(`X-Fourze-Mock is off, fallback to original -> ${normalizeRoute(url, method)}.`)
                 await this.originalSend(data)
             } else {
                 await this.mockSend(data)

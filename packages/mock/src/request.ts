@@ -1,4 +1,4 @@
-import { createLogger, flatHeaders, FourzeLogger, FourzeResponse, getHeaderValue, isBuffer, isFunction, isString } from "@fourze/core"
+import { createLogger, flatHeaders, FourzeLogger, FourzeResponse, getHeaderValue, isBuffer, isFunction, isString, normalizeRoute } from "@fourze/core"
 import type { ClientRequest, ClientRequestArgs, IncomingMessage, RequestOptions } from "http"
 import http from "http"
 import https from "https"
@@ -35,6 +35,7 @@ export function createProxyRequest(router: FourzeMockRouter) {
         logger.warn("request is not defined")
         return
     }
+
     const { Writable, Readable } = require("stream") as typeof import("stream")
 
     class ProxyClientResponse extends Readable {
@@ -117,12 +118,12 @@ export function createProxyRequest(router: FourzeMockRouter) {
                 body: this.buffer.toString("utf-8")
             })
             if (response.matched) {
-                logger.success(`Found route by [${this.method}] -> "${this._url}"`)
+                logger.success(`Found route by ${normalizeRoute(this._url, this.method)}.`)
 
                 const res = new ProxyClientResponse(response)
                 this.emit("response", res)
             } else {
-                logger.debug(`Not found route, fallback to original [${this.method}] -> "${this._url}"`)
+                logger.debug(`Not found route, fallback to original ${normalizeRoute(this._url, this.method)}.`)
                 this._nativeRequest()
             }
         }

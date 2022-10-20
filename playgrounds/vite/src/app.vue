@@ -39,7 +39,7 @@
                         <Table :data="state.items" :columns="columns" row-key="id" />
                     </div>
                     <Pagination button-class="px-2 bg-light-blue-300 text-white cursor-pointer select-none"
-                        @change="execute()" :total-page="state.totalPageCount" v-model:page="args.page">
+                        :total-page="state.totalPageCount" v-model:page="args.page">
                     </Pagination>
                 </Loading>
             </div>
@@ -152,7 +152,7 @@ const columns: TableColumns<UserInfo> = [
         render({ record }) {
             return <div class="space-x-2">
                 <Button size="small">Edit</Button>
-                <Button size="small" class="bg-red-400" onClick={() => deleteById(record.id)}>Delete</Button>
+                <Button size="small" class="!bg-red-400" onClick={() => deleteById(record.id)}>Delete</Button>
             </div>
         }
     }

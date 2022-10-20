@@ -3,7 +3,7 @@ import { defineFourze, Fourze, FourzeSetup, isFourze } from "./app"
 import { delayHook } from "./endpoints"
 import { createLogger } from "./logger"
 import { createServiceContext, defineRoute, FourzeContext, FourzeContextOptions, FourzeHook, FourzeInstance, FourzeMiddleware, FourzeNext, FourzeRequest, FourzeResponse, FourzeRoute } from "./shared"
-import { asyncLock, DelayMsType, isMatch, relativePath, unique } from "./utils"
+import { asyncLock, DelayMsType, isMatch, normalizeRoute, relativePath, unique } from "./utils"
 
 export interface FourzeRouter extends FourzeMiddleware {
     /**
@@ -149,13 +149,13 @@ export function createRouter(params: FourzeRouterOptions | Fourze[] | MaybeAsync
         }
 
         if (response.matched) {
-            logger.info(`Request matched [${method}] -> "${path}".`)
+            logger.info(`Request matched -> ${normalizeRoute(path, method)}.`)
             if (!response.writableEnded) {
                 response.end()
             }
         } else {
             if (isAllowed) {
-                logger.warn(`Request is allowed but not matched [${method}] -> "${path}".`)
+                logger.warn(`Request is allowed but not matched -> ${normalizeRoute(path, method)}.`)
             }
             await next?.()
         }
