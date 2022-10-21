@@ -1,8 +1,7 @@
-import { defineFourze, FourzeHandle, jsonWrapperHook, PolyfillFile, randomArray, randomDate, randomInt, randomItem } from "@fourze/core"
+import { defineFourze, FourzeHandle, isNode, jsonWrapperHook, PolyfillFile, randomArray, randomDate, randomInt, randomItem } from "@fourze/mock"
 import fs from "fs"
 import path from "path"
 import { slicePage, successResponseWrap } from "../utils/setup-mock"
-import { isNode } from "./../../../../packages/core/src/utils/common"
 
 interface Pagination {
     page: number

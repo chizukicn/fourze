@@ -1,5 +1,6 @@
 import fourzeUnplugin, { UnpluginFourzeOptions } from "@fourze/unplugin"
 import { addServerHandler, addTemplate, addVitePlugin, defineNuxtModule } from "@nuxt/kit"
+import "@nuxt/schema"
 import dedent from "dedent"
 import { join } from "pathe"
 import { fileURLToPath } from "url"
@@ -25,10 +26,10 @@ export default defineNuxtModule<ModuleOptions>({
         if (nuxt.options.target == "static") {
             addVitePlugin(fourzeUnplugin.vite(options))
         } else {
-            const mockHandlerPath = join(nuxt.options.buildDir, "fourze-mock.ts")
+            const mockHandlerPath = join(nuxt.options.buildDir, "@fourze/client")
 
             addTemplate({
-                filename: "fourze-mock.ts",
+                filename: "@fourze/client",
                 write: true,
                 getContents() {
                     return dedent`

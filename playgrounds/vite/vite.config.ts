@@ -4,7 +4,7 @@ import jsx from "@vitejs/plugin-vue-jsx"
 import visualizer from "rollup-plugin-visualizer"
 import uncomponents from "unplugin-vue-components"
 
-import { defineConfig } from "vite"
+import { defineConfig, Plugin } from "vite"
 import windicss from "vite-plugin-windicss"
 
 export default defineConfig({
@@ -30,7 +30,7 @@ export default defineConfig({
             open: false,
             gzipSize: true,
             brotliSize: true
-        }),
+        }) as Plugin,
         uncomponents.vite({
             resolvers: []
         })

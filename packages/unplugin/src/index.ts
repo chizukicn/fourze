@@ -1,6 +1,7 @@
 import { createLogger, DelayMsType, FourzeLogLevelKey, setLoggerLevel } from "@fourze/core"
 import { createUnplugin } from "unplugin"
 
+import { installPackage } from "@antfu/install-pkg"
 import type { FourzeMockRouterOptions } from "@fourze/mock"
 import { createFourzeServer, createHotRouter, FourzeHotRouter, FourzeProxyOption } from "@fourze/server"
 import { defaultMockCode as defaultTransformCode } from "./mock"
@@ -112,7 +113,7 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
 
     const transformCode = options.transformCode ?? defaultTransformCode
 
-    logger.info(`${PLUGIN_NAME} is starting...`)
+    logger.info(`Fourze Plugin is starting...`)
 
     return {
         name: PLUGIN_NAME,
@@ -138,6 +139,7 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
             await app.listen(port, host)
             console.log("Webpack Server listening on port", options.server?.port)
         },
+
         vite: {
             transformIndexHtml: {
                 enforce: "pre",
@@ -156,7 +158,7 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
                     return html
                 }
             },
-            config(config, env) {
+            async config(config, env) {
                 options.mock = options.mock ?? (env.command == "build" || env.mode === "mock")
                 return {
                     define: {
@@ -164,6 +166,12 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
                     }
                 }
             },
+            async configResolved(config) {
+                if (options.mock) {
+                    await installPackage("@fourze/mock", { cwd: config.root, silent: true })
+                }
+            },
+
             configureServer({ middlewares, httpServer, watcher }) {
                 if (hmr) {
                     router.watch(watcher)

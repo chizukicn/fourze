@@ -1,13 +1,13 @@
 <template>
     <div class="px-4">
         <div class=" font-bold py-4 text-2xl text-light-blue-400">Image Upload/Load</div>
-        <di class="flex space-x-4 px-8 items-center">
+        <div class="flex space-x-4 px-8 items-center">
             <img :style="{ width: '120px' , height:'120px' }" :src="avatarUrl" />
             <div>
                 <button class="bg-light-blue-400 text-white py-1 px-2 hover:bg-opacity-60"
                     @click="upload">Upload</button>
             </div>
-        </di>
+        </div>
 
         <div class=" font-bold py-4 text-2xl text-light-blue-400">XHR/FETCH</div>
         <div class="px-8">

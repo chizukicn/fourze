@@ -1,23 +1,16 @@
 import comporession from "compression"
 import ejs from "ejs"
+import express from "express"
 
 import { CommonMiddleware, FourzeRequest, FourzeResponse } from "@fourze/core"
 import { createFourzeServer, createHotRouter, createRenderer, FourzeRendererContext } from "@fourze/server"
 import fs from "fs"
 import path from "path"
 
-const router0 = createHotRouter().use(route => {
+const router = createHotRouter().use(route => {
     route("GET /hello", () => {
         return {
             msg: "hello router 1"
-        }
-    })
-})
-
-const router1 = createHotRouter().use(route => {
-    route("GET /hello", () => {
-        return {
-            msg: "hello router 2"
         }
     })
 })
@@ -35,8 +28,12 @@ renderer.use(renderEjs)
 
 const app = createFourzeServer({})
 
-app.use("/test", comporession({ threshold: 0 }) as CommonMiddleware)
-app.use(router0, router1)
+app.use(router)
 
 app.use(renderer)
-app.listen()
+app.use(comporession({ threshold: 0 }) as CommonMiddleware)
+
+const expressApp = express()
+
+expressApp.use(app)
+expressApp.listen(7609)

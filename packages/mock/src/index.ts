@@ -121,4 +121,5 @@ export function isMockRouter(router: any): router is FourzeMockRouter {
     return !!router && router[FOURZE_MOCK_ROUTER_SYMBOL]
 }
 
+export * from "@fourze/core"
 export * from "./shared"

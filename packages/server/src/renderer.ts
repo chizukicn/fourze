@@ -125,7 +125,7 @@ export function createRenderer(options: FourzeRendererOptions | string = {}): Fo
     }
 
     const renderer = async function (request: FourzeRequest, response: FourzeResponse, next?: FourzeNext) {
-        const url = request.relativePath
+        const url = request.relativePath ?? request.url
         if (url.startsWith(base)) {
             const context = { file: path.join(dir, url), logger, dir }
 

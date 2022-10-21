@@ -20,16 +20,16 @@
     "author": "chizuki",
     "license": "MIT",
     "dependencies": {
+        "@antfu/install-pkg": "^0.1.1",
         "@fourze/core": "workspace:*",
-        "@fourze/mock": "workspace:*",
         "@fourze/server": "workspace:*",
-        "unplugin": "^0.8.0"
+        "unplugin": "^0.10.0"
     },
     "devDependencies": {
         "@types/webpack": "^5.28.0",
         "esbuild": "^0.14.54",
         "rollup": "^2.77.2",
-        "vite": "^3.0.9",
+        "vite": "^3.1.8",
         "webpack": "^5.74.0",
         "webpack-dev-server": "^4.9.3"
     }
