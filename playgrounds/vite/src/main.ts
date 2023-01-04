@@ -1,5 +1,5 @@
 import { createApp } from "vue";
-import { createRouter, createWebHistory, RouterView } from "vue-router";
+import { RouterView, createRouter, createWebHistory } from "vue-router";
 import "windi.css";
 
 createApp(RouterView)

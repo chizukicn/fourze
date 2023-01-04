@@ -11,7 +11,7 @@ import {
   getHeaderValue
 } from "./polyfill/header";
 import { PolyfillServerResponse } from "./polyfill/response";
-import { isBuffer, isDef, isString, resolvePath } from "./utils";
+import { isBuffer, isDef, isFunction, isString, resolvePath } from "./utils";
 
 export const FOURZE_VERSION = version;
 
@@ -24,6 +24,7 @@ export type DefaultData = Record<string, unknown>;
 
 export interface FourzeRequest<
   Props extends ObjectProps = ObjectProps,
+  Meta = Record<string, any>,
   Data = ExtractPropTypes<Props>,
   Query = ExtractPropTypes<Props, "query">,
   Body = ExtractPropTypes<Props, "body">,
@@ -38,7 +39,7 @@ export interface FourzeRequest<
 
   readonly params: Params
 
-  meta: Record<string, any>
+  meta: Meta
 
   readonly query: Query
 
@@ -80,12 +81,15 @@ export interface FourzeResponse extends FourzeBaseResponse {
   readonly [FOURZE_RESPONSE_SYMBOL]: true
 }
 
-export interface FourzeBaseRoute<Props extends ObjectProps = ObjectProps> {
+export interface FourzeBaseRoute<
+  Props extends ObjectProps = ObjectProps,
+  Meta = Record<string, any>
+> {
   path: string
   base?: string
   method?: RequestMethod
-  handle: FourzeHandle<Props>
-  meta?: Record<string, any>
+  handle: FourzeHandle<Props, Meta>
+  meta?: Meta
   props?: Props
 }
 
@@ -190,6 +194,10 @@ export type ObjectProps<P = Record<string, unknown>> = {
   [K in keyof P]: Prop<P[K]> | null;
 };
 
+export type NormalizedObjectProps<P = Record<string, unknown>> = {
+  [K in keyof P]: PropOptions<P[K]> | null;
+};
+
 type Prop<T, D = T> = PropOptions<T, D> | PropType<T>;
 
 type PropConstructor<T = any> =
@@ -211,13 +219,23 @@ type PropMethod<T, TConstructor = any> = [T] extends [
     }
   : never;
 
-interface PropOptions<T = any, D = T> {
-  type: PropType<T>
+interface PropOptions<Type = any, Default = Type> {
+  type: PropType<Type>
   required?: boolean
-  default?: D | DefaultFactory<D> | null | undefined | object
+  default?: Default | DefaultFactory<Default> | null | undefined | object
   validator?(value: unknown): boolean
-  transform?(value: unknown): T
+  transform?(value: unknown): Type
+  meta?: Record<string, any>
   in?: PropIn
+}
+
+export interface NormalizedProps<Type = any, Default = Type> {
+  name: string
+  meta: Record<string, any>
+  in?: PropIn
+  required: boolean
+  type: PropType<any>
+  default?: Default | DefaultFactory<Default> | null | undefined | object
 }
 
 declare type DefaultFactory<T> = (props: DefaultData) => T | null | undefined;
@@ -226,12 +244,14 @@ export type PropType<T> = PropConstructor<T> | PropConstructor<T>[];
 
 // #endregion
 
-export interface FourzeRoute<Props extends ObjectProps = ObjectProps>
-  extends FourzeBaseRoute<Props> {
+export interface FourzeRoute<
+  Props extends ObjectProps = ObjectProps,
+  Meta = Record<string, any>
+> extends FourzeBaseRoute<Props, Meta> {
   readonly [FOURZE_ROUTE_SYMBOL]: true
-  readonly pathParams: RegExpMatchArray
-  meta: Record<string, any>
+  readonly pathParams: RegExpMatchArray | string[]
   props: Props
+  meta: Meta
   match: (
     url: string,
     method?: string,
@@ -241,8 +261,12 @@ export interface FourzeRoute<Props extends ObjectProps = ObjectProps>
 
 export type FourzeNext = (rs?: boolean) => MaybePromise<void>;
 
-export type FourzeHandle<Props extends ObjectProps = ObjectProps, R = any> = (
-  request: FourzeRequest<Props>,
+export type FourzeHandle<
+  Props extends ObjectProps = ObjectProps,
+  Meta = Record<string, any>,
+  R = any
+> = (
+  request: FourzeRequest<Props, Meta>,
   response: FourzeResponse
 ) => MaybePromise<R>;
 
@@ -280,11 +304,17 @@ const REQUEST_PATH_REGEX = new RegExp(
 
 const PARAM_KEY_REGEX = /\{[\w_-]+\}/g;
 
-export function defineRoute<Props extends ObjectProps = ObjectProps>(
-  route: FourzeBaseRoute<Props>
-): FourzeRoute<Props> {
-  /* eslint @typescript-eslint/ban-types:"off" */
-  const { handle, meta = {}, base, props = {} as Props } = route;
+export function defineRouteProps<Props extends ObjectProps = ObjectProps>(
+  props: Props
+) {
+  return props;
+}
+
+export function defineRoute<
+  Props extends ObjectProps = ObjectProps,
+  Meta = Record<string, any>
+>(route: FourzeBaseRoute<Props, Meta>): FourzeRoute<Props, Meta> {
+  const { handle, meta = {} as Meta, base, props = {} as Props } = route;
   let { method, path } = route;
 
   if (REQUEST_PATH_REGEX.test(path)) {
@@ -413,6 +443,26 @@ export interface FourzeResponseOptions {
   url: string
   method: string
   response?: OutgoingMessage
+}
+
+export function normalizeProps<Props extends ObjectProps = ObjectProps>(
+  props: Props
+): NormalizedObjectProps {
+  const result: NormalizedObjectProps = {};
+  for (const name in props) {
+    const prop = props[name];
+    if (!isFunction(prop) && !Array.isArray(prop) && !!prop) {
+      result[name] = {
+        type: prop.type,
+        meta: {
+          ...prop.meta
+        },
+        default: prop.default,
+        required: prop.default ? false : prop.required ?? false
+      };
+    }
+  }
+  return result;
 }
 
 export function createResponse(options: FourzeResponseOptions) {

@@ -1,5 +1,5 @@
 {
-    "name": "@fourze/unplugin",
+    "name": "@fourze/swagger",
     "version": "0.22.0",
     "description": "",
     "main": "dist/index.cjs",
@@ -20,18 +20,8 @@
     "author": "chizuki",
     "license": "MIT",
     "dependencies": {
-        "@fourze/core": "workspace:*",
-        "@fourze/mock": "workspace:*",
-        "@fourze/server": "workspace:*",
-        "@fourze/swagger": "workspace:*",
-        "unplugin": "^0.10.0"
+        "@fourze/core": "workspace:*"
     },
     "devDependencies": {
-        "@types/webpack": "^5.28.0",
-        "esbuild": "^0.14.54",
-        "rollup": "^2.77.2",
-        "vite": "^3.1.8",
-        "webpack": "^5.74.0",
-        "webpack-dev-server": "^4.9.3"
     }
 }

@@ -5,6 +5,8 @@ import { createUnplugin } from "unplugin";
 import type { FourzeMockRouterOptions } from "@fourze/mock";
 import type { FourzeHotRouter, FourzeProxyOption } from "@fourze/server";
 import { createFourzeServer, createHotRouter } from "@fourze/server";
+import { createSwaggerRouter } from "@fourze/swagger";
+
 import { defaultMockCode as defaultTransformCode } from "./mock";
 
 const PLUGIN_NAME = "unplugin-fourze";
@@ -115,6 +117,8 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
     allow
   });
 
+  const swaggerRouter = createSwaggerRouter(router);
+
   proxy.forEach(router.proxy);
 
   const transformCode = options.transformCode ?? defaultTransformCode;
@@ -186,6 +190,7 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
         }
         const app = createFourzeServer();
         app.use(base, router);
+        app.use("/v2", swaggerRouter);
 
         if (options.server?.port) {
           try {

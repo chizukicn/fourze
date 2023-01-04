@@ -4,7 +4,8 @@ import jsx from "@vitejs/plugin-vue-jsx";
 import visualizer from "rollup-plugin-visualizer";
 import uncomponents from "unplugin-vue-components";
 
-import { defineConfig, Plugin } from "vite";
+import type { Plugin } from "vite";
+import { defineConfig } from "vite";
 import windicss from "vite-plugin-windicss";
 
 export default defineConfig({
@@ -26,13 +27,13 @@ export default defineConfig({
       mock: true,
       delay: "200-500",
     }),
-        visualizer({
-          open: false,
-          gzipSize: true,
-          brotliSize: true,
-        }) as Plugin,
-        uncomponents.vite({
-          resolvers: [],
-        }),
+    visualizer({
+      open: false,
+      gzipSize: true,
+      brotliSize: true,
+    }) as Plugin,
+    uncomponents.vite({
+      resolvers: [],
+    }),
   ],
 });

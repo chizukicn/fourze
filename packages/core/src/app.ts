@@ -35,10 +35,16 @@ export type FourzeSetup = (
 
 export type FourzeRequestFunctions = {
   [K in RequestMethod]: {
-    <P extends ObjectProps = ObjectProps>(
+    <Props extends ObjectProps = ObjectProps, Meta = Record<string, any>>(
       path: string,
-      data: P,
-      handle: FourzeHandle<P>
+      props: Props,
+      meta: Meta,
+      handle: FourzeHandle<Props, Meta>
+    ): Fourze
+    <Props extends ObjectProps = ObjectProps>(
+      path: string,
+      props: Props,
+      handle: FourzeHandle<Props>
     ): Fourze
     (path: string, handle: FourzeHandle): Fourze
   };
@@ -46,23 +52,37 @@ export type FourzeRequestFunctions = {
 
 const FOURZE_SYMBOL = Symbol("FourzeInstance");
 export interface Fourze extends FourzeRequestFunctions, FourzeInstance {
-  <M extends RequestMethod, P extends ObjectProps = ObjectProps>(
+  <
+    Method extends RequestMethod,
+    Props extends ObjectProps = ObjectProps,
+    Meta = Record<string, any>
+  >(
     path: string,
-    method: M,
-    props: P,
-    handle: FourzeHandle<P>
+    method: Method,
+    meta: Meta,
+    props: Props,
+    handle: FourzeHandle<Props, Meta>
   ): this
-  <M extends RequestMethod>(
+  <Method extends RequestMethod, Props extends ObjectProps = ObjectProps>(
     path: string,
-    method: M,
-    handle: FourzeHandle
+    method: Method,
+    props: Props,
+    handle: FourzeHandle<Props>
   ): this
-  <P extends ObjectProps = ObjectProps>(
+  <Props extends ObjectProps = ObjectProps, Meta = Record<string, any>>(
     path: string,
-    data: P,
-    handle: FourzeHandle<P>
+    props: Props,
+    meta: Meta,
+    handle: FourzeHandle<Props, Meta>
   ): this
-  <P extends ObjectProps = ObjectProps>(route: FourzeBaseRoute<P>): this
+  <Props extends ObjectProps = ObjectProps>(
+    path: string,
+    props: Props,
+    handle: FourzeHandle<Props>
+  ): this
+  <Props extends ObjectProps = ObjectProps, Meta = Record<string, any>>(
+    route: FourzeBaseRoute<Props, Meta>
+  ): this
   (path: string, handle: FourzeHandle): this
 
   (routes: FourzeBaseRoute<any>[]): this
@@ -137,6 +157,10 @@ export function defineFourze(
             {
               type: "object",
               name: "props"
+            },
+            {
+              type: "object",
+              name: "meta"
             },
             {
               type: "function",

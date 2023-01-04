@@ -21,11 +21,15 @@
             "@fourze/unplugin": [
                 "./packages/integrations/unplugin/src/index.ts"
             ],
-            "@fourze/nuxt": ["./packages/integrations/nuxt/src/index.ts"]
+            "@fourze/nuxt": ["./packages/integrations/nuxt/src/index.ts"],
+            "@fourze/swagger": [
+              "./packages/integrations/swagger/src/index.ts"
+          ],
         }
     },
     "include": [
         "playgrounds/**/*.ts",
+        "playgrounds/**/*.d.ts",
         "playgrounds/**/*.tsx",
         "packages/**/**.ts",
         "playgrounds/vue-cli/vue.config.js"

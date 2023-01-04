@@ -18,7 +18,7 @@ export function isFunction<T extends Function>(value: unknown): value is T {
   return typeof value === "function" || value instanceof Function;
 }
 
-export function isConstructor<T extends Function>(value: unknown): value is T {
+export function isConstructor<T>(value: unknown): value is Constructor<T> {
   return isFunction(value) && value.prototype !== undefined;
 }
 
@@ -89,3 +89,11 @@ export function isTruthy<T>(value: T): value is NonNullable<T> {
 export const isNode = () => typeof window === "undefined";
 
 export const isBrowser = () => !isNode();
+
+export type Constructor<T> =
+  | {
+    new (...args: any[]): T & {}
+  }
+  | {
+    (): T
+  };

@@ -23,6 +23,10 @@ interface Pagination {
   pageSize: number;
 }
 
+export interface SwaggerMeta extends Record<string, any> {
+  summary: string;
+}
+
 export default defineFourze((fourze) => {
   fourze.hook(
     jsonWrapperHook(
@@ -37,9 +41,15 @@ export default defineFourze((fourze) => {
       name: {
         type: String,
         required: true,
+        meta: {
+          title: "姓名",
+        },
       },
     },
-    (req) => req.data.name
+    {
+      summary: "测试",
+    },
+    (req) => req.meta.summary
   );
 
   // person names
@@ -47,7 +57,7 @@ export default defineFourze((fourze) => {
   const storage = createStorage();
   const createData = (source: "server" | "mock") => {
     if (storage.hasItem("fz_cache_data")) {
-      return storage.getItem("fz_cache_data");
+      return storage.getItem("fz_cache_data") as UserInfo[];
     }
 
     const data = randomArray<UserInfo>(
@@ -77,12 +87,14 @@ export default defineFourze((fourze) => {
       80
     );
     storage.setItem("fz_cache_data", data);
+    return data;
   };
 
   const data = isNode() ? createData("server") : createData("mock");
 
   const handleSearch: FourzeHandle<
     ObjectProps<Pagination>,
+    any,
     PagingData<UserInfo>
   > = async (req) => {
     const {
@@ -90,7 +102,6 @@ export default defineFourze((fourze) => {
       pageSize = 10,
       keyword = "",
     } = req.query as unknown as Pagination & { keyword?: string };
-    console.log(data);
     const items = data.filter((item) => item.username.includes(keyword));
     return slicePage(items, { page, pageSize });
   };
@@ -135,6 +146,7 @@ export default defineFourze((fourze) => {
         in: "body",
       },
     },
+    {},
     async (req) => {
       const file = req.body.file;
       if (!fs.existsSync(path.resolve(__dirname, ".tmp"))) {

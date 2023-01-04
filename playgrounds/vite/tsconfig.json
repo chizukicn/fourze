@@ -1,9 +1,17 @@
 {
-    "extends": "../../tsconfig.json",
-    "compilerOptions": {
-        "baseUrl": "./",
-        "paths": {
-            "@/*": ["src/*"]
-        }
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@fourze/core": ["../../packages/core/src/index.ts"],
+      "@fourze/mock": ["../../packages/mock/src/index.ts"],
+      "@fourze/server": ["../../packages/server/src/index.ts"],
+      "@fourze/vite": ["../../packages/integrations/vite/src/index.ts"],
+      "@fourze/webpack": ["../../packages/integrations/webpack/src/index.ts"],
+      "@fourze/unplugin": ["../../packages/integrations/unplugin/src/index.ts"],
+      "@fourze/nuxt": ["../../packages/integrations/nuxt/src/index.ts"],
+      "@fourze/swagger": ["../../packages/integrations/swagger/src/index.ts"],
+      "@/*": ["src/*"]
     }
+  }
 }
