@@ -1,0 +1,30 @@
+{
+  "name": "@fourze/bench",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "bench": "tsx ./run.ts",
+    "compare": "tsx ./compare.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/autocannon": "^7.9.0",
+    "@types/cli-table": "^0.3.1",
+    "@types/inquirer": "^9.0.3",
+    "tsx": "^3.12.1"
+  },
+  "dependencies": {
+    "@fourze/core": "workspace:*",
+    "@fourze/server": "workspace:*",
+    "autocannon-compare": "^0.4.0",
+    "cli-table": "^0.3.11",
+    "consola": "^2.15.3",
+    "express": "^4.18.1",
+    "fastify": "^4.11.0",
+    "inquirer": "^9.1.4"
+  }
+}

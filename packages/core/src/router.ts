@@ -1,5 +1,5 @@
 import type { MaybeAsyncFunction, MaybePromise, MaybeRegex } from "maybe-types";
-import type { Fourze, FourzeSetup } from "./app";
+import type { Fourze, FourzeRequestFunctions, FourzeSetup } from "./app";
 import { defineFourze, isFourze } from "./app";
 import { delayHook } from "./endpoints";
 import { createLogger } from "./logger";
@@ -16,7 +16,7 @@ import type {
   ObjectProps,
   PropType
 } from "./shared";
-import { createServiceContext, defineRoute } from "./shared";
+import { FOURZE_METHODS, createServiceContext, defineRoute } from "./shared";
 import type { DelayMsType } from "./utils";
 import {
   createSingletonPromise,
@@ -30,7 +30,9 @@ import {
   unique
 } from "./utils";
 
-export interface FourzeRouter extends FourzeMiddleware {
+export interface FourzeRouter
+  extends FourzeMiddleware,
+  FourzeRequestFunctions<FourzeRouter> {
   /**
    * 根据url匹配路由
    * @param url
@@ -59,14 +61,15 @@ export interface FourzeRouter extends FourzeMiddleware {
 
   service(context: FourzeContextOptions): Promise<FourzeContext>
 
+  allow(...rules: MaybeRegex[]): this
+  deny(...rules: MaybeRegex[]): this
+
   readonly base: string
 
   readonly name: string
 
   readonly routes: FourzeRoute[]
   readonly hooks: FourzeHook[]
-
-  readonly options: Required<FourzeRouterOptions>
 }
 
 export interface FourzeRouterOptions {
@@ -261,6 +264,18 @@ export function createRouter(
     return { request, response };
   };
 
+  router.allow = function (...rules: MaybeRegex[]) {
+    options.allow = options.allow ?? [];
+    options.allow.push(...rules);
+    return this;
+  };
+
+  router.deny = function (...rules: MaybeRegex[]) {
+    options.deny = options.deny ?? [];
+    options.deny.push(...rules);
+    return this;
+  };
+
   router.use = function (
     module: FourzeInstance | FourzeSetup | string,
     setup?: FourzeSetup
@@ -332,7 +347,31 @@ export function createRouter(
     }
   });
 
+  const coreModule = defineFourze();
+
   Object.defineProperties(router, {
+    ...Object.fromEntries(
+      FOURZE_METHODS.map((method) => [
+        method,
+        {
+          get() {
+            return function (
+              this: FourzeRouter,
+              path: string,
+              ...others: any[]
+            ) {
+              const args = [
+                path,
+                method,
+                ...others
+              ] as unknown as Parameters<Fourze>;
+              coreModule(...args);
+              return this;
+            };
+          }
+        }
+      ])
+    ),
     name: {
       get() {
         return options.name ?? "FourzeRouter";
@@ -370,6 +409,8 @@ export function createRouter(
       }
     }
   });
+
+  router.use(coreModule);
 
   return router;
 }

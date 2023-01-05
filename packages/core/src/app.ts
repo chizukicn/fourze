@@ -23,6 +23,7 @@ import {
   resolvePath
 } from "./utils";
 export interface FourzeOptions {
+  name?: string
   base?: string
   setup?: FourzeSetup
   routes?: FourzeBaseRoute[]
@@ -33,25 +34,25 @@ export type FourzeSetup = (
   fourze: Fourze
 ) => MaybePromise<void | FourzeBaseRoute[] | FourzeInstance>;
 
-export type FourzeRequestFunctions = {
+export type FourzeRequestFunctions<This> = {
   [K in RequestMethod]: {
     <Props extends ObjectProps = ObjectProps, Meta = Record<string, any>>(
       path: string,
       props: Props,
       meta: Meta,
       handle: FourzeHandle<Props, Meta>
-    ): Fourze
+    ): This
     <Props extends ObjectProps = ObjectProps>(
       path: string,
       props: Props,
       handle: FourzeHandle<Props>
-    ): Fourze
-    (path: string, handle: FourzeHandle): Fourze
+    ): This
+    (path: string, handle: FourzeHandle): This
   };
 };
 
 const FOURZE_SYMBOL = Symbol("FourzeInstance");
-export interface Fourze extends FourzeRequestFunctions, FourzeInstance {
+export interface Fourze extends FourzeRequestFunctions<Fourze>, FourzeInstance {
   <
     Method extends RequestMethod,
     Props extends ObjectProps = ObjectProps,
@@ -95,6 +96,7 @@ export interface Fourze extends FourzeRequestFunctions, FourzeInstance {
 
   setup(): Promise<void>
   readonly [FOURZE_SYMBOL]: true
+  readonly name: string
 }
 
 export function defineFourze(routes: FourzeBaseRoute[]): Fourze;
@@ -124,6 +126,9 @@ export function defineFourze(
       : isSetup
         ? options
         : undefined;
+
+  const name = isOption ? options.name : "anonymous";
+
   const routes = Array.from(
     (isOption ? options.routes : isRoutes ? options : []) ?? []
   );
@@ -172,7 +177,7 @@ export function defineFourze(
         )
       );
     }
-    return this;
+    return fourze;
   } as Fourze;
 
   fourze.hook = function (
@@ -246,6 +251,11 @@ export function defineFourze(
         }
       ])
     ),
+    name: {
+      get() {
+        return name;
+      }
+    },
 
     [FOURZE_SYMBOL]: {
       get() {

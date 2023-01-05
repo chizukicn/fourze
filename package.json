@@ -13,6 +13,7 @@
     "hmr"
   ],
   "scripts": {
+    "bench":"pnpm -C bench run bench",
     "build": "pnpm -r --filter=./packages/** build",
     "stub": "pnpm -r --parallel --filter=./packages/**  run stub",
     "lint": "eslint ./packages/ --ext .ts",
@@ -38,11 +39,12 @@
     ]
   },
   "devDependencies": {
-    "@curev/eslint-config": "^0.0.3",
+    "@curev/eslint-config": "^0.0.6",
     "@fourze/core": "workspace:*",
     "@fourze/mock": "workspace:*",
     "@fourze/server": "workspace:*",
     "@types/node": "^18.6.0",
+    "autocannon": "^7.10.0",
     "bumpp": "^8.2.1",
     "chokidar": "^3.5.3",
     "eslint": "^8.27.0",
