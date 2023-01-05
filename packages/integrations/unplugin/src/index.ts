@@ -110,7 +110,6 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
     );
 
   const router = createHotRouter({
-    base,
     dir,
     pattern,
     delay,

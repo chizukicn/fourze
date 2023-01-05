@@ -1,5 +1,10 @@
-import { createRouter, groupBy, isConstructor } from "@fourze/core";
-import type { FourzeRouter, ObjectProps, RequestMethod } from "@fourze/core";
+import { createQuery, createRouter, normalizeProps } from "@fourze/core";
+import type {
+  FourzeRouter,
+  ObjectProps,
+  PropType,
+  RequestMethod
+} from "@fourze/core";
 
 interface SwaggerPathSchema {
   summary?: string
@@ -19,24 +24,33 @@ interface SwaggerPathSchema {
 interface SwaggerParameter {
   in?: "body" | "path" | "query"
   name: string
+  type: string | string[]
   description?: string
   required?: boolean
 }
 
+function getParameterType(type: PropType<any>): string | string[] {
+  if (Array.isArray(type)) {
+    return type.map(getParameterType).flat();
+  }
+  if (typeof type === "function") {
+    return type.name.toLowerCase();
+  }
+  return type;
+}
+
 function getParameter<P extends ObjectProps = ObjectProps>(props: P) {
   const parameters: SwaggerParameter[] = [];
+  const normalizedProps = normalizeProps(props);
 
-  for (const [name, prop] of Object.entries(props)) {
-    if (isConstructor(prop)) {
-      // TODO
-    } else if (Array.isArray(prop)) {
-      // TODO
-    } else {
+  for (const [name, prop] of Object.entries(normalizedProps)) {
+    if (prop) {
       parameters.push({
-        in: prop?.in,
+        in: prop.in ?? "query",
         name,
-        description: prop?.meta?.description,
-        required: prop?.required
+        type: getParameterType(prop.type),
+        description: prop.meta?.description,
+        required: prop.required
       });
     }
   }
@@ -45,7 +59,7 @@ function getParameter<P extends ObjectProps = ObjectProps>(props: P) {
 
 export function createSwaggerRouter(baseRouter: FourzeRouter): FourzeRouter {
   const swaggerRouter = createRouter({
-    base: "/v2"
+    name: "SwaggerRouter"
   });
   swaggerRouter.use((route) => {
     route("/api-docs", async (req) => {
@@ -57,7 +71,7 @@ export function createSwaggerRouter(baseRouter: FourzeRouter): FourzeRouter {
           string,
           Record<RequestMethod, SwaggerPathSchema> | SwaggerPathSchema
         >();
-        const groups = groupBy(routes, (r) => r.path);
+        const groups = createQuery(routes).groupBy((e) => e.path);
         for (const [path, routes] of groups) {
           const map = new Map<RequestMethod, SwaggerPathSchema>();
           for (const route of routes) {
@@ -108,7 +122,7 @@ export function createSwaggerRouter(baseRouter: FourzeRouter): FourzeRouter {
           }
         },
         host: req.headers.Host,
-        basePath: "/v2",
+        basePath: "/",
         schemes: ["http"],
         consumes: ["application/json"],
         produces: ["application/json"],

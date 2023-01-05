@@ -1,6 +1,6 @@
 import { isUndef } from "./is";
 
-type OverloadConfig<T = object, V = T[keyof T]> = {
+export type OverloadConfig<T = object, V = T[keyof T]> = {
   name: keyof T
   required?: boolean
   type: "string" | "number" | "boolean" | "array" | "object" | "function"

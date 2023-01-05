@@ -208,6 +208,9 @@ export function createFourzeServer(options: FourzeServerOptions = {}) {
           value: `anonymous@${Math.random().toString(36).slice(2, 8)}`
         });
       }
+      Object.defineProperty(middleware, "base", {
+        get: () => base
+      });
 
       app.emit(`use:${middleware.name}`, middleware);
       logger.info(

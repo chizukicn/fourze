@@ -234,13 +234,13 @@ export function defineFourze(
         method,
         {
           get() {
-            return function (
-              this: Fourze,
-              path: string,
-              data: ObjectProps,
-              handle: FourzeHandle
-            ) {
-              return this(path, method, data, handle);
+            return function (this: Fourze, path: string, ...others: any[]) {
+              const args = [
+                path,
+                method,
+                ...others
+              ] as unknown as Parameters<Fourze>;
+              return this(...args);
             };
           }
         }

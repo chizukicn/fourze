@@ -59,6 +59,10 @@ export interface FourzeRouter extends FourzeMiddleware {
 
   service(context: FourzeContextOptions): Promise<FourzeContext>
 
+  readonly base: string
+
+  readonly name: string
+
   readonly routes: FourzeRoute[]
   readonly hooks: FourzeHook[]
 
@@ -66,16 +70,13 @@ export interface FourzeRouter extends FourzeMiddleware {
 }
 
 export interface FourzeRouterOptions {
+  name?: string
   /**
    * @example localhost
    */
   host?: string
   port?: string
 
-  /**
-   *  根路径
-   */
-  base?: string
   /**
    *  路由模块
    */
@@ -214,10 +215,10 @@ export function createRouter(
   } as FourzeRouter;
 
   router.isAllow = function (url: string) {
-    const { allow, deny, external, base = "" } = options;
+    const { allow, deny, external } = options;
     // 是否在base域下
-    let rs = url.startsWith(base);
-    const relativeUrl = relativePath(url, base);
+    let rs = url.startsWith(this.base);
+    const relativeUrl = relativePath(url, this.base);
 
     if (allow?.length) {
       // 有允许规则,必须在base域下
@@ -284,7 +285,6 @@ export function createRouter(
     const isArray = Array.isArray(rs);
 
     if (!isArray) {
-      options.base = rs.base ?? options.base;
       options.allow = rs.allow ?? options.allow;
       options.delay = rs.delay ?? options.delay;
       options.modules = rs.modules ?? options.modules;
@@ -319,7 +319,7 @@ export function createRouter(
       routes.add(
         defineRoute({
           ...route,
-          base: options.base
+          base: router.base
         })
       );
     }
@@ -327,12 +327,17 @@ export function createRouter(
     for (const hook of newHooks) {
       hooks.add({
         ...hook,
-        path: relativePath(hook.path, options.base)
+        path: relativePath(hook.path, router.base)
       });
     }
   });
 
   Object.defineProperties(router, {
+    name: {
+      get() {
+        return options.name ?? "FourzeRouter";
+      }
+    },
     setup: {
       get() {
         return setupRouter;
@@ -341,12 +346,8 @@ export function createRouter(
     options: {
       get() {
         const opt = {} as Required<FourzeRouterOptions>;
-        opt.base = options.base ?? "";
         opt.delay = options.delay ?? 0;
         opt.allow = options.allow ?? [];
-        if (opt.base) {
-          opt.allow = unique([...(options.allow ?? []), opt.base]);
-        }
         opt.deny = options.deny ?? [];
         opt.modules = options.modules ?? [];
         return opt;

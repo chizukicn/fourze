@@ -195,7 +195,7 @@ export type ObjectProps<P = Record<string, unknown>> = {
 };
 
 export type NormalizedObjectProps<P = Record<string, unknown>> = {
-  [K in keyof P]: PropOptions<P[K]> | null;
+  [K in keyof P]: NormalizedProps<P[K]> | null;
 };
 
 type Prop<T, D = T> = PropOptions<T, D> | PropType<T>;
@@ -229,8 +229,8 @@ interface PropOptions<Type = any, Default = Type> {
   in?: PropIn
 }
 
-export interface NormalizedProps<Type = any, Default = Type> {
-  name: string
+export interface NormalizedProps<Type = any, Default = Type>
+  extends PropOptions<Type, Default> {
   meta: Record<string, any>
   in?: PropIn
   required: boolean
@@ -250,8 +250,8 @@ export interface FourzeRoute<
 > extends FourzeBaseRoute<Props, Meta> {
   readonly [FOURZE_ROUTE_SYMBOL]: true
   readonly pathParams: RegExpMatchArray | string[]
-  props: Props
-  meta: Meta
+  readonly props: Props
+  readonly meta: Meta
   match: (
     url: string,
     method?: string,
@@ -436,6 +436,7 @@ export interface CommonMiddleware {
 export interface FourzeMiddleware<T = void> {
   (req: FourzeRequest, res: FourzeResponse, next?: FourzeNext): MaybePromise<T>
   name?: string
+  base?: string
   setup?: () => MaybePromise<void>
 }
 
@@ -445,14 +446,15 @@ export interface FourzeResponseOptions {
   response?: OutgoingMessage
 }
 
-export function normalizeProps<Props extends ObjectProps = ObjectProps>(
-  props: Props
-): NormalizedObjectProps {
-  const result: NormalizedObjectProps = {};
+export function normalizeProps<T>(
+  props: ObjectProps<T>
+): NormalizedObjectProps<T> {
+  const result = {} as NormalizedObjectProps<T>;
   for (const name in props) {
+    const key = name;
     const prop = props[name];
     if (!isFunction(prop) && !Array.isArray(prop) && !!prop) {
-      result[name] = {
+      result[key] = {
         type: prop.type,
         meta: {
           ...prop.meta

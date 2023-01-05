@@ -28,12 +28,12 @@ export interface SwaggerMeta extends Record<string, any> {
 }
 
 export default defineFourze((fourze) => {
-  fourze.hook(
-    jsonWrapperHook(
-      (data) => successResponseWrap(data),
-      (error) => failResponseWrap(error.message)
-    )
-  );
+  // fourze.hook(
+  //   jsonWrapperHook(
+  //     (data) => successResponseWrap(data),
+  //     (error) => failResponseWrap(error.message)
+  //   )
+  // );
 
   fourze.get(
     "/test",
@@ -48,8 +48,15 @@ export default defineFourze((fourze) => {
     },
     {
       summary: "测试",
+      response: {
+        type: String,
+      },
     },
-    (req) => req.meta.summary
+    (req) => {
+      return {
+        summary: req.meta.summary,
+      };
+    }
   );
 
   // person names
