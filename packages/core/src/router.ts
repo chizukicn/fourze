@@ -351,7 +351,7 @@ export function createRouter(
 
   Object.defineProperties(router, {
     ...Object.fromEntries(
-      FOURZE_METHODS.map((method) => [
+      [...FOURZE_METHODS, "all" as const].map((method) => [
         method,
         {
           get() {
@@ -362,7 +362,7 @@ export function createRouter(
             ) {
               const args = [
                 path,
-                method,
+                method === "all" ? undefined : method,
                 ...others
               ] as unknown as Parameters<Fourze>;
               coreModule(...args);

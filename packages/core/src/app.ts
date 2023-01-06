@@ -35,7 +35,7 @@ export type FourzeSetup = (
 ) => MaybePromise<void | FourzeBaseRoute[] | FourzeInstance>;
 
 export type FourzeRequestFunctions<This> = {
-  [K in RequestMethod]: {
+  [K in RequestMethod | "all"]: {
     <Props extends ObjectProps = ObjectProps, Meta = Record<string, any>>(
       path: string,
       props: Props,
@@ -235,14 +235,14 @@ export function defineFourze(
     },
 
     ...Object.fromEntries(
-      FOURZE_METHODS.map((method) => [
+      [...FOURZE_METHODS, "all" as const].map((method) => [
         method,
         {
           get() {
             return function (this: Fourze, path: string, ...others: any[]) {
               const args = [
                 path,
-                method,
+                method === "all" ? undefined : method,
                 ...others
               ] as unknown as Parameters<Fourze>;
               return this(...args);

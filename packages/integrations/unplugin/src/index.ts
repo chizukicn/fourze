@@ -73,6 +73,8 @@ export interface UnpluginFourzeOptions {
 
   allow?: string[]
 
+  deny?: string[]
+
   transformCode?: (
     router: FourzeHotRouter,
     options?: FourzeMockRouterOptions
@@ -86,6 +88,7 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
 
   const delay = options.delay ?? 0;
   const allow = options.allow ?? [];
+  const deny = options.deny ?? [];
 
   const port = options.server?.port ?? 7609;
   const host = options.server?.host ?? "localhost";
@@ -94,7 +97,7 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
   const hmr = options.hmr ?? true;
   const injectScript = options.injectScript ?? true;
 
-  const logger = createLogger("@fourze/vite");
+  const logger = createLogger("@fourze/unplugin");
 
   setLoggerLevel(options.logLevel ?? "info");
 
@@ -113,7 +116,8 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
     dir,
     pattern,
     delay,
-    allow
+    allow,
+    deny
   });
 
   const swaggerRouter = createSwaggerRouter(router);
@@ -122,13 +126,13 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
 
   const transformCode = options.transformCode ?? defaultTransformCode;
 
-  logger.info("Fourze Plugin is starting...");
-
   return {
     name: PLUGIN_NAME,
 
     async buildStart() {
       await router.setup();
+
+      logger.info("Fourze plugin is ready.");
     },
 
     resolveId(id) {
@@ -199,7 +203,6 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
           }
         } else {
           middlewares.use(app);
-          logger.info("Fourze middleware was installed!");
         }
       }
     }
