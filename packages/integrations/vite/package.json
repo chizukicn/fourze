@@ -23,6 +23,6 @@
         "@fourze/unplugin": "workspace:*"
     },
     "devDependencies": {
-        "vite": "^3.1.8"
+        "vite": "^4.0.4"
     }
 }

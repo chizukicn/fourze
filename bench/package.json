@@ -9,7 +9,7 @@
     "compare": "tsx ./compare.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "chizuki",
   "license": "MIT",
   "devDependencies": {
     "@types/autocannon": "^7.9.0",

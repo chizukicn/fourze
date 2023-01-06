@@ -61,74 +61,72 @@ export function createSwaggerRouter(baseRouter: FourzeRouter): FourzeRouter {
   const swaggerRouter = createRouter({
     name: "SwaggerRouter"
   });
-  swaggerRouter.use((route) => {
-    route("/api-docs", async (req) => {
-      await baseRouter.setup();
-      const routes = baseRouter.routes;
+  swaggerRouter.get("/api-docs", async (req) => {
+    await baseRouter.setup();
+    const routes = baseRouter.routes;
 
-      function getPaths() {
-        const paths = new Map<
-          string,
-          Record<RequestMethod, SwaggerPathSchema> | SwaggerPathSchema
-        >();
-        const groups = createQuery(routes).groupBy((e) => e.path);
-        for (const [path, routes] of groups) {
-          const map = new Map<RequestMethod, SwaggerPathSchema>();
-          for (const route of routes) {
-            const { method, meta, props } = route;
-            const parameters = getParameter(props);
-            const { summary, description, tags, responses } = meta;
-            const schema = {
-              summary,
-              description,
-              tags,
-              responses,
-              parameters
-            };
-            if (!method) {
-              paths.set(path, schema);
-            } else {
-              map.set(method, schema);
-            }
-          }
-          const newPath = Object.fromEntries(map.entries()) as Record<
-            RequestMethod,
-            SwaggerPathSchema
-          >;
-          let exist = paths.get(path);
-          if (exist) {
-            Object.assign(exist, newPath);
+    function getPaths() {
+      const paths = new Map<
+        string,
+        Record<RequestMethod, SwaggerPathSchema> | SwaggerPathSchema
+      >();
+      const groups = createQuery(routes).groupBy((e) => e.path);
+      for (const [path, routes] of groups) {
+        const map = new Map<RequestMethod, SwaggerPathSchema>();
+        for (const route of routes) {
+          const { method, meta, props } = route;
+          const parameters = getParameter(props);
+          const { summary, description, tags, responses } = meta;
+          const schema = {
+            summary,
+            description,
+            tags,
+            responses,
+            parameters
+          };
+          if (!method) {
+            paths.set(path, schema);
           } else {
-            exist = newPath;
+            map.set(method, schema);
           }
-          paths.set(path, exist);
         }
-        return Object.fromEntries(paths.entries());
+        const newPath = Object.fromEntries(map.entries()) as Record<
+          RequestMethod,
+          SwaggerPathSchema
+        >;
+        let exist = paths.get(path);
+        if (exist) {
+          Object.assign(exist, newPath);
+        } else {
+          exist = newPath;
+        }
+        paths.set(path, exist);
       }
+      return Object.fromEntries(paths.entries());
+    }
 
-      return {
-        swagger: "2.0",
-        info: {
-          version: "1.0.0",
-          title: "Swagger Petstore",
-          description:
-            "A sample API that uses a petstore as an example to demonstrate features in the swagger-2.0 specification",
-          termsOfService: "http://swagger.io/terms/",
-          contact: {
-            name: "Swagger API Team"
-          },
-          license: {
-            name: "MIT"
-          }
+    return {
+      swagger: "2.0",
+      info: {
+        version: "1.0.0",
+        title: "Swagger Petstore",
+        description:
+          "A sample API that uses a petstore as an example to demonstrate features in the swagger-2.0 specification",
+        termsOfService: "http://swagger.io/terms/",
+        contact: {
+          name: "Swagger API Team"
         },
-        host: req.headers.Host,
-        basePath: "/",
-        schemes: ["http"],
-        consumes: ["application/json"],
-        produces: ["application/json"],
-        paths: getPaths()
-      };
-    });
+        license: {
+          name: "MIT"
+        }
+      },
+      host: req.headers.Host,
+      basePath: "/",
+      schemes: ["http"],
+      consumes: ["application/json"],
+      produces: ["application/json"],
+      paths: getPaths()
+    };
   });
 
   return swaggerRouter;

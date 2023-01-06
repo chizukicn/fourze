@@ -1,10 +1,19 @@
+/* eslint-disable vars-on-top */
+/* eslint-disable no-var */
 import type http from "http";
 import type https from "https";
 import type { FourzeRouter, FourzeRouterOptions } from "@fourze/core";
 
+declare global {
+  var __FOURZE_MOCK_ROUTER__: FourzeMockRouter;
+
+  var __FOURZE_VERSION__: string;
+}
+
 export type FourzeMockRequestMode = "xhr" | "fetch" | "request";
 
 export interface FourzeMockRouterOptions extends FourzeRouterOptions {
+  base?: string
   /**
    * @default ["xhr","fetch"]
    */
@@ -33,19 +42,17 @@ export interface FourzeMockRouter extends FourzeRouter {
 
   enabled: boolean
 
-  enable(): void
+  enable(): this
 
-  disable(): void
+  enable(modes: FourzeMockRequestMode[]): this
+
+  disable(): this
+
+  disable(modes: FourzeMockRequestMode[]): this
 
   activeModes: FourzeMockRequestMode[]
 
   [FOURZE_MOCK_ROUTER_SYMBOL]: true
-}
-
-declare global {
-  /* eslint no-var:"off" */
-  // eslint-disable-next-line vars-on-top
-  var __FOURZE_MOCK_ROUTER__: FourzeMockRouter;
 }
 
 export {};

@@ -1,6 +1,10 @@
 {
     "typescript.tsdk": "node_modules\\typescript\\lib",
-    "cSpell.words": ["fourze", "nexted"],
+    "cSpell.words": [
+        "autocannon",
+        "fourze",
+        "nexted"
+    ],
     "eslint.alwaysShowStatus": true,
     "eslint.format.enable": true,
     "eslint.packageManager": "pnpm"

@@ -2,12 +2,10 @@ import { arch, cpus, platform, totalmem } from "os";
 import { join } from "path";
 import { readFileSync, readdirSync, writeFileSync } from "fs";
 import { program } from "commander";
-import inquirer from "inquirer";
 import Table from "cli-table";
 import chalk from "chalk";
 import consola from "consola";
 import { info } from "./lib/packages";
-import { compare } from "./lib/autocannon";
 
 const resultsPath = join(process.cwd(), "results");
 
@@ -29,8 +27,6 @@ if (!getAvailableResults().length) {
   updateReadme();
 } else if (opts.table) {
   consola.log(compareResults(opts.markdown));
-} else {
-  compareResultsInteractive();
 }
 
 function getAvailableResults() {
@@ -40,7 +36,7 @@ function getAvailableResults() {
     .map((choice) => choice.replace(".json", ""));
 }
 
-function formatHasRouter(hasRouter) {
+function formatHasRouter(hasRouter: boolean | string) {
   return typeof hasRouter === "string" ? hasRouter : hasRouter ? "✓" : "✗";
 }
 
@@ -60,7 +56,7 @@ ${compareResults(true)}
   writeFileSync("README.md", md.split("# Benchmarks")[0] + benchmarkMd, "utf8");
 }
 
-function compareResults(markdown) {
+async function compareResults(markdown: boolean) {
   const tableStyle = !markdown
     ? {}
     : {
@@ -115,7 +111,7 @@ function compareResults(markdown) {
     throughput ? (throughput / 1024 / 1024).toFixed(2) : "N/A";
 
   for (const result of results) {
-    const beBold = result.server === "fastify";
+    const beBold = result.server === "fourze";
     const { hasRouter, version } = info(result.server) || {};
     const {
       requests: { average: requests },
@@ -149,51 +145,6 @@ function compareResults(markdown) {
   return table.toString();
 }
 
-async function compareResultsInteractive() {
-  let choices = getAvailableResults();
-
-  const firstChoice = await inquirer.prompt([
-    {
-      type: "list",
-      name: "choice",
-      message: "What's your first pick?",
-      choices
-    }
-  ]);
-
-  choices = choices.filter((choice) => choice !== firstChoice.choice);
-
-  const secondChoice = await inquirer.prompt([
-    {
-      type: "list",
-      name: "choice",
-      message: "What's your second one?",
-      choices
-    }
-  ]);
-
-  const [a, b] = [firstChoice.choice, secondChoice.choice];
-  const result = compare(a, b);
-
-  if (result === true) {
-    consola.log(chalk.green.bold(`${a} and ${b} both are fast!`));
-    return;
-  }
-
-  const fastest = chalk.bold.yellow(result.fastest);
-  const fastestAverage = chalk.green(result.fastestAverage);
-  const slowest = chalk.bold.yellow(result.slowest);
-  const slowestAverage = chalk.green(result.slowestAverage);
-  const diff = chalk.bold.green(result.diff);
-
-  consola.log(`
- ${chalk.blue("Both are awesome but")} ${fastest} ${chalk.blue(
-    "is"
-  )} ${diff} ${chalk.blue("faster than")} ${slowest}
- • ${fastest} ${chalk.blue("request average is")} ${fastestAverage}
- • ${slowest} ${chalk.blue("request average is")} ${slowestAverage}`);
-}
-
-function bold(writeBold, str) {
+function bold(writeBold: boolean, str: string) {
   return writeBold ? chalk.bold(str) : str;
 }

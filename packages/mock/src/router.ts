@@ -1,4 +1,10 @@
-import { createLogger, createRouter, isDef, isNode } from "@fourze/core";
+import {
+  FOURZE_VERSION,
+  createLogger,
+  createRouter,
+  isDef,
+  isNode
+} from "@fourze/core";
 import { createProxyFetch } from "./fetch";
 import { createProxyRequest } from "./request";
 import type {
@@ -16,7 +22,14 @@ export function createMockRouter(
 
   const instance = createRouter(options) as FourzeMockRouter;
 
+  Object.defineProperty(instance, "base", {
+    get() {
+      return options.base ?? "/";
+    }
+  });
+
   logger.info("Fourze Mock is starting...");
+  logger.info(`Powered by Fourze v${FOURZE_VERSION}`);
 
   const mode = options.mode ?? (isNode() ? ["request"] : ["xhr", "fetch"]);
   const autoEnable = options.autoEnable ?? true;
@@ -31,6 +44,7 @@ export function createMockRouter(
       );
     }
     globalThis.__FOURZE_MOCK_ROUTER__ = instance;
+    globalThis.__FOURZE_VERSION__ = FOURZE_VERSION;
   }
 
   if (mode.includes("request") && isNode()) {
@@ -72,7 +86,8 @@ export function createMockRouter(
       http.request = this.request;
       https.request = this.request;
     }
-    logger.info(`Fourze Mock is enabled for [${_mode.join(",")}]`);
+    logger.success(`Fourze Mock is enabled for [${_mode.join(",")}]`);
+    return this;
   };
 
   instance.disable = function (_mode?: FourzeMockRequestMode[]) {
@@ -92,6 +107,7 @@ export function createMockRouter(
       https.request = this.originalHttpsRequest;
     }
     logger.success(`Fourze Mock is disabled for [${_mode.join(",")}]`);
+    return this;
   };
 
   Object.defineProperties(instance, {
@@ -118,7 +134,9 @@ export function createMockRouter(
 
   instance.use((r) => {
     r.hook(async (req, res, next) => {
-      req.headers["X-Fourze-Mock"] = "on";
+      if (!req.headers["X-Fourze-Mock"]) {
+        req.headers["X-Fourze-Mock"] = "on";
+      }
       await next?.();
     });
   });

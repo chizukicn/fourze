@@ -10,21 +10,21 @@ import {
   randomArray,
   randomDate,
   randomInt,
-  randomItem,
+  randomItem
 } from "@fourze/core";
 import {
   failResponseWrap,
   slicePage,
-  successResponseWrap,
+  successResponseWrap
 } from "../utils/setup-mock";
 
 interface Pagination {
-  page: number;
-  pageSize: number;
+  page: number
+  pageSize: number
 }
 
 export interface SwaggerMeta extends Record<string, any> {
-  summary: string;
+  summary: string
 }
 
 export default defineFourze((fourze) => {
@@ -42,19 +42,19 @@ export default defineFourze((fourze) => {
         type: String,
         required: true,
         meta: {
-          title: "姓名",
-        },
-      },
+          title: "姓名"
+        }
+      }
     },
     {
       summary: "测试",
       response: {
-        type: String,
-      },
+        type: String
+      }
     },
     (req) => {
       return {
-        summary: req.meta.summary,
+        summary: req.meta.summary
       };
     }
   );
@@ -82,12 +82,12 @@ export default defineFourze((fourze) => {
             "Tom",
             "Jerry",
             "Henry",
-            "Nancy",
+            "Nancy"
           ]),
           phone: randomInt("13000000000-19999999999"),
           createdTime: randomDate("2020-01-01", "2021-01-01"),
           allow: randomItem(["fetch", "xhr"]),
-          source,
+          source
         };
       },
       40,
@@ -107,7 +107,7 @@ export default defineFourze((fourze) => {
     const {
       page = 1,
       pageSize = 10,
-      keyword = "",
+      keyword = ""
     } = req.query as unknown as Pagination & { keyword?: string };
     const items = data.filter((item) => item.username.includes(keyword));
     return slicePage(items, { page, pageSize });
@@ -121,8 +121,8 @@ export default defineFourze((fourze) => {
       id: {
         type: String,
         required: true,
-        in: "path",
-      },
+        in: "path"
+      }
     },
     async (req) => {
       const { id } = req.params;
@@ -150,8 +150,8 @@ export default defineFourze((fourze) => {
       file: {
         type: PolyfillFile,
         required: true,
-        in: "body",
-      },
+        in: "body"
+      }
     },
     {},
     async (req) => {
@@ -165,7 +165,7 @@ export default defineFourze((fourze) => {
         file.body
       );
       return {
-        size: file.size,
+        size: file.size
       };
     }
   );

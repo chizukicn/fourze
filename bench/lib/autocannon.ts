@@ -1,21 +1,11 @@
-import {
-  access as _access,
-  mkdir as _mkdir,
-  writeFile as _writeFile
-} from "fs";
+import { access, mkdir, writeFile } from "fs/promises";
 import { join } from "path";
-import { promisify } from "util";
-import compare from "autocannon-compare";
 import autocannon from "autocannon";
-
-const writeFile = promisify(_writeFile);
-const mkdir = promisify(_mkdir);
-const access = promisify(_access);
 
 const resultsDirectory = join(process.cwd(), "results");
 
-const run = (opts: autocannon.Options = { url: "http://localhost:3000" }) =>
-  new Promise((resolve, reject) => {
+const run = (opts: autocannon.Options = { url: "http://localhost:3000" }) => {
+  return new Promise<any>((resolve, reject) => {
     opts.url = "http://localhost:3000";
     autocannon(opts, (err, result) => {
       if (err) {
@@ -25,46 +15,26 @@ const run = (opts: autocannon.Options = { url: "http://localhost:3000" }) =>
       }
     });
   });
-
-const writeResult = async (handler, result) => {
-  try {
-    await access(resultsDirectory);
-  } catch (e) {
-    await mkdir(resultsDirectory);
-  }
-
-  result.server = handler;
-
-  const dest = join(resultsDirectory, `${handler}.json`);
-  return writeFile(dest, JSON.stringify(result));
 };
 
-export async function fire(opts, handler, save) {
+export async function fire(
+  opts: autocannon.Options,
+  handler: string,
+  save = true
+) {
   const result = await run(opts);
-  return save ? writeResult(handler, result) : null;
+  if (save) {
+    try {
+      await access(resultsDirectory);
+    } catch (e) {
+      await mkdir(resultsDirectory);
+    }
+
+    result.server = handler;
+
+    const dest = join(resultsDirectory, `${handler}.json`);
+    return writeFile(dest, JSON.stringify(result));
+  }
 }
 
-const _compare = (a, b) => {
-  const resA = require(`${resultsDirectory}/${a}.json`);
-  const resB = require(`${resultsDirectory}/${b}.json`);
-  const comp = compare(resA, resB);
-  if (comp.equal) {
-    return true;
-  } else if (comp.aWins) {
-    return {
-      diff: comp.requests.difference,
-      fastest: a,
-      slowest: b,
-      fastestAverage: resA.requests.average,
-      slowestAverage: resB.requests.average
-    };
-  }
-  return {
-    diff: compare(resB, resA).requests.difference,
-    fastest: b,
-    slowest: a,
-    fastestAverage: resB.requests.average,
-    slowestAverage: resA.requests.average
-  };
-};
-export { _compare as compare };
+export type Options = autocannon.Options;
