@@ -1,5 +1,6 @@
 import type { MaybePromise } from "maybe-types";
 import type {
+  FourzeBaseHook,
   FourzeBaseRoute,
   FourzeHook,
   FourzeInstance,
@@ -27,7 +28,7 @@ export interface FourzeOptions {
   base?: string
   setup?: FourzeSetup
   routes?: FourzeBaseRoute[]
-  hooks?: FourzeHook[]
+  hooks?: FourzeBaseHook[]
 }
 
 export type FourzeSetup = (
@@ -136,7 +137,7 @@ export function defineFourze(
   fourze.hook = function (
     ...args: [string, FourzeMiddleware] | [FourzeMiddleware] | [FourzeHook]
   ) {
-    if (args.length === 1 && isFourzeHook(args[0])) {
+    if (isFourzeHook(args[0])) {
       hooks.push(args[0]);
     } else {
       const hook = defineFourzeHook(

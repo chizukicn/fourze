@@ -1,7 +1,8 @@
 import type { MaybePromise } from "maybe-types";
+import { getHeaderRawValue } from "../polyfill";
 import { defineFourzeHook } from "../shared";
 import type { DelayMsType } from "../utils";
-import { delay } from "../utils";
+import { delay, isBuffer, isObject } from "../utils";
 
 export function delayHook(ms: DelayMsType) {
   return defineFourzeHook(async (req, res, next) => {
@@ -18,15 +19,23 @@ export function jsonWrapperHook(
   reject?: (error: any) => MaybePromise<any>
 ) {
   return defineFourzeHook(async (req, res, next) => {
-    const _json = res.json.bind(res);
+    const _send = res.send.bind(res);
 
     let catchError = false;
 
-    res.json = function (data) {
+    res.send = function (data) {
       if (catchError) {
-        return _json(data);
+        return _send(data);
       }
-      return _json(resolve(data));
+      _send(data);
+      const contentType = getHeaderRawValue(res.getHeader("Content-Type"));
+      if (
+        (!isBuffer(data) && isObject(data))
+        || contentType?.startsWith("application/json")
+      ) {
+        data = resolve(data);
+      }
+      return _send(data);
     };
 
     try {

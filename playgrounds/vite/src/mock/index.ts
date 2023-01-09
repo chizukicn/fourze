@@ -6,13 +6,15 @@ import {
   createStorage,
   defineFourze,
   isNode,
+  jsonWrapperHook,
   randomArray,
   randomDate,
-  randomInt,
-  randomItem
+  randomInt
+  , randomItem
 } from "@fourze/core";
 import {
-  slicePage
+  failResponseWrap,
+  slicePage, successResponseWrap
 } from "../utils/setup-mock";
 
 interface Pagination {
@@ -25,12 +27,12 @@ export interface SwaggerMeta extends Record<string, any> {
 }
 
 export default defineFourze((fourze) => {
-  // fourze.hook(
-  //   jsonWrapperHook(
-  //     (data) => successResponseWrap(data),
-  //     (error) => failResponseWrap(error.message)
-  //   )
-  // );
+  fourze.hook(
+    jsonWrapperHook(
+      (data) => successResponseWrap(data),
+      (error) => failResponseWrap(error.message)
+    )
+  );
 
   fourze.get(
     "/test",
