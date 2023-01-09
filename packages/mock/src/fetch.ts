@@ -59,14 +59,10 @@ class ProxyFetchResponse implements Response {
   }
 
   async json() {
-    try {
-      if (isString(this.data)) {
-        return JSON.parse(this.data);
-      }
-      return this.data;
-    } catch (e) {
-      return this.data;
+    if (isString(this.data)) {
+      return JSON.parse(this.data);
     }
+    return this.data;
   }
 
   clone(): Response {

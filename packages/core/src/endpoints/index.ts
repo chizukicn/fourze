@@ -22,12 +22,11 @@ export function jsonWrapperHook(
     const _send = res.send.bind(res);
 
     res.send = function (data, contentType) {
-      if (catchError) {
-        return _send(data, contentType);
-      }
-      contentType = contentType ?? res.getContentType(data);
-      if (contentType?.startsWith("application/json")) {
-        data = resolve(data);
+      if (!catchError) {
+        contentType = contentType ?? res.getContentType(data);
+        if (contentType?.startsWith("application/json")) {
+          data = resolve(data);
+        }
       }
       return _send(data, contentType);
     };
