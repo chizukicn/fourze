@@ -43,3 +43,8 @@ export interface SwaggerDocument extends Record<string, any> {
   consumes?: string[]
   produces?: string[]
 }
+
+export interface SwaggerUIInitOptions {
+  url?: string
+  urls?: string[]
+}
