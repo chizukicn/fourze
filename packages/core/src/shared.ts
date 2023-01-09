@@ -6,11 +6,7 @@ import { version } from "../package.json";
 import { overload } from "./utils/overload";
 import { decodeFormData } from "./polyfill/form-data";
 import type { PolyfillHeaderInit } from "./polyfill/header";
-import {
-  flatHeaders,
-  getHeaderRawValue,
-  getHeaderValue
-} from "./polyfill/header";
+import { flatHeaders, getHeaderValue } from "./polyfill/header";
 import { PolyfillServerResponse } from "./polyfill/response";
 import {
   isBuffer,
@@ -147,13 +143,13 @@ export interface FourzeBaseResponse extends ServerResponse {
   matched?: boolean
 }
 export interface FourzeResponse extends FourzeBaseResponse {
-  json(data?: any): this
+  json(data: any): this
 
-  image(data?: any): this
+  image(data: Buffer): this
 
-  text(data?: string): this
+  text(data: string): this
 
-  binary(data?: any): this
+  binary(data: Buffer): this
 
   redirect(url: string): this
 
@@ -161,7 +157,11 @@ export interface FourzeResponse extends FourzeBaseResponse {
 
   removeHeader(key: string): this
 
-  send(data?: any, contentType?: string): this
+  send(data: any, contentType?: string): this
+
+  getContentType(data?: any): string | undefined
+
+  setContentType(contentType: string): this
 
   readonly url: string
 
@@ -591,20 +591,27 @@ export function createResponse(options: FourzeResponseOptions) {
 
   let _result: any;
 
-  response.send = function (data: any, contentType?: string) {
-    contentType
-      = contentType ?? getHeaderRawValue(response.getHeader("content-type"));
-    if (!contentType) {
+  response.setContentType = function (contentType) {
+    response.setHeader("Content-Type", contentType);
+    return this;
+  };
+
+  response.getContentType = function (data) {
+    let contentType: string = getHeaderValue(this.getHeaders(), "Content-Type");
+    if (!contentType && isDef(data)) {
       if (isBuffer(data)) {
         contentType = "application/octet-stream";
       } else if (isObject(data)) {
         contentType = "application/json";
       } else if (isString(data)) {
         contentType = "text/html";
-      } else {
-        contentType = "text/plain";
       }
     }
+    return contentType;
+  };
+
+  response.send = function (data: any, contentType?: string) {
+    contentType = contentType ?? this.getContentType(data);
     switch (contentType) {
       case "application/json":
         data = JSON.stringify(data);
@@ -616,7 +623,9 @@ export function createResponse(options: FourzeResponseOptions) {
       default:
         break;
     }
-    response.setHeader("content-type", contentType);
+    if (contentType) {
+      response.setHeader("Content-Type", contentType);
+    }
     _result = data;
     return this;
   };
@@ -654,11 +663,11 @@ export function createResponse(options: FourzeResponseOptions) {
     return this.send(data, "application/json");
   };
 
-  response.binary = function (data: any) {
+  response.binary = function (data: Buffer) {
     return this.send(data, "application/octet-stream");
   };
 
-  response.image = function (data: any) {
+  response.image = function (data: Buffer) {
     return this.send(data, "image/jpeg");
   };
 
@@ -767,7 +776,7 @@ export function createRequest(options: FourzeRequestOptions) {
 
   const contentType = getHeaderValue(
     headers,
-    "content-type",
+    "Content-Type",
     "application/json"
   );
 

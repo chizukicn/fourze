@@ -87,16 +87,16 @@ export function getHeader(headers: Record<string, string>, key: string) {
   return [key, headers[key]];
 }
 
-export function getHeaderKey(headers: Record<string, string>, key: string) {
-  return getHeader(headers, key)[0];
+export function getHeaderKey(headers: PolyfillHeaderInit, key: string) {
+  return getHeader(flatHeaders(headers), key)[0];
 }
 
 export function getHeaderValue(
-  headers: Record<string, string>,
+  headers: PolyfillHeaderInit,
   key: string,
   defaultValue?: string
 ) {
-  return getHeader(headers, key)?.[1] ?? defaultValue;
+  return getHeader(flatHeaders(headers), key)?.[1] ?? defaultValue;
 }
 
 export function getHeaderRawValue(

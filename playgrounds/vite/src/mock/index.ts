@@ -125,7 +125,6 @@ export default defineFourze((fourze) => {
     async (req) => {
       const { id } = req.params;
       const index = data.findIndex((item) => item.id === id);
-      throw new Error(`item(${id}) not exists`);
       data.splice(index, 1);
       storage.setItem("fz_cache_data", data);
       return { result: true };

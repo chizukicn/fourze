@@ -45,7 +45,11 @@ describe("data", async () => {
             name: req.body.name,
           };
         }
-      );
+      ).get("/avatar.jpg", (req, res) => {
+        res.image(Buffer.from([0,0,0,0]))
+      });
+
+
 
 
     await server.use(router).listen();
@@ -55,5 +59,8 @@ describe("data", async () => {
       .then((r) => r.data);
 
     expect(name).toEqual(testData.name);
+
+    const contentType = await axios("http://localhost:7609/avatar.jpg").then(r => r.headers["content-type"])
+    expect(contentType).toEqual("image/jpeg")
   });
 });
