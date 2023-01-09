@@ -6,16 +6,13 @@ import {
   createStorage,
   defineFourze,
   isNode,
-  jsonWrapperHook,
   randomArray,
   randomDate,
   randomInt,
   randomItem
 } from "@fourze/core";
 import {
-  failResponseWrap,
-  slicePage,
-  successResponseWrap
+  slicePage
 } from "../utils/setup-mock";
 
 interface Pagination {
@@ -28,12 +25,12 @@ export interface SwaggerMeta extends Record<string, any> {
 }
 
 export default defineFourze((fourze) => {
-  fourze.hook(
-    jsonWrapperHook(
-      (data) => successResponseWrap(data),
-      (error) => failResponseWrap(error.message)
-    )
-  );
+  // fourze.hook(
+  //   jsonWrapperHook(
+  //     (data) => successResponseWrap(data),
+  //     (error) => failResponseWrap(error.message)
+  //   )
+  // );
 
   fourze.get(
     "/test",
@@ -100,18 +97,17 @@ export default defineFourze((fourze) => {
   const data = isNode() ? createData("server") : createData("mock");
 
   const handleSearch: FourzeHandle<
+    PagingData<UserInfo>,
     ObjectProps<Pagination>,
-    any,
-    PagingData<UserInfo>
-  > = async (req) => {
-    const {
-      page = 1,
-      pageSize = 10,
-      keyword = ""
-    } = req.query as unknown as Pagination & { keyword?: string };
-    const items = data.filter((item) => item.username.includes(keyword));
-    return slicePage(items, { page, pageSize });
-  };
+    any> = async (req) => {
+      const {
+        page = 1,
+        pageSize = 10,
+        keyword = ""
+      } = req.query as unknown as Pagination & { keyword?: string };
+      const items = data.filter((item) => item.username.includes(keyword));
+      return slicePage(items, { page, pageSize });
+    };
 
   fourze("GET /item/list", handleSearch);
 

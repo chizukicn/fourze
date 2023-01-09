@@ -1,5 +1,5 @@
 import type { MaybeAsyncFunction, MaybePromise, MaybeRegex } from "maybe-types";
-import type { Fourze, FourzeRequestFunctions, FourzeSetup } from "./app";
+import type { Fourze, FourzeSetup } from "./app";
 import { defineFourze, isFourze } from "./app";
 import { delayHook } from "./endpoints";
 import { createLogger } from "./logger";
@@ -13,6 +13,8 @@ import type {
   FourzeRequest,
   FourzeResponse,
   FourzeRoute,
+  FourzeRouteFunction,
+  FourzeRouteGenerator,
   ObjectProps,
   PropType
 } from "./shared";
@@ -21,6 +23,7 @@ import type { DelayMsType } from "./utils";
 import {
   createSingletonPromise,
   isConstructor,
+  isDef,
   isFunction,
   isMatch,
   isString,
@@ -32,7 +35,7 @@ import {
 
 export interface FourzeRouter
   extends FourzeMiddleware,
-  FourzeRequestFunctions<FourzeRouter> {
+  FourzeRouteGenerator<FourzeRouter> {
   /**
    * 根据url匹配路由
    * @param url
@@ -52,6 +55,8 @@ export interface FourzeRouter
   isAllow(url: string): boolean
 
   refresh(): void
+
+  route: FourzeRouteFunction<FourzeRouter>
 
   setup(): MaybePromise<void>
 
@@ -181,20 +186,24 @@ export function createRouter(
 
         const activeHooks = router.hooks.filter((e) => isMatch(path, e.path));
 
-        const handle = async () => {
+        const handle = async (): Promise<any> => {
+          let _result: any;
           const hook = activeHooks.shift();
 
           if (hook) {
             const hookReturn = await hook.handle(request, response, handle);
-            response.result = hookReturn ?? response.result;
+            _result = hookReturn ?? _result;
           } else {
-            response.result
-              = (await route.handle(request, response)) ?? response.result;
+            const routeReturn = await route.handle(request, response);
+            _result = routeReturn ?? _result;
           }
-          return response.result;
+          return _result;
         };
 
-        await handle();
+        const result = await handle();
+        if (result) {
+          response.send(result);
+        }
         response.matched = true;
       }
     }
@@ -220,7 +229,7 @@ export function createRouter(
   router.isAllow = function (url: string) {
     const { allow, deny, external } = options;
     // 是否在base域下
-    let rs = url.startsWith(this.base);
+    let rs = isDef(this.base) ? url.startsWith(this.base) : true;
     const relativeUrl = relativePath(url, this.base);
 
     if (allow?.length) {
@@ -351,7 +360,7 @@ export function createRouter(
 
   Object.defineProperties(router, {
     ...Object.fromEntries(
-      [...FOURZE_METHODS, "all" as const].map((method) => [
+      [...FOURZE_METHODS, "route"].map((method) => [
         method,
         {
           get() {
@@ -362,7 +371,7 @@ export function createRouter(
             ) {
               const args = [
                 path,
-                method === "all" ? undefined : method,
+                method === "route" ? undefined : method,
                 ...others
               ] as unknown as Parameters<Fourze>;
               coreModule(...args);

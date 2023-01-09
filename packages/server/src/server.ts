@@ -39,7 +39,7 @@ export interface FourzeServer extends EventEmitter {
   readonly origin: string
 
   readonly server?: Server
-  readonly serverMode: "http" | "https"
+  readonly protocol: "http" | "https"
 
   use(middleware: CommonMiddleware): this
   use(middleware: FourzeMiddleware): this
@@ -57,7 +57,7 @@ export interface FourzeServer extends EventEmitter {
 
   listen(port?: number, host?: string): Promise<Server>
 
-  close(): void
+  close(): this
 }
 
 export function createServerContext(
@@ -285,6 +285,7 @@ export function createFourzeServer(options: FourzeServerOptions = {}) {
 
   app.close = function () {
     this.server?.close();
+    return this;
   };
 
   Object.defineProperties(app, {
@@ -307,7 +308,7 @@ export function createFourzeServer(options: FourzeServerOptions = {}) {
         return _server;
       }
     },
-    serverMode: {
+    protocol: {
       get() {
         return _protocol;
       }

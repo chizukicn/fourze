@@ -10,7 +10,7 @@ export function isBoolean(value: unknown): value is boolean {
   return typeof value === "boolean";
 }
 
-export function isObject(value: unknown): value is Record<string, unknown> {
+export function isObject(value: unknown): value is object {
   return value !== null && typeof value === "object";
 }
 

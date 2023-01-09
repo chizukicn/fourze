@@ -226,7 +226,7 @@ export function createProxyXMLHttpRequest(router: FourzeMockRouter) {
         this.status = 200;
         this.statusText = HTTP_STATUS_CODES[200];
 
-        this.response = response.result;
+        this.response = response.data;
 
         this.responseHeaders = flatHeaders(response.getHeaders());
 

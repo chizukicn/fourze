@@ -75,7 +75,7 @@ export function createProxyRequest(router: FourzeMockRouter) {
       this.headers = flatHeaders(res.getHeaders());
       this.method = res.method;
       this.statusCode = res.statusCode;
-      this.data = res.result ?? [];
+      this.data = res.data ?? [];
       this._maxLength = this.data.length;
     }
 

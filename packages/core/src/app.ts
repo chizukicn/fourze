@@ -1,13 +1,11 @@
 import type { MaybePromise } from "maybe-types";
 import type {
-  DefineFourzeHook,
-  FourzeBaseHook,
   FourzeBaseRoute,
-  FourzeHandle,
   FourzeHook,
   FourzeInstance,
-  ObjectProps,
-  RequestMethod
+  FourzeMiddleware,
+  FourzeRouteFunction,
+  FourzeRouteGenerator
 } from "./shared";
 import {
   FOURZE_METHODS,
@@ -17,7 +15,9 @@ import {
 } from "./shared";
 import {
   createSingletonPromise,
+  isDef,
   isFunction,
+  isObject,
   isString,
   overload,
   resolvePath
@@ -27,71 +27,23 @@ export interface FourzeOptions {
   base?: string
   setup?: FourzeSetup
   routes?: FourzeBaseRoute[]
-  hooks?: FourzeBaseHook[]
+  hooks?: FourzeHook[]
 }
 
 export type FourzeSetup = (
-  fourze: Fourze
+  route: Fourze
 ) => MaybePromise<void | FourzeBaseRoute[] | FourzeInstance>;
 
-export type FourzeRequestFunctions<This> = {
-  [K in RequestMethod | "all"]: {
-    <Props extends ObjectProps = ObjectProps, Meta = Record<string, any>>(
-      path: string,
-      props: Props,
-      meta: Meta,
-      handle: FourzeHandle<Props, Meta>
-    ): This
-    <Props extends ObjectProps = ObjectProps>(
-      path: string,
-      props: Props,
-      handle: FourzeHandle<Props>
-    ): This
-    (path: string, handle: FourzeHandle): This
-  };
-};
-
 const FOURZE_SYMBOL = Symbol("FourzeInstance");
-export interface Fourze extends FourzeRequestFunctions<Fourze>, FourzeInstance {
-  <
-    Method extends RequestMethod,
-    Props extends ObjectProps = ObjectProps,
-    Meta = Record<string, any>
-  >(
-    path: string,
-    method: Method,
-    meta: Meta,
-    props: Props,
-    handle: FourzeHandle<Props, Meta>
-  ): this
-  <Method extends RequestMethod, Props extends ObjectProps = ObjectProps>(
-    path: string,
-    method: Method,
-    props: Props,
-    handle: FourzeHandle<Props>
-  ): this
-  <Props extends ObjectProps = ObjectProps, Meta = Record<string, any>>(
-    path: string,
-    props: Props,
-    meta: Meta,
-    handle: FourzeHandle<Props, Meta>
-  ): this
-  <Props extends ObjectProps = ObjectProps>(
-    path: string,
-    props: Props,
-    handle: FourzeHandle<Props>
-  ): this
-  <Props extends ObjectProps = ObjectProps, Meta = Record<string, any>>(
-    route: FourzeBaseRoute<Props, Meta>
-  ): this
-  (path: string, handle: FourzeHandle): this
-
+export interface Fourze
+  extends FourzeRouteGenerator<Fourze>,
+  FourzeRouteFunction<Fourze>,
+  FourzeInstance {
   (routes: FourzeBaseRoute<any>[]): this
 
-  hook(hook: FourzeHook): this
-  hook(hook: FourzeBaseHook): this
-  hook(hook: DefineFourzeHook): this
-  hook(base: string, hook: FourzeBaseHook): this
+  hook<R = any>(hook: FourzeHook<R>): this
+  hook<R = any>(handle: FourzeMiddleware<R>): this
+  hook<R = any>(path: string, handle: FourzeMiddleware<R>): this
   apply(fourze: FourzeInstance): this
 
   setup(): Promise<void>
@@ -144,48 +96,45 @@ export function defineFourze(
       hooks.push(...param0.hooks);
     } else if (Array.isArray(param0)) {
       routes.push(...param0.map(defineRoute));
-    } else if (typeof param0 === "object") {
+    } else if (isObject(param0)) {
       routes.push(param0);
     } else {
-      routes.push(
-        overload(
-          [
-            {
-              type: "string",
-              name: "path",
-              required: true
-            },
-            {
-              type: "string",
-              name: "method"
-            },
-            {
-              type: "object",
-              name: "props"
-            },
-            {
-              type: "object",
-              name: "meta"
-            },
-            {
-              type: "function",
-              name: "handle",
-              required: true
-            }
-          ],
-          [param0, ...args]
-        )
+      const route = overload(
+        [
+          {
+            type: "string",
+            name: "path",
+            required: true
+          },
+          {
+            type: "string",
+            name: "method"
+          },
+          {
+            type: "object",
+            name: "props"
+          },
+          {
+            type: "object",
+            name: "meta"
+          },
+          {
+            type: "function",
+            name: "handle",
+            required: true
+          }
+        ],
+        [param0, ...args]
       );
+      if (isDef(route)) {
+        routes.push(route);
+      }
     }
     return fourze;
   } as Fourze;
 
   fourze.hook = function (
-    ...args:
-      | [string, FourzeBaseHook]
-      | [FourzeBaseHook]
-      | [DefineFourzeHook]
-      | [FourzeHook]
+    ...args: [string, FourzeMiddleware] | [FourzeMiddleware] | [FourzeHook]
   ) {
     if (args.length === 1 && isFourzeHook(args[0])) {
       hooks.push(args[0]);

@@ -5,29 +5,12 @@ import type {
   PropType,
   RequestMethod
 } from "@fourze/core";
-
-interface SwaggerPathSchema {
-  summary?: string
-  description?: string
-  tags?: string[]
-  operationId?: string
-  deprecated?: boolean
-  responses?: Record<
-    string,
-    {
-      description: string
-      schema?: Record<string, any>
-    }
-  >
-}
-
-interface SwaggerParameter {
-  in?: "body" | "path" | "query"
-  name: string
-  type: string | string[]
-  description?: string
-  required?: boolean
-}
+import type {
+  SwaggerDocument,
+  SwaggerInfo,
+  SwaggerParameter,
+  SwaggerPathSchema
+} from "./types";
 
 function getParameterType(type: PropType<any>): string | string[] {
   if (Array.isArray(type)) {
@@ -57,11 +40,21 @@ function getParameter<P extends ObjectProps = ObjectProps>(props: P) {
   return parameters;
 }
 
-export function createSwaggerRouter(baseRouter: FourzeRouter): FourzeRouter {
+export interface SwaggerOptions {
+  info?: SwaggerInfo
+  schemas?: string[]
+  consumes?: string[]
+  produces?: string[]
+}
+
+export function createSwaggerRouter(
+  baseRouter: FourzeRouter,
+  options: SwaggerOptions = {}
+): FourzeRouter {
   const swaggerRouter = createRouter({
     name: "SwaggerRouter"
   });
-  swaggerRouter.get("/api-docs", async (req) => {
+  swaggerRouter.get<SwaggerDocument>("/api-docs", async (req) => {
     await baseRouter.setup();
     const routes = baseRouter.routes;
 
@@ -107,24 +100,12 @@ export function createSwaggerRouter(baseRouter: FourzeRouter): FourzeRouter {
 
     return {
       swagger: "2.0",
-      info: {
-        version: "1.0.0",
-        title: "Swagger Petstore",
-        description:
-          "A sample API that uses a petstore as an example to demonstrate features in the swagger-2.0 specification",
-        termsOfService: "http://swagger.io/terms/",
-        contact: {
-          name: "Swagger API Team"
-        },
-        license: {
-          name: "MIT"
-        }
-      },
-      host: req.headers.Host,
-      basePath: "/",
-      schemes: ["http"],
-      consumes: ["application/json"],
-      produces: ["application/json"],
+      info: options.info,
+      host: req.headers.Hosta as string,
+      basePath: baseRouter.base,
+      schemes: options.schemas ?? ["http"],
+      consumes: options.consumes ?? ["application/json"],
+      produces: options.produces ?? ["application/json"],
       paths: getPaths()
     };
   });

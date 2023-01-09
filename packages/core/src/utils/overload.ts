@@ -9,40 +9,59 @@ export type OverloadConfig<T = object, V = T[keyof T]> = {
   match?: (value: V) => boolean
 }[];
 
-export function overload<T>(config: OverloadConfig<T>, args: any[]) {
-  const result = {} as T;
+export function defineOverload<T extends Record<string, any>>(
+  ...configs: OverloadConfig<T>[]
+) {
+  return (args: any[]) => {
+    const result = {} as T;
 
-  for (const {
-    name,
-    required = false,
-    type,
-    default: defaultValue,
-    match,
-    transform
-  } of config) {
-    function matchValue(value: any) {
-      if (match) {
-        return match(value);
+    for (const config of configs) {
+      const parameters = Array.from(args);
+
+      for (const {
+        name,
+        required = false,
+        type,
+        default: defaultValue,
+        match,
+        transform
+      } of config) {
+        function matchValue(value: any) {
+          if (match) {
+            return match(value);
+          }
+          if (isUndef(value)) {
+            return !required;
+          }
+          if (type === "array") {
+            return Array.isArray(value);
+          }
+          return typeof value === type;
+        }
+
+        const value = parameters.shift();
+
+        if (matchValue(value)) {
+          result[name] = transform ? transform(value) : value;
+          continue;
+        } else {
+          result[name] = defaultValue;
+        }
+
+        parameters.unshift(value);
       }
-      if (isUndef(value)) {
-        return !required;
+      if (Object.keys(result).length === config.length) {
+        return result;
       }
-      if (type === "array") {
-        return Array.isArray(value);
-      }
-      return typeof value === type;
     }
+    return result;
+  };
+}
 
-    const value = args.shift();
-
-    if (matchValue(value)) {
-      result[name] = transform ? transform(value) : value;
-      continue;
-    } else {
-      result[name] = defaultValue;
-    }
-
-    args.unshift(value);
-  }
-  return result;
+export function overload<T extends Record<string, any>>(
+  config: OverloadConfig<T>,
+  args: any[]
+) {
+  const overloadFn = defineOverload(config);
+  return overloadFn(args);
 }

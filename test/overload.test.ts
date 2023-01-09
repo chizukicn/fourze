@@ -1,8 +1,8 @@
-import { overload, OverloadConfig } from "@fourze/core";
+import { defineOverload } from "@fourze/core";
 import { describe, expect, it } from "vitest";
 
 describe("overload", async () => {
-  const overloadConfig = [
+  const overload = defineOverload([
     {
       name: "path",
       type: "string",
@@ -11,6 +11,7 @@ describe("overload", async () => {
     {
       name: "method",
       type: "string",
+      default: "get",
     },
     {
       name: "props",
@@ -25,28 +26,48 @@ describe("overload", async () => {
       type: "function",
       required: true,
     },
-  ] as OverloadConfig;
+  ]);
 
   it("should overload", () => {
-    const data = overload(overloadConfig, [
+    const data = overload([
       "/test",
       {
-        name: {
-          type: String,
-          required: true,
-          meta: {
-            title: "姓名",
-          },
-        },
+        name: "test-overload",
       },
       {
         summary: "测试",
-        response: {
-          type: String,
-        },
       },
+      () => "hello,world!",
+    ]);
+
+    expect(data?.path).toBe("/test");
+    expect(data?.method).toBe("get");
+    expect(data?.props?.name).toBe("test-overload");
+    expect(data?.meta?.summary).toBe("测试");
+    expect(data?.handle?.()).toBe("hello,world!")
+
+    const data1 = overload([
+      "/test2",
+      "put",
+      {
+        summary: "测试",
+      },
+      () => "hello,world!"
+    ]);
+
+    expect(data1?.path).toBe("/test2");
+    expect(data1?.method).toBe("put");
+    expect(data1?.props?.summary).toBe("测试");
+    expect(data1?.handle?.()).toBe("hello,world!")
+
+    const data2 = overload([
+      "/test3",
+      "post",
       (req) => req.meta.summary,
     ]);
-    expect(data.handle).toBeTruthy();
+
+    expect(data2?.path).toBe("/test3");
+    expect(data2?.method).toBe("post");
+    expect(data2?.handle).toBeTruthy();
   });
 });

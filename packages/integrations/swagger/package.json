@@ -20,8 +20,10 @@
     "author": "chizuki",
     "license": "MIT",
     "dependencies": {
-        "@fourze/core": "workspace:*"
+        "@fourze/core": "workspace:*",
+        "swagger-ui-dist": "^4.15.5"
     },
     "devDependencies": {
+        "@types/swagger-ui-dist": "^3.30.1"
     }
 }

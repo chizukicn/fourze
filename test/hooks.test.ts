@@ -27,19 +27,17 @@ describe("hooks", async () => {
             req.meta.token = req.headers["token"].toString().toUpperCase();
           }
           res.setHeader("token", data.token);
-          return await next?.();
         });
 
         route.hook("/api/test", async (req, res, next) => {
-          if (req.method == "post") {
-            res.result = "others";
+          if (req.method == "delete") {
+             return "delete";
           }
-          return next?.();
         });
 
         route.hook("/api/test", (req, res, next) => {
           if (req.method == "post") {
-            return "something";
+            return "post";
           }
           return next?.();
         });
@@ -70,6 +68,6 @@ describe("hooks", async () => {
 
     const text = await res2.json();
 
-    expect(text).toEqual("something");
+    expect(text).toEqual("post");
   });
 });

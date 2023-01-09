@@ -25,7 +25,6 @@ describe("shared", async () => {
 
     const router = createRouter(() => {
       return {
-        base: "/v1",
         delay: "200-500",
         allow: ["/api/**", "/hello", "/add"],
         deny: ["/api/deny"],
@@ -74,9 +73,7 @@ describe("shared", async () => {
     await router.setup();
 
     // has not base
-    expect(router.match("/api/test")).length(0);
-    // has base
-    expect(router.match("/v1/api/test")).not.length(0);
+    expect(router.match("/api/test")).not.length(0);
 
     // in external
     expect(router.match("http://www.test.com/hello")).not.length(0);
@@ -84,15 +81,12 @@ describe("shared", async () => {
     expect(router.match("http://test.com/hello")).length(0);
 
     // not in allow
-    expect(router.match("/api/hello")).length(0);
-    expect(router.match("/hello")).length(0);
+    expect(router.match("/api/hello")).not.length(0);
     expect(router.match("/v1/noallow")).length(0);
-
-    // in allow
-    expect(router.match("/v1/api/hello")).not.length(0);
-    //        expect(router.match("/v1/add", "post")).not.length(0)
+    // allow,but not matched
+    expect(router.match("/hello")).length(0);
 
     // in deny
-    expect(router.match("/v1/api/deny")).length(0);
+    expect(router.match("/api/deny")).length(0);
   });
 });

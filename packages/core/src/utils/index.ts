@@ -9,3 +9,4 @@ export * from "./path";
 export * from "./promise";
 export * from "./random";
 export * from "./storage";
+export * from "./string";
