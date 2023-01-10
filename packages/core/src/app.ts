@@ -48,8 +48,14 @@ export interface Fourze
   apply(fourze: FourzeInstance): this
 
   setup(): Promise<void>
+
+  setMeta(name: string, value: any): this
+  setMeta(meta: Record<string, any>): this
+  getMeta<T = any>(name: string): T | undefined
+
+  readonly meta: Record<string, any>
+  readonly name?: string
   readonly [FOURZE_SYMBOL]: true
-  readonly name: string
 }
 
 export function defineFourze(routes: FourzeBaseRoute[]): Fourze;
@@ -80,7 +86,7 @@ export function defineFourze(
         ? options
         : undefined;
 
-  const name = isOption ? options.name : "anonymous";
+  const _name = isOption ? options.name : undefined;
 
   const routes = Array.from(
     (isOption ? options.routes : isRoutes ? options : []) ?? []
@@ -154,14 +160,26 @@ export function defineFourze(
     return this;
   };
 
+  const _meta: Record<string, any> = {};
+
+  fourze.setMeta = function (name: string | Record<string, any>, value?: any) {
+    if (isString(name)) {
+      _meta[name] = value;
+    } else {
+      Object.assign(_meta, value ?? {});
+    }
+    return this;
+  };
+
+  fourze.getMeta = function<T>(name: string) {
+    return _meta[name] as T;
+  };
+
   Object.defineProperties(fourze, {
     routes: {
       get() {
         return routes.map((e) => {
-          return defineRoute({
-            ...e,
-            base: _base
-          });
+          return defineRoute(e);
         });
       }
     },
@@ -203,7 +221,14 @@ export function defineFourze(
     ),
     name: {
       get() {
-        return name;
+        return _name ?? _meta.name;
+      },
+      configurable: true
+    },
+
+    meta: {
+      get() {
+        return _meta;
       }
     },
 

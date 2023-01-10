@@ -10,10 +10,10 @@ import {
   createLogger,
   flatHeaders,
   getHeaderValue,
-  isBuffer,
   isFunction,
   isString,
   isURL,
+  isUint8Array,
   normalizeRoute
 } from "@fourze/core";
 import type { FourzeLogger, FourzeResponse } from "@fourze/core";
@@ -213,7 +213,7 @@ export function createProxyRequest(router: FourzeMockRouter) {
 
       if (isString(chunk)) {
         this.buffer.write(chunk, encoding);
-      } else if (isBuffer(chunk)) {
+      } else if (isUint8Array(chunk)) {
         this.buffer = Buffer.concat([this.buffer, chunk]);
       } else {
         throw new TypeError("CHUNK should be a string, Buffer or Uint8Array");

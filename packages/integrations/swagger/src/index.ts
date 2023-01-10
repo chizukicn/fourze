@@ -1,4 +1,9 @@
-import { createQuery, createRouter, normalizeProps } from "@fourze/core";
+import {
+  createQuery,
+  createRouter,
+  isFourze,
+  normalizeProps
+} from "@fourze/core";
 import type {
   FourzeRouter,
   ObjectProps,
@@ -11,6 +16,7 @@ import type {
   SwaggerParameter,
   SwaggerPathSchema
 } from "./types";
+import { service } from "./ui";
 
 function getParameterType(type: PropType<any>): string | string[] {
   if (Array.isArray(type)) {
@@ -54,16 +60,38 @@ export function createSwaggerRouter(
   const swaggerRouter = createRouter({
     name: "SwaggerRouter"
   });
+  swaggerRouter.route(service());
   swaggerRouter.get<SwaggerDocument>("/api-docs", async (req) => {
     await baseRouter.setup();
-    const routes = baseRouter.routes;
+    const modules = createQuery(baseRouter.modules);
+
+    const tags = modules.select((e) => {
+      return {
+        name: e.name,
+        ...(isFourze(e) ? e.meta : {})
+      };
+    });
+
+    const routes = modules
+      .select((module) => {
+        return module.routes.map((r) => {
+          return {
+            ...r,
+            meta: {
+              ...r.meta,
+              tags: r.meta.tags ?? [module.name]
+            } as Record<string, any>
+          };
+        });
+      })
+      .flat();
 
     function getPaths() {
       const paths = new Map<
         string,
         Record<RequestMethod, SwaggerPathSchema> | SwaggerPathSchema
       >();
-      const groups = createQuery(routes).groupBy((e) => e.path);
+      const groups = routes.groupBy((e) => e.path);
       for (const [path, routes] of groups) {
         const map = new Map<RequestMethod, SwaggerPathSchema>();
         for (const route of routes) {
@@ -106,7 +134,8 @@ export function createSwaggerRouter(
       schemes: options.schemas ?? ["http"],
       consumes: options.consumes ?? ["application/json"],
       produces: options.produces ?? ["application/json"],
-      paths: getPaths()
+      paths: getPaths(),
+      tags
     };
   });
 

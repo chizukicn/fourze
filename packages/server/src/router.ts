@@ -1,5 +1,5 @@
 import fs from "fs";
-import { join, resolve } from "path";
+import path, { join, resolve } from "path";
 import type {
   DelayMsType,
   Fourze,
@@ -134,8 +134,14 @@ export function createHotRouter(
         const extraRoutes: FourzeBaseRoute[] = [];
         const extraHooks: FourzeBaseHook[] = [];
 
-        const fn = async (ins: any) => {
+        const fn = async (ins: unknown) => {
           if (isFourze(ins)) {
+            if (!ins.name) {
+              ins.setMeta(
+                "name",
+                path.basename(f).replace(/\.(tmp\.)?js$/g, "")
+              );
+            }
             extras.push(ins);
           } else if (Array.isArray(ins)) {
             await Promise.all(ins.map(fn));

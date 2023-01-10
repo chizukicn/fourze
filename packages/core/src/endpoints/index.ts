@@ -17,30 +17,40 @@ export function jsonWrapperHook(
   resolve: (data: any) => MaybePromise<any>,
   reject?: (error: any) => MaybePromise<any>
 ) {
-  return defineFourzeHook(async (req, res, next) => {
-    let catchError = false;
-    const _send = res.send.bind(res);
+  const JSON_WRAPPER_MARK = Symbol("JSON_WRAPPER_MARK");
+  function hasMark(value: any) {
+    return value && value[JSON_WRAPPER_MARK];
+  }
 
-    res.send = function (data, contentType) {
-      if (!catchError) {
+  function mark(value: any) {
+    Object.defineProperty(value, JSON_WRAPPER_MARK, {
+      get() {
+        return true;
+      }
+    });
+  }
+
+  return defineFourzeHook(async (req, res) => {
+    if (!hasMark(res)) {
+      const _send = res.send.bind(res);
+
+      res.send = function (data, contentType) {
         contentType = contentType ?? res.getContentType(data);
         if (contentType?.startsWith("application/json")) {
           data = resolve(data);
         }
-      }
-      return _send(data, contentType);
-    };
+        return _send(data, contentType);
+      };
 
-    try {
-      await next?.();
-    } catch (error) {
       if (reject) {
-        const rs = reject(error);
-        catchError = true;
-        return rs;
-      } else {
-        throw error;
+        const _sendError = res.sendError.bind(res);
+        res.sendError = function (code, message) {
+          _sendError(code, message);
+          _send(reject(message), "application/json");
+          return this;
+        };
       }
+      mark(res);
     }
   });
 }

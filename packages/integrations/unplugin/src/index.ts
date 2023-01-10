@@ -130,9 +130,13 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
     name: PLUGIN_NAME,
 
     async buildStart() {
-      await router.setup();
+      try {
+        await router.setup();
 
-      logger.info("Fourze plugin is ready.");
+        logger.info("Fourze plugin is ready.");
+      } catch (error) {
+        logger.error("Fourze plugin is not ready.", error);
+      }
     },
 
     resolveId(id) {

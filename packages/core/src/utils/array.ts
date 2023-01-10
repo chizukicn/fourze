@@ -91,6 +91,9 @@ export interface CollectionQuery<T> extends Iterable<T> {
   toArray(): T[]
   toSet(): Set<T>
   count(): number
+  reset(source?: Iterable<T>): this
+  // set(index: number, value: T): this
+  // get(index: number): T | undefined
 }
 
 export function createPredicate<T, Q>(
@@ -114,8 +117,10 @@ export function createPredicate<T, Q>(
   return predicate;
 }
 
-export function createQuery<T>(iterable: Iterable<T> = []): CollectionQuery<T> {
-  const source = Array.from(iterable);
+export function createQuery<T>(
+  initSource: Iterable<T> = []
+): CollectionQuery<T> {
+  const source = Array.from(initSource);
   return {
     where(predicateFn: PredicateFn<T>) {
       let predicate = createPredicate(predicateFn);
@@ -164,33 +169,33 @@ export function createQuery<T>(iterable: Iterable<T> = []): CollectionQuery<T> {
     },
     distinct<U>(mapFn?: MapFn<T, U>) {
       if (!mapFn) {
-        return createQuery(Array.from(new Set(source)));
+        return this.reset(new Set(source));
       }
       const set = new Set<U>();
-      const array = <T[]>[];
+      source.length = 0;
       for (let i = 0; i < source.length; i++) {
         const item = source[i];
         const key = mapFn(item, i);
         if (!set.has(key)) {
           set.add(key);
-          array.push(item);
+          source.push(item);
         }
       }
-      return createQuery(array);
+      return this;
     },
     intersect(...collections: Iterable<T>[]) {
       const set = new Set(collections.flatMap((c) => Array.from(c)));
       const array = source.filter((item) => set.has(item));
-      return createQuery(array);
+      return this.reset(array);
     },
     union(...collections: Iterable<T>[]) {
-      const array = source.concat(collections.flatMap((c) => Array.from(c)));
-      return createQuery(array);
+      source.push(...collections.flatMap((c) => Array.from(c)));
+      return this;
     },
     except(...collections: Iterable<T>[]) {
       const set = new Set(collections.flatMap((c) => Array.from(c)));
       const array = source.filter((item) => !set.has(item));
-      return createQuery(array);
+      return this.reset(array);
     },
     zip<U, R = [T, U]>(
       collection: Iterable<U>,
@@ -234,6 +239,10 @@ export function createQuery<T>(iterable: Iterable<T> = []): CollectionQuery<T> {
     },
     clone() {
       return createQuery(source);
+    },
+    reset(iterable: Iterable<T> = initSource) {
+      source.splice(0, source.length, ...Array.from(iterable));
+      return this;
     },
     toArray() {
       return Array.from(source);

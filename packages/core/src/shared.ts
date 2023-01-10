@@ -9,13 +9,11 @@ import type { PolyfillHeaderInit } from "./polyfill/header";
 import { flatHeaders, getHeaderValue } from "./polyfill/header";
 import { PolyfillServerResponse } from "./polyfill/response";
 import {
-  isBuffer,
   isDef,
   isFunction,
-  isObject,
   isString,
-  isUndefined,
-  resolvePath
+  isUint8Array,
+  isUndefined
 } from "./utils";
 
 export const FOURZE_VERSION = version;
@@ -117,11 +115,9 @@ export interface FourzeRequest<
   headers: Record<string, string | string[] | undefined>
 
   route: FourzeRoute
-  relativePath: string
+  meta: Meta
 
   readonly params: Params
-
-  meta: Meta
 
   readonly query: Query
 
@@ -134,6 +130,10 @@ export interface FourzeRequest<
   readonly raw: string
 
   readonly path: string
+
+  readonly relativePath: string
+
+  readonly contextPath: string
 
   readonly [FOURZE_REQUEST_SYMBOL]: true
 }
@@ -163,9 +163,13 @@ export interface FourzeResponse extends FourzeBaseResponse {
 
   setContentType(contentType: string): this
 
+  sendError(code: number, error?: string | Error): this
+
   readonly url: string
 
   readonly data: any
+
+  readonly error: Error | undefined
 
   readonly [FOURZE_RESPONSE_SYMBOL]: true
 }
@@ -176,7 +180,6 @@ export interface FourzeBaseRoute<
   Meta = Record<string, any>
 > {
   path: string
-  base?: string
   method?: RequestMethod
   handle: FourzeHandle<Result, Props, Meta>
   meta?: Meta
@@ -408,7 +411,7 @@ export function defineRoute<
 >(
   route: FourzeBaseRoute<Result, Props, Meta>
 ): FourzeRoute<Result, Props, Meta> {
-  const { handle, meta = {} as Meta, base, props = {} as Props } = route;
+  const { handle, meta = {} as Meta, props = {} as Props } = route;
   let { method, path } = route;
 
   if (REQUEST_PATH_REGEX.test(path)) {
@@ -419,8 +422,6 @@ export function defineRoute<
       path = arr[1].trim();
     }
   }
-
-  path = resolvePath(path, base);
 
   return {
     method,
@@ -433,10 +434,14 @@ export function defineRoute<
         || !method
         || this.method.toLowerCase() === method.toLowerCase()
       ) {
-        const regex = new RegExp(
-          `^${path.replace(PARAM_KEY_REGEX, "([a-zA-Z0-9_-\\s]+)?")}$`,
-          "i"
-        );
+        let pattern = path.replace(PARAM_KEY_REGEX, "([a-zA-Z0-9_-\\s]+)?");
+        if (!pattern.startsWith("*")) {
+          pattern = `^${pattern}`;
+        }
+        if (!pattern.endsWith("*")) {
+          pattern = `${pattern}$`;
+        }
+        const regex = new RegExp(pattern, "i");
         return url.match(regex);
       }
       return null;
@@ -534,6 +539,7 @@ export function defineFourzeHook<R>(
 }
 
 export interface FourzeInstance {
+  name?: string
   base?: string
   routes: FourzeRoute[]
   hooks: FourzeHook[]
@@ -589,22 +595,23 @@ export function createResponse(options: FourzeResponseOptions) {
   const response = (options?.response
     ?? new PolyfillServerResponse()) as FourzeResponse;
 
-  let _result: any;
+  let _data: any;
+  let _error: Error;
 
   response.setContentType = function (contentType) {
-    response.setHeader("Content-Type", contentType);
+    if (!response.headersSent) {
+      response.setHeader("Content-Type", contentType);
+    }
     return this;
   };
 
   response.getContentType = function (data) {
     let contentType: string = getHeaderValue(this.getHeaders(), "Content-Type");
     if (!contentType && isDef(data)) {
-      if (isBuffer(data)) {
+      if (isUint8Array(data)) {
         contentType = "application/octet-stream";
-      } else if (isObject(data)) {
+      } else {
         contentType = "application/json";
-      } else if (isString(data)) {
-        contentType = "text/html";
       }
     }
     return contentType;
@@ -624,9 +631,16 @@ export function createResponse(options: FourzeResponseOptions) {
         break;
     }
     if (contentType) {
-      response.setHeader("Content-Type", contentType);
+      response.setContentType(contentType);
     }
-    _result = data;
+    _data = data;
+    return this;
+  };
+
+  response.sendError = function (code = 500, error: Error | string) {
+    _error = typeof error === "string" ? new Error(error) : error;
+    this.statusCode = code;
+    this.statusMessage = _error.message;
     return this;
   };
 
@@ -636,7 +650,7 @@ export function createResponse(options: FourzeResponseOptions) {
     if (data) {
       this.send(data);
     }
-    _end(_result);
+    _end(_data);
     return response;
   };
 
@@ -696,7 +710,12 @@ export function createResponse(options: FourzeResponseOptions) {
     },
     data: {
       get() {
-        return _result;
+        return _data;
+      }
+    },
+    error: {
+      get() {
+        return _error;
       }
     },
 
@@ -717,6 +736,7 @@ export interface FourzeContextOptions {
   body?: any
   request?: IncomingMessage
   response?: OutgoingMessage
+  contextPath?: string
 }
 
 export interface FourzeContext {
@@ -783,7 +803,7 @@ export function createRequest(options: FourzeRequestOptions) {
   const bodyRaw: Buffer | string | Record<string, any>
     = options.body ?? request.body ?? {};
   let body: Record<string, any> = {};
-  if (isBuffer(bodyRaw) || isString(bodyRaw)) {
+  if (isUint8Array(bodyRaw) || isString(bodyRaw)) {
     if (bodyRaw.length > 0) {
       if (contentType.startsWith("application/json")) {
         body = JSON.parse(bodyRaw.toString("utf-8"));

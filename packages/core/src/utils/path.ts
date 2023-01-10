@@ -6,6 +6,10 @@ export function slash(p: string): string {
   return p.replace(/\\/g, "/").replace(/\/+/g, "/");
 }
 
+export function slashEnd(p: string): string {
+  return p.replace(/\/+$/, "");
+}
+
 export const NOT_NEED_BASE = /^((https?|file):)\/\//i;
 
 export function resolvePath(_path: string, _base?: string): string {
@@ -20,7 +24,7 @@ export function resolvePath(_path: string, _base?: string): string {
 
 export function relativePath(path: string, base?: string): string {
   if (base) {
-    path = path.replace(new RegExp(`^${slash(base.concat("/"))}`), "/");
+    path = path.replace(new RegExp(`^${slash(base)}`), "");
   }
   return path;
 }

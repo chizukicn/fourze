@@ -6,6 +6,7 @@ import {
   randomArray,
   randomInt,
   randomItem,
+  relativePath,
 } from "@fourze/core";
 import { describe, expect, it } from "vitest";
 
@@ -35,6 +36,19 @@ describe("utils", () => {
     expect(array).length.greaterThanOrEqual(12).lessThanOrEqual(30);
     expect(array).include(item);
   });
+
+  it("path", () => {
+    const path = "/abc/def/ghi";
+    const path2 = "/abc/def/ghi/";
+    const path3 = "/abc/";
+    const path4 = "/abc"
+    const base = "/abc";
+    expect(relativePath(path, base)).toBe("/def/ghi");
+    expect(relativePath(path2, base)).toBe("/def/ghi/");
+    expect(relativePath(path3, base)).toBe("/");
+    expect(relativePath(path4, base)).toBe("");
+  });
+
 
   it("createSingletonPromise", async () => {
     const createInstance = () => randomInt("374-9197");

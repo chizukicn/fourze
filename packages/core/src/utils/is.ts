@@ -23,7 +23,11 @@ export function isConstructor<T>(value: unknown): value is Constructor<T> {
 }
 
 export function isBuffer(value: unknown): value is Buffer {
-  return isObject(value) && "length" in value;
+  return isObject(value) && !!globalThis.Buffer && Buffer.isBuffer(value);
+}
+
+export function isUint8Array(value: unknown): value is Uint8Array {
+  return value instanceof Uint8Array;
 }
 
 export function isPromise<R = unknown>(value: unknown): value is Promise<R> {
@@ -35,7 +39,7 @@ export function isRegExp(value: unknown): value is RegExp {
 }
 
 export function isFormData(value: unknown): value is FormData {
-  return value != null && globalThis.FormData && value instanceof FormData;
+  return value != null && !!globalThis.FormData && value instanceof FormData;
 }
 
 export function isURL(value: unknown): value is URL {
