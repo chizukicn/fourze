@@ -30,7 +30,7 @@ export function jsonWrapperHook(
     });
   }
 
-  return async (req, res) => {
+  return async (req, res, next) => {
     if (!hasMark(res)) {
       const _send = res.send.bind(res);
 
@@ -52,5 +52,6 @@ export function jsonWrapperHook(
       }
       mark(res);
     }
+    await next();
   };
 }

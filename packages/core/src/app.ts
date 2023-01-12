@@ -7,7 +7,13 @@ import type {
 } from "./shared";
 import { createServiceContext } from "./shared";
 import type { DelayMsType } from "./utils";
-import { isMatch, isString, relativePath, resolvePath } from "./utils";
+import {
+  createQuery,
+  isMatch,
+  isString,
+  relativePath,
+  resolvePath
+} from "./utils";
 
 export interface FourzeAppOptions {
   base?: string
@@ -29,28 +35,24 @@ export interface FourzeAppOptions {
    */
   deny?: MaybeRegex[]
 
-  /**
-   *  不在base域下的外部路径
-   *  @example ["https://www.example.com"]
-   */
-  external?: MaybeRegex[]
-
   fallback?: FourzeNext
+}
+
+export interface FourzeMiddlewareNode {
+  middleware: FourzeMiddleware
+  path: string
 }
 
 export function createApp(options: FourzeAppOptions = {}): FourzeApp {
   const { fallback } = options;
 
-  const middlewaresMap = new Map<string, FourzeMiddleware[]>();
-
-  middlewaresMap.set("/", Array.from(options.middlewares ?? []));
+  const middlewareStore = createQuery<FourzeMiddlewareNode>();
 
   const app = (async (request, response, next?: FourzeNext) => {
     next = next ?? fallback;
     const { url } = request;
-    const path = app.relative(url);
-    if (path && app.isAllow(url)) {
-      const ms = app.match(path);
+    if (app.isAllow(url)) {
+      const ms = app.match(url);
 
       async function doNext() {
         const middleware = ms.shift();
@@ -66,10 +68,15 @@ export function createApp(options: FourzeAppOptions = {}): FourzeApp {
     }
   }) as FourzeApp;
 
-  app.match = (url: string) => {
-    return Array.from(middlewaresMap.entries())
-      .filter(([path]) => isMatch(url, path))
-      .flatMap(([, ms]) => ms);
+  app.match = function (_url: string) {
+    const url = this.relative(_url);
+    if (url) {
+      return middlewareStore
+        .where((r) => isMatch(url, r.path))
+        .select((r) => r.middleware)
+        .toArray();
+    }
+    return [];
   };
 
   app.use = function (
@@ -78,16 +85,15 @@ export function createApp(options: FourzeAppOptions = {}): FourzeApp {
     const arg0 = args[0];
     const isPath = isString(arg0);
     const path = resolvePath(isPath ? arg0 : "/", "/");
-    const ms = isPath ? args.slice(1) : args;
-    const old = middlewaresMap.get(path) ?? [];
-    middlewaresMap.set(path, [...old, ...ms] as FourzeMiddleware[]);
-
+    const ms = (isPath ? args.slice(1) : args) as FourzeMiddleware[];
     ms.forEach((r) => {
       Object.defineProperty(r, "base", {
         value: resolvePath(path, this.base),
         writable: false,
         configurable: true
       });
+
+      middlewareStore.append(...ms.map((middleware) => ({ path, middleware })));
     });
 
     return this;
@@ -102,25 +108,17 @@ export function createApp(options: FourzeAppOptions = {}): FourzeApp {
   };
 
   app.isAllow = function (url: string) {
-    const { allow, deny, external } = options;
-    const path = this.relative(url);
-    if (path) {
-      let rs = path.startsWith(this.base);
-      if (allow?.length) {
-        // 有允许规则
-        rs &&= isMatch(path, ...allow);
-      }
-      if (external?.length) {
-        // 有外部规则
-        rs ||= isMatch(path, ...external);
-      }
-      if (deny?.length) {
-        // 有拒绝规则,优先级最高
-        rs &&= !isMatch(path, ...deny);
-      }
-      return rs;
+    const { allow, deny } = options;
+    let rs = true;
+    if (allow?.length) {
+      // 有允许规则
+      rs &&= isMatch(url, ...allow);
     }
-    return false;
+    if (deny?.length) {
+      // 有拒绝规则,优先级最高
+      rs &&= !isMatch(url, ...deny);
+    }
+    return rs;
   };
 
   app.allow = function (...rules: MaybeRegex[]) {
@@ -147,7 +145,7 @@ export function createApp(options: FourzeAppOptions = {}): FourzeApp {
   Object.defineProperties(app, {
     middlewares: {
       get() {
-        return Array.from(middlewaresMap.values()).flat();
+        return middlewareStore.select((r) => r.middleware).toArray();
       }
     },
     base: {
