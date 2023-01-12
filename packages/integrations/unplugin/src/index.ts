@@ -2,10 +2,13 @@ import type { DelayMsType, FourzeLogLevelKey } from "@fourze/core";
 import { createLogger, setLoggerLevel } from "@fourze/core";
 import { createUnplugin } from "unplugin";
 
-import type { FourzeMockRouterOptions } from "@fourze/mock";
-import type { FourzeHotRouter, FourzeProxyOption } from "@fourze/server";
-import { createFourzeServer, createHotRouter } from "@fourze/server";
-import { createSwaggerRouter } from "@fourze/swagger";
+import type { FourzeMockAppOptions } from "@fourze/mock";
+import type {
+  FourzeHmrApp,
+  FourzeHmrOptions,
+  FourzeProxyOption
+} from "@fourze/server";
+import { createHmrApp, createServer } from "@fourze/server";
 
 import { defaultMockCode as defaultTransformCode } from "./mock";
 
@@ -40,7 +43,7 @@ export interface UnpluginFourzeOptions {
   /**
    *  mock mode
    */
-  mode?: FourzeMockRouterOptions["mode"]
+  mode?: FourzeMockAppOptions["mode"]
 
   /**
    *  @default true
@@ -75,10 +78,7 @@ export interface UnpluginFourzeOptions {
 
   deny?: string[]
 
-  transformCode?: (
-    router: FourzeHotRouter,
-    options?: FourzeMockRouterOptions
-  ) => string
+  transformCode?: (router: FourzeHmrApp, options?: FourzeHmrOptions) => string
 }
 
 export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
@@ -112,15 +112,13 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
       }
     );
 
-  const router = createHotRouter({
+  const router = createHmrApp({
     dir,
     pattern,
     delay,
     allow,
     deny
   });
-
-  const swaggerRouter = createSwaggerRouter(router);
 
   proxy.forEach(router.proxy);
 
@@ -131,7 +129,7 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
 
     async buildStart() {
       try {
-        await router.setup();
+        await router.mount();
 
         logger.info("Fourze plugin is ready.");
       } catch (error) {
@@ -152,7 +150,7 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
       }
     },
     async webpack() {
-      const app = createFourzeServer();
+      const app = createServer();
       app.use(base, router);
       await app.listen(port, host);
       logger.info("Webpack Server listening on port", options.server?.port);
@@ -196,9 +194,9 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
         if (hmr) {
           router.watch(watcher);
         }
-        const app = createFourzeServer();
+        const app = createServer();
         app.use(base, router);
-        app.use("/v2", swaggerRouter);
+        // app.use("/v2", swaggerRouter);
 
         if (options.server?.port) {
           try {

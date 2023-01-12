@@ -1,5 +1,5 @@
-import { randomInt, setLoggerLevel } from "@fourze/core";
-import { createMockRouter } from "@fourze/mock";
+import { defineRouter, randomInt, setLoggerLevel } from "@fourze/core";
+import { createMockApp } from "@fourze/mock";
 import nodeFetch from "node-fetch";
 import { describe, expect, it } from "vitest";
 
@@ -12,26 +12,27 @@ describe("fetch", async () => {
     };
     setLoggerLevel("debug");
 
-    const router = createMockRouter({
+    const app = createMockApp({
       delay: "200-500",
       mode: ["fetch"],
-      external: ["http://localhost:7609"],
-    }).hook(async (req, res, next) => {
+      origin: "http://localhost:7609",
+    }).use(async (req, res, next) => {
       res.setHeader("x-test", "abcd");
       res.appendHeader("x-test", "test");
       await next?.();
-    }).get("http://localhost:7609/hello", (req, res) => {
-      return {
-        ...testData,
-      };
-    }).post("http://www.test.com/api/return", req => {
-      return {
-        ...req.data,
-      };
+    })
+
+    const router = defineRouter(router => {
+      router.route("/hello", (req, res) => {
+        return {
+          ...testData,
+        };
+      })
     });
 
+    app.use(router);
 
-    await router.setup();
+    await app.mount();
 
     const fetchReturn = await fetch("http://localhost:7609/hello");
 

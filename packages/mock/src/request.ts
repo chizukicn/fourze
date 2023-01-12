@@ -17,7 +17,7 @@ import {
   normalizeRoute
 } from "@fourze/core";
 import type { FourzeLogger, FourzeResponse } from "@fourze/core";
-import type { FourzeMockRouter } from "./shared";
+import type { FourzeMockApp } from "./shared";
 
 type RequestCallback = (res: IncomingMessage) => void;
 
@@ -41,9 +41,9 @@ function optionsToURL(options: RequestOptions): URL {
   return url;
 }
 
-export function createProxyRequest(router: FourzeMockRouter) {
-  const originHttpRequest = router.originalHttpRequest;
-  const originHttpsRequest = router.originalHttpsRequest;
+export function createProxyRequest(app: FourzeMockApp) {
+  const originHttpRequest = app.originalHttpRequest;
+  const originHttpsRequest = app.originalHttpsRequest;
   const logger = createLogger("@fourze/mock");
 
   if (!originHttpRequest || !originHttpsRequest) {
@@ -138,27 +138,30 @@ export function createProxyRequest(router: FourzeMockRouter) {
     }
 
     async _mockRequest() {
-      const { response } = await router.service({
-        url: this._url,
-        method: this.method,
-        headers: this._requestHeaders,
-        body: this.buffer.toString("utf-8")
-      });
-      if (response.matched) {
-        const res = new ProxyClientResponse(response);
-        this.emit("response", res);
-        logger.success(
-          `Found route by ${normalizeRoute(this._url, this.method)}.`
-        );
-      } else {
-        logger.debug(
-          `Not found route, fallback to original ${normalizeRoute(
-            this._url,
-            this.method
-          )}.`
-        );
-        this._nativeRequest();
+      const url = app.relative(this._url);
+      if (url) {
+        const { response } = await app.service({
+          url,
+          method: this.method,
+          headers: this._requestHeaders,
+          body: this.buffer.toString("utf-8")
+        });
+        if (response.matched) {
+          const res = new ProxyClientResponse(response);
+          this.emit("response", res);
+          logger.success(
+            `Found route by ${normalizeRoute(this._url, this.method)}.`
+          );
+          return;
+        }
       }
+      logger.debug(
+        `Not found route, fallback to original ${normalizeRoute(
+          this._url,
+          this.method
+        )}.`
+      );
+      this._nativeRequest();
     }
 
     async _nativeRequest() {

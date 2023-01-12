@@ -7,6 +7,7 @@ export type OverloadConfig<T = object, V = T[keyof T]> = {
   default?: any
   transform?: (value: V) => any
   match?: (value: V) => boolean
+  rest?: boolean
 }[];
 
 export function defineOverload<T extends Record<string, any>>(

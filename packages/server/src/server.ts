@@ -5,13 +5,13 @@ import https from "https";
 import type { AddressInfo } from "net";
 import {
   FOURZE_VERSION,
+  createApp,
   createLogger,
   createServiceContext,
-  isFunction,
   isString
 } from "@fourze/core";
 import type {
-  CommonMiddleware,
+  FourzeApp,
   FourzeContext,
   FourzeLogger,
   FourzeMiddleware,
@@ -20,6 +20,7 @@ import type {
 import { injectEventEmitter } from "./utils";
 
 export interface FourzeServerOptions {
+  app?: FourzeApp
   host?: string
   port?: number
   server?: Server
@@ -42,23 +43,15 @@ export interface FourzeServer extends EventEmitter {
   readonly server?: Server
   readonly protocol: "http" | "https"
 
-  use(middleware: CommonMiddleware): this
-  use(middleware: FourzeMiddleware): this
-  use(path: string, middleware: CommonMiddleware): this
-  use(path: string, middlewares: FourzeMiddleware): this
-
-  use(path: string, ...middlewares: CommonMiddleware[]): this
-  use(path: string, ...middlewares: FourzeMiddleware[]): this
-
-  use(...middlewares: CommonMiddleware[]): this
-
-  use(...middlewares: FourzeMiddleware[]): this
-
   createServer(): Server
 
   listen(port?: number, host?: string): Promise<Server>
 
-  close(): this
+  use(path: string, ...middlewares: FourzeMiddleware[]): this
+
+  use(...middleware: FourzeMiddleware[]): this
+
+  close(): Promise<void>
 }
 
 export function createServerContext(
@@ -99,7 +92,7 @@ function normalizeAddress(address?: AddressInfo | string | null): string {
   return "unknown";
 }
 
-export function createFourzeServer(options: FourzeServerOptions = {}) {
+export function createServer(options: FourzeServerOptions = {}) {
   let _host = options.host ?? "localhost";
   let _port = options.port ?? 7609;
   let _server = options.server;
@@ -108,27 +101,19 @@ export function createFourzeServer(options: FourzeServerOptions = {}) {
 
   const logger = options.logger ?? createLogger("@fourze/server");
 
-  const middlewareMap = new Map<string, FourzeMiddleware[]>();
+  const app = options.app ?? createApp();
 
-  const app = async function (
+  const serverApp = async function (
     req: IncomingMessage,
     res: OutgoingMessage,
     next?: FourzeNext
   ) {
     const context = await createServerContext(req, res);
     const { request, response } = context;
-    try {
-      const middlewares = Array.from(middlewareMap.entries())
-        .map(([key, value]) => (request.url.startsWith(key) ? value : []))
-        .reduce((a, b) => a.concat(b), []);
 
-      let i = 0;
-      const fn = async () => {
-        const middleware = middlewares[i++];
-        if (middleware) {
-          request.contextPath = middleware.base ?? "/";
-          await middleware(request, response, fn);
-        } else if (isFunction(next)) {
+    try {
+      await app(request, response, async () => {
+        if (next) {
           await next();
         } else if (!response.writableEnded) {
           response.sendError(
@@ -137,11 +122,11 @@ export function createFourzeServer(options: FourzeServerOptions = {}) {
           );
           response.end();
         }
-      };
-      app.emit("request", context);
-      await fn();
+      });
+
+      serverApp.emit("request", context);
     } catch (error) {
-      app.emit("error", error, context);
+      serverApp.emit("error", error, context);
       if (!response.writableEnded) {
         response.sendError(500, "Internal Server Error");
         response.end();
@@ -149,64 +134,31 @@ export function createFourzeServer(options: FourzeServerOptions = {}) {
     }
   } as FourzeServer;
 
-  injectEventEmitter(app);
+  injectEventEmitter(serverApp);
 
-  app.on("error", (error) => {
+  serverApp.on("error", (error) => {
     logger.error(error);
   });
 
-  app.use = function (
-    param0: FourzeMiddleware | string,
-    ...params: FourzeMiddleware[]
-  ) {
-    const isStr = isString(param0);
-    const base = isStr ? param0 : "/";
-    const arr = (isStr ? params : [param0, ...params]).filter(isFunction);
-    const middlewares = middlewareMap.get(base) ?? [];
-    middlewareMap.set(base, middlewares.concat(arr));
-
-    for (const middleware of arr) {
-      if (!middleware.name) {
-        Object.defineProperty(middleware, "name", {
-          value: `anonymous@${Math.random().toString(36).slice(2, 8)}`
-        });
-      }
-      Object.defineProperty(middleware, "base", {
-        get: () => base
-      });
-
-      app.emit(`use:${middleware.name}`, middleware);
-      logger.info(
-        "Middleware",
-        `[${middleware.name}]`,
-        `was registered on '${base}'.`
-      );
-    }
-
-    return this;
-  };
-
-  app.createServer = function () {
+  serverApp.createServer = function () {
     switch (_protocol) {
       case "https":
-        _server = https.createServer(app);
+        _server = https.createServer(serverApp);
         break;
       case "http":
       default:
-        _server = http.createServer(app);
+        _server = http.createServer(serverApp);
         break;
     }
     return _server;
   };
 
-  app.listen = async function (port: number, hostname = "localhost") {
+  serverApp.listen = async function (port: number, hostname = "localhost") {
     _port = port ?? _port;
     _host = hostname ?? _host;
     _server = _server ?? this.createServer();
 
-    const middlewares = Array.from(middlewareMap.values()).flat();
-
-    await Promise.all(middlewares.flatMap((r) => r.setup?.()));
+    await app.mount();
 
     return new Promise((resolve, reject) => {
       logger.info(`Start server process [${process.pid}]`);
@@ -229,7 +181,7 @@ export function createFourzeServer(options: FourzeServerOptions = {}) {
               `Application ready for Fourze Server v${FOURZE_VERSION}`
             );
             resolve(server);
-            app.emit("ready");
+            serverApp.emit("ready");
           });
         } else {
           reject(
@@ -246,12 +198,30 @@ export function createFourzeServer(options: FourzeServerOptions = {}) {
     });
   };
 
-  app.close = function () {
-    this.server?.close();
+  serverApp.use = function (
+    ...args: [string, ...FourzeMiddleware[]] | FourzeMiddleware[]
+  ) {
+    app.use(...(args as Parameters<FourzeApp["use"]>));
     return this;
   };
 
-  Object.defineProperties(app, {
+  serverApp.close = function () {
+    return new Promise((resolve, reject) => {
+      if (this.server) {
+        this.server.close((err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      } else {
+        reject(new Error("Server is not defined"));
+      }
+    });
+  };
+
+  Object.defineProperties(serverApp, {
     port: {
       get() {
         return _port;
@@ -278,5 +248,5 @@ export function createFourzeServer(options: FourzeServerOptions = {}) {
     }
   });
 
-  return app;
+  return serverApp;
 }

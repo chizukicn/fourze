@@ -9,14 +9,14 @@ import {
   toRawHeaders
 } from "@fourze/core";
 import { HTTP_STATUS_CODES } from "./code";
-import type { FourzeMockRouter } from "./shared";
+import type { FourzeMockApp } from "./shared";
 
 const XHR_EVENTS
   = "readystatechange loadstart progress abort error load timeout loadend".split(
     " "
   );
 
-export function createProxyXMLHttpRequest(router: FourzeMockRouter) {
+export function createProxyXMLHttpRequest(router: FourzeMockApp) {
   const OriginalXmlHttpRequest = router.originalXMLHttpRequest;
   const logger = createLogger("@fourze/mock");
 
@@ -29,10 +29,6 @@ export function createProxyXMLHttpRequest(router: FourzeMockRouter) {
     readonly HEADERS_RECEIVED: number = 2;
     readonly LOADING: number = 3;
     readonly DONE: number = 4;
-
-    get $routes() {
-      return router.routes;
-    }
 
     url = "";
 

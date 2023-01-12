@@ -1,260 +1,162 @@
-import type { MaybePromise } from "maybe-types";
+import type { MaybeRegex } from "maybe-types";
 import type {
-  FourzeBaseHook,
-  FourzeBaseRoute,
-  FourzeHook,
-  FourzeInstance,
+  FourzeApp,
+  FourzeContextOptions,
   FourzeMiddleware,
-  FourzeRouteFunction,
-  FourzeRouteGenerator
+  FourzeNext
 } from "./shared";
-import {
-  FOURZE_METHODS,
-  defineFourzeHook,
-  defineRoute,
-  isFourzeHook
-} from "./shared";
-import {
-  createSingletonPromise,
-  isDef,
-  isFunction,
-  isObject,
-  isString,
-  overload,
-  resolvePath
-} from "./utils";
-export interface FourzeOptions {
-  name?: string
+import { createServiceContext } from "./shared";
+import type { DelayMsType } from "./utils";
+import { isMatch, isString, relativePath, resolvePath } from "./utils";
+
+export interface FourzeAppOptions {
   base?: string
-  setup?: FourzeSetup
-  routes?: FourzeBaseRoute[]
-  hooks?: FourzeBaseHook[]
+
+  middlewares?: FourzeMiddleware[]
+
+  /**
+   *  延时
+   */
+  delay?: DelayMsType
+  /**
+   * 允许的路径规则,默认为所有
+   * @default []
+   */
+  allow?: MaybeRegex[]
+
+  /**
+   *  不允许的路径规则
+   */
+  deny?: MaybeRegex[]
+
+  /**
+   *  不在base域下的外部路径
+   *  @example ["https://www.example.com"]
+   */
+  external?: MaybeRegex[]
+
+  fallback?: FourzeNext
 }
 
-export type FourzeSetup = (
-  route: Fourze
-) => MaybePromise<void | FourzeBaseRoute[] | FourzeInstance>;
+export function createApp(options: FourzeAppOptions = {}): FourzeApp {
+  const { fallback } = options;
 
-const FOURZE_SYMBOL = Symbol("FourzeInstance");
-export interface Fourze
-  extends FourzeRouteGenerator<Fourze>,
-  FourzeRouteFunction<Fourze>,
-  FourzeInstance {
-  (routes: FourzeBaseRoute<any>[]): this
+  const middlewaresMap = new Map<string, FourzeMiddleware[]>();
 
-  hook<R = any>(hook: FourzeHook<R>): this
-  hook<R = any>(handle: FourzeMiddleware<R>): this
-  hook<R = any>(path: string, handle: FourzeMiddleware<R>): this
-  apply(fourze: FourzeInstance): this
+  middlewaresMap.set("/", Array.from(options.middlewares ?? []));
 
-  setup(): Promise<void>
+  const app = (async (request, response, next?: FourzeNext) => {
+    next = next ?? fallback;
+    const { url } = request;
+    const path = app.relative(url);
+    if (path && app.isAllow(url)) {
+      const ms = app.match(path);
 
-  setMeta(name: string, value: any): this
-  setMeta(meta: Record<string, any>): this
-  getMeta<T = any>(name: string): T | undefined
-
-  readonly meta: Record<string, any>
-  readonly name?: string
-  readonly [FOURZE_SYMBOL]: true
-}
-
-export function defineFourze(routes: FourzeBaseRoute[]): Fourze;
-
-export function defineFourze(options: FourzeOptions): Fourze;
-
-export function defineFourze(setup: FourzeSetup): Fourze;
-
-export function defineFourze(base: string, setup: FourzeSetup): Fourze;
-
-export function defineFourze(): Fourze;
-
-export function defineFourze(
-  options: FourzeOptions | FourzeBaseRoute[] | FourzeSetup | string = {},
-  setupFn?: FourzeSetup
-): Fourze {
-  const isBase = isString(options);
-  const isRoutes = Array.isArray(options);
-  const isSetup = isFunction(options);
-  const isOption = !isRoutes && !isSetup && !isBase;
-
-  let _base = isBase ? options : isOption ? options.base : undefined;
-  const setup = isBase
-    ? setupFn
-    : isOption
-      ? options.setup
-      : isSetup
-        ? options
-        : undefined;
-
-  const _name = isOption ? options.name : undefined;
-
-  const routes = Array.from(
-    (isOption ? options.routes : isRoutes ? options : []) ?? []
-  );
-  const hooks: FourzeHook[] = [];
-
-  const fourze = function (
-    this: Fourze,
-    param0: string | FourzeBaseRoute | FourzeBaseRoute[],
-    ...args: any[]
-  ) {
-    if (isFourze(param0)) {
-      routes.push(...param0.routes.map(defineRoute));
-      hooks.push(...param0.hooks);
-    } else if (Array.isArray(param0)) {
-      routes.push(...param0.map(defineRoute));
-    } else if (isObject(param0)) {
-      routes.push(param0);
-    } else {
-      const route = overload(
-        [
-          {
-            type: "string",
-            name: "path",
-            required: true
-          },
-          {
-            type: "string",
-            name: "method"
-          },
-          {
-            type: "object",
-            name: "props"
-          },
-          {
-            type: "object",
-            name: "meta"
-          },
-          {
-            type: "function",
-            name: "handle",
-            required: true
-          }
-        ],
-        [param0, ...args]
-      );
-      if (isDef(route)) {
-        routes.push(route);
+      async function doNext() {
+        const middleware = ms.shift();
+        if (middleware) {
+          await middleware(request, response, doNext);
+        } else {
+          return await next?.();
+        }
       }
+      await doNext();
+    } else {
+      await next?.();
     }
-    return fourze;
-  } as Fourze;
+  }) as FourzeApp;
 
-  fourze.hook = function (
-    ...args: [string, FourzeMiddleware] | [FourzeMiddleware] | [FourzeHook]
+  app.match = (url: string) => {
+    return Array.from(middlewaresMap.entries())
+      .filter(([path]) => isMatch(url, path))
+      .flatMap(([, ms]) => ms);
+  };
+
+  app.use = function (
+    ...args: [string, ...FourzeMiddleware[]] | FourzeMiddleware[]
   ) {
-    if (isFourzeHook(args[0])) {
-      hooks.push(args[0]);
-    } else {
-      const hook = defineFourzeHook(
-        ...(args as Parameters<typeof defineFourzeHook>)
-      );
-      hooks.push(hook);
-    }
+    const arg0 = args[0];
+    const isPath = isString(arg0);
+    const path = resolvePath(isPath ? arg0 : "/", "/");
+    const ms = isPath ? args.slice(1) : args;
+    const old = middlewaresMap.get(path) ?? [];
+    middlewaresMap.set(path, [...old, ...ms] as FourzeMiddleware[]);
+
+    ms.forEach((r) => {
+      Object.defineProperty(r, "base", {
+        value: resolvePath(path, this.base),
+        writable: false,
+        configurable: true
+      });
+    });
+
     return this;
   };
 
-  fourze.apply = function (instance: FourzeInstance) {
-    routes.push(...instance.routes);
-    hooks.push(...instance.hooks);
-    return this;
+  app.service = async function (options: FourzeContextOptions) {
+    const { request, response } = createServiceContext(options);
+    await this(request, response, async () => {
+      await fallback?.();
+    });
+    return { request, response };
   };
 
-  const _meta: Record<string, any> = {};
-
-  fourze.setMeta = function (name: string | Record<string, any>, value?: any) {
-    if (isString(name)) {
-      _meta[name] = value;
-    } else {
-      Object.assign(_meta, value ?? {});
-    }
-    return this;
-  };
-
-  fourze.getMeta = function<T>(name: string) {
-    return _meta[name] as T;
-  };
-
-  Object.defineProperties(fourze, {
-    routes: {
-      get() {
-        return routes.map((e) => {
-          return defineRoute({
-            ...e,
-            base: _base
-          });
-        });
+  app.isAllow = function (url: string) {
+    const { allow, deny, external } = options;
+    const path = this.relative(url);
+    if (path) {
+      let rs = path.startsWith(this.base);
+      if (allow?.length) {
+        // 有允许规则
+        rs &&= isMatch(path, ...allow);
       }
-    },
-    hooks: {
+      if (external?.length) {
+        // 有外部规则
+        rs ||= isMatch(path, ...external);
+      }
+      if (deny?.length) {
+        // 有拒绝规则,优先级最高
+        rs &&= !isMatch(path, ...deny);
+      }
+      return rs;
+    }
+    return false;
+  };
+
+  app.allow = function (...rules: MaybeRegex[]) {
+    const { allow } = options;
+    options.allow = [...(allow ?? []), ...rules];
+    return this;
+  };
+
+  app.deny = function (...rules: MaybeRegex[]) {
+    const { deny } = options;
+    options.deny = [...(deny ?? []), ...rules];
+    return this;
+  };
+
+  app.mount = async function () {
+    const tasks = this.middlewares.map(async (r) => r.setup?.(this));
+    await Promise.all(tasks);
+  };
+
+  app.relative = function (url: string) {
+    return relativePath(url, this.base);
+  };
+
+  Object.defineProperties(app, {
+    middlewares: {
       get() {
-        return hooks.map((e) => {
-          return {
-            ...e,
-            path: resolvePath(e.path, _base)
-          };
-        });
+        return Array.from(middlewaresMap.values()).flat();
       }
     },
     base: {
       get() {
-        return _base;
-      },
-      set(value) {
-        _base = value;
-      }
-    },
-
-    ...Object.fromEntries(
-      [...FOURZE_METHODS, "all" as const].map((method) => [
-        method,
-        {
-          get() {
-            return function (this: Fourze, path: string, ...others: any[]) {
-              const args = [
-                path,
-                method === "all" ? undefined : method,
-                ...others
-              ] as unknown as Parameters<Fourze>;
-              return this(...args);
-            };
-          }
-        }
-      ])
-    ),
-    name: {
-      get() {
-        return _name ?? _meta.name;
+        return options.base ?? "/";
       },
       configurable: true
-    },
-
-    meta: {
-      get() {
-        return _meta;
-      }
-    },
-
-    [FOURZE_SYMBOL]: {
-      get() {
-        return true;
-      }
     }
   });
 
-  fourze.setup = createSingletonPromise(async () => {
-    const extra = (await setup?.(fourze)) ?? [];
-
-    if (Array.isArray(extra)) {
-      routes.push(...extra);
-    } else if (extra) {
-      fourze.apply(extra);
-    }
-  });
-
-  return fourze;
-}
-
-export function isFourze(fourze: any): fourze is Fourze {
-  return !!fourze && fourze[FOURZE_SYMBOL];
+  return app;
 }

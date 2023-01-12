@@ -1,32 +1,27 @@
+import type { FourzeContextOptions } from "@fourze/core";
 import {
   FOURZE_VERSION,
+  createApp,
   createLogger,
-  createRouter,
   isDef,
   isNode
 } from "@fourze/core";
 import { createProxyFetch } from "./fetch";
 import { createProxyRequest } from "./request";
 import type {
-  FourzeMockRequestMode,
-  FourzeMockRouter,
-  FourzeMockRouterOptions
+  FourzeMockApp,
+  FourzeMockAppOptions,
+  FourzeMockRequestMode
 } from "./shared";
-import { FOURZE_MOCK_ROUTER_SYMBOL } from "./shared";
+import { FOURZE_MOCK_APP_SYMBOL } from "./shared";
 import { createProxyXMLHttpRequest } from "./xhr";
 
-export function createMockRouter(
-  options: FourzeMockRouterOptions = {}
-): FourzeMockRouter {
+export function createMockApp(
+  options: FourzeMockAppOptions = {}
+): FourzeMockApp {
   const logger = createLogger("@fourze/mock");
 
-  const instance = createRouter(options) as FourzeMockRouter;
-
-  Object.defineProperty(instance, "base", {
-    get() {
-      return options.base ?? "/";
-    }
-  });
+  const app = createApp(options) as FourzeMockApp;
 
   logger.info("Fourze Mock is starting...");
   logger.info(`Powered by Fourze v${FOURZE_VERSION}`);
@@ -35,15 +30,17 @@ export function createMockRouter(
   const autoEnable = options.autoEnable ?? true;
   const activeMode = new Set<FourzeMockRequestMode>(mode);
 
+  const origin = options.origin ?? globalThis.location?.origin ?? "";
+
   const injectGlobal = options.global ?? true;
 
   if (injectGlobal) {
-    if (isDef(globalThis.__FOURZE_MOCK_ROUTER__)) {
+    if (isDef(globalThis.__FOURZE_MOCK_APP__)) {
       logger.warn(
         "Fourze Mock is already started, please do not start it again."
       );
     }
-    globalThis.__FOURZE_MOCK_ROUTER__ = instance;
+    globalThis.__FOURZE_MOCK_APP__ = app;
     globalThis.__FOURZE_VERSION__ = FOURZE_VERSION;
   }
 
@@ -51,26 +48,26 @@ export function createMockRouter(
     const http = require("http");
     const https = require("https");
 
-    instance.originalHttpRequest = http.request;
-    instance.originalHttpsRequest = https.request;
+    app.originalHttpRequest = http.request;
+    app.originalHttpsRequest = https.request;
 
-    instance.request = createProxyRequest(instance) as typeof http.request;
+    app.request = createProxyRequest(app) as typeof http.request;
   }
 
   if (mode.includes("xhr")) {
     const XMLHttpRequest = globalThis.XMLHttpRequest;
-    instance.originalXMLHttpRequest = XMLHttpRequest;
-    instance.XmlHttpRequest = createProxyXMLHttpRequest(
-      instance
+    app.originalXMLHttpRequest = XMLHttpRequest;
+    app.XmlHttpRequest = createProxyXMLHttpRequest(
+      app
     ) as unknown as typeof XMLHttpRequest;
   }
 
   if (mode.includes("fetch")) {
-    instance.originalFetch = globalThis.fetch;
-    instance.fetch = createProxyFetch(instance) as typeof fetch;
+    app.originalFetch = globalThis.fetch;
+    app.fetch = createProxyFetch(app) as typeof fetch;
   }
 
-  instance.enable = function (_mode?: FourzeMockRequestMode[]) {
+  app.enable = function (_mode?: FourzeMockRequestMode[]) {
     _mode = _mode ?? Array.from(mode);
     _mode.forEach((m) => activeMode.add(m));
 
@@ -90,7 +87,7 @@ export function createMockRouter(
     return this;
   };
 
-  instance.disable = function (_mode?: FourzeMockRequestMode[]) {
+  app.disable = function (_mode?: FourzeMockRequestMode[]) {
     _mode = _mode ?? Array.from(mode);
     _mode.forEach((m) => activeMode.delete(m));
 
@@ -110,7 +107,16 @@ export function createMockRouter(
     return this;
   };
 
-  Object.defineProperties(instance, {
+  const _service = app.service.bind(app);
+
+  app.service = function (context: FourzeContextOptions) {
+    return _service({
+      ...context,
+      url: context.url.replace(origin, "")
+    });
+  };
+
+  Object.defineProperties(app, {
     activeModes: {
       get() {
         return Array.from(activeMode);
@@ -118,10 +124,10 @@ export function createMockRouter(
     },
     enabled: {
       get() {
-        return instance.activeModes.length > 0;
+        return app.activeModes.length > 0;
       }
     },
-    [FOURZE_MOCK_ROUTER_SYMBOL]: {
+    [FOURZE_MOCK_APP_SYMBOL]: {
       get() {
         return true;
       }
@@ -129,25 +135,23 @@ export function createMockRouter(
   });
 
   if (autoEnable) {
-    instance.enable();
+    app.enable();
   }
 
-  instance.use((r) => {
-    r.hook(async (req, res, next) => {
-      if (!req.headers["X-Fourze-Mock"]) {
-        req.headers["X-Fourze-Mock"] = "on";
-      }
-      await next?.();
-    });
+  app.use(async (req, res, next) => {
+    if (!req.headers["X-Fourze-Mock"]) {
+      req.headers["X-Fourze-Mock"] = "on";
+    }
+    await next?.();
   });
 
-  return instance;
+  return app;
 }
 
 export function getGlobalMockRouter() {
-  return globalThis.__FOURZE_MOCK_ROUTER__;
+  return globalThis.__FOURZE_MOCK_APP__;
 }
 
-export function isMockRouter(router: any): router is FourzeMockRouter {
-  return !!router && router[FOURZE_MOCK_ROUTER_SYMBOL];
+export function isMockRouter(router: any): router is FourzeMockApp {
+  return !!router && router[FOURZE_MOCK_APP_SYMBOL];
 }

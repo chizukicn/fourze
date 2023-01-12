@@ -90,6 +90,7 @@ export interface CollectionQuery<T> extends Iterable<T> {
   slice(start?: number, end?: number): this
   toArray(): T[]
   toSet(): Set<T>
+  includes(value: T, fromIndex?: number): boolean
   count(): number
   reset(source?: Iterable<T>): this
   // set(index: number, value: T): this
@@ -172,16 +173,16 @@ export function createQuery<T>(
         return this.reset(new Set(source));
       }
       const set = new Set<U>();
-      source.length = 0;
+      const array: T[] = [];
       for (let i = 0; i < source.length; i++) {
         const item = source[i];
         const key = mapFn(item, i);
         if (!set.has(key)) {
           set.add(key);
-          source.push(item);
+          array.push(item);
         }
       }
-      return this;
+      return this.reset(new Set(array));
     },
     intersect(...collections: Iterable<T>[]) {
       const set = new Set(collections.flatMap((c) => Array.from(c)));
@@ -243,6 +244,9 @@ export function createQuery<T>(
     reset(iterable: Iterable<T> = initSource) {
       source.splice(0, source.length, ...Array.from(iterable));
       return this;
+    },
+    includes(item: T, fromIndex = 0) {
+      return source.includes(item, fromIndex);
     },
     toArray() {
       return Array.from(source);

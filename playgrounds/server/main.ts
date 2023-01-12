@@ -1,16 +1,17 @@
+import fs from "fs";
+import path from "path";
 import comporession from "compression";
 import ejs from "ejs";
 import express from "express";
 
-import { CommonMiddleware, FourzeRequest, FourzeResponse } from "@fourze/core";
-import { createFourzeServer, createHotRouter, createRenderer, FourzeRendererContext } from "@fourze/server";
-import fs from "fs";
-import path from "path";
+import type { CommonMiddleware, FourzeRequest, FourzeResponse } from "@fourze/core";
+import type { FourzeRendererContext } from "@fourze/server";
+import { createHmrApp, createRenderer, createServer } from "@fourze/server";
 
-const router = createHotRouter().use(route => {
+const router = createHmrApp().use(route => {
   route("GET /hello", () => {
     return {
-      msg: "hello router 1",
+      msg: "hello router 1"
     };
   });
 });
@@ -26,7 +27,7 @@ const renderer = createRenderer({ dir: path.resolve(process.cwd(), "./"), fallba
 
 renderer.use(renderEjs);
 
-const app = createFourzeServer({});
+const app = createServer({});
 
 app.use(router);
 

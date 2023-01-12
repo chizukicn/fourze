@@ -3,16 +3,21 @@ import minimatch from "minimatch";
 import { isRegExp } from "./is";
 
 export function slash(...paths: string[]): string {
-  return paths
+  let path = paths
     .map((p) => p.replace(/\\/g, "/"))
     .join("/")
-    .replace(/\/+/g, "/")
-    .replace(/\/$/, "");
+    .replace(/\/+/g, "/");
+
+  if (path.length > 1 && path.endsWith("/")) {
+    path = path.slice(0, -1);
+  }
+
+  return path;
 }
 
-export function resolvePath(_path: string, _base?: string): string {
+export function resolvePath(_path: string, _base = "/"): string {
   if (!hasProtocol(_path)) {
-    if (!_path.startsWith("//") && _base) {
+    if (!_path.startsWith("//")) {
       return slash(_base, _path);
     }
     return slash(_path);
@@ -20,14 +25,18 @@ export function resolvePath(_path: string, _base?: string): string {
   return _path;
 }
 
-export function relativePath(path: string, base?: string): string {
+export function relativePath(path: string, base?: string): string | null {
   if (!hasProtocol(path)) {
     if (base) {
-      path = path.replace(new RegExp(`^${slash(base)}`), "/");
+      if (path.startsWith(base)) {
+        path = path.replace(new RegExp(`^${slash(base)}`), "/");
+      } else {
+        return null;
+      }
     }
     return slash(path);
   }
-  return path;
+  return null;
 }
 
 export function hasProtocol(path: string) {

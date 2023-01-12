@@ -1,4 +1,4 @@
-import { createRouter, isMatch, randomInt, resolvePath } from "@fourze/core";
+import { createApp, defineRouter, isMatch, randomInt, resolvePath } from "@fourze/core";
 import { describe, expect, it } from "vitest";
 
 describe("shared", async () => {
@@ -14,14 +14,15 @@ describe("shared", async () => {
       count: randomInt(200),
     };
 
-    const router = createRouter(() => {
-      return {
-        delay: "200-500",
-        allow: ["/api/**", "/hello", "/add"],
-        deny: ["/api/deny"],
-        external: ["http://www.test.com"],
-      };
-    }).use("/api/", route => {
+    const app = createApp({
+      base:'/api',
+      delay: "200-500",
+      allow: ["/api/**", "/hello", "/add"],
+      deny: ["/api/deny"],
+      external: ["http://www.test.com"]
+    })
+
+    const router = defineRouter(route => {
       route.get("/test", () => {
         return {
           ...testData,
@@ -38,13 +39,13 @@ describe("shared", async () => {
         return "not-allow";
       });
 
-      route("get http://test.com/hello", () => {
+      route.route("get http://test.com/hello", () => {
         return {
           ...testData,
         };
       });
 
-      route("GET http://www.test.com/hello", () => {
+      route.route("GET http://www.test.com/hello", () => {
         return {
           ...testData,
         };
@@ -54,14 +55,14 @@ describe("shared", async () => {
         return "deny";
       });
 
-      route("POST //add", () => {
+      route.route("POST //add", () => {
         return {
           ...testData,
         };
       });
     });
 
-    await router.setup();
+    await app.use(router).mount();
 
     // has not base
     expect(router.match("/api/test")).not.length(0);

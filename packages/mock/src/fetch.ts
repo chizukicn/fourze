@@ -8,7 +8,7 @@ import {
   isURL,
   normalizeRoute
 } from "@fourze/core";
-import type { FourzeMockRouter } from "./shared";
+import type { FourzeMockApp } from "./shared";
 
 class ProxyFetchResponse implements Response {
   readonly url: string;
@@ -78,9 +78,9 @@ class ProxyFetchResponse implements Response {
   }
 }
 
-export function createProxyFetch(router: FourzeMockRouter) {
+export function createProxyFetch(app: FourzeMockApp) {
   const logger = createLogger("@fourze/mock");
-  const originalFetch = router.originalFetch;
+  const originalFetch = app.originalFetch;
 
   if (!originalFetch) {
     logger.warn("globalThis.fetch is not defined");
@@ -105,7 +105,7 @@ export function createProxyFetch(router: FourzeMockRouter) {
 
     async function mockRequest() {
       headers["X-Request-With"] = "Fourze Fetch Proxy";
-      const { response } = await router.service({
+      const { response } = await app.service({
         url,
         method,
         body,

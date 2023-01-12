@@ -2,22 +2,24 @@
 /* eslint-disable no-var */
 import type http from "http";
 import type https from "https";
-import type { FourzeRouter, FourzeRouterOptions } from "@fourze/core";
+import type { FourzeApp, FourzeAppOptions } from "@fourze/core";
 
 declare global {
-  var __FOURZE_MOCK_ROUTER__: FourzeMockRouter;
+  var __FOURZE_MOCK_APP__: FourzeMockApp;
 
   var __FOURZE_VERSION__: string;
 }
 
 export type FourzeMockRequestMode = "xhr" | "fetch" | "request";
 
-export interface FourzeMockRouterOptions extends FourzeRouterOptions {
+export interface FourzeMockAppOptions extends FourzeAppOptions {
   base?: string
   /**
    * @default ["xhr","fetch"]
    */
   mode?: FourzeMockRequestMode[]
+
+  origin?: string
 
   port?: string
 
@@ -28,9 +30,9 @@ export interface FourzeMockRouterOptions extends FourzeRouterOptions {
   global?: boolean
 }
 
-export const FOURZE_MOCK_ROUTER_SYMBOL = Symbol("FOURZE_MOCK_ROUTER_SYMBOL");
+export const FOURZE_MOCK_APP_SYMBOL = Symbol("FOURZE_MOCK_APP_SYMBOL");
 
-export interface FourzeMockRouter extends FourzeRouter {
+export interface FourzeMockApp extends FourzeApp {
   originalFetch: typeof fetch
   originalXMLHttpRequest: typeof XMLHttpRequest
   originalHttpRequest: typeof http.request
@@ -52,7 +54,7 @@ export interface FourzeMockRouter extends FourzeRouter {
 
   activeModes: FourzeMockRequestMode[]
 
-  [FOURZE_MOCK_ROUTER_SYMBOL]: true
+  [FOURZE_MOCK_APP_SYMBOL]: true
 }
 
 export {};

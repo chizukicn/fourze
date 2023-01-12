@@ -1,12 +1,12 @@
 import type { FourzeMockRouterOptions } from "@fourze/mock";
-import type { FourzeHotRouter } from "@fourze/server";
+import type { FourzeHmrApp } from "@fourze/server";
 import { normalizePath } from "@fourze/server";
 import dedent from "dedent";
 
 const TEMPORARY_FILE_SUFFIX = ".tmp.js";
 
 export function defaultMockCode(
-  router: FourzeHotRouter,
+  router: FourzeHmrApp,
   options: FourzeMockRouterOptions
 ) {
   let code = "import {createMockRouter} from \"@fourze/mock\";";
