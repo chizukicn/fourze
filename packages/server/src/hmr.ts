@@ -1,13 +1,14 @@
 import fs from "fs";
 import { join, resolve } from "path";
+import { createApp, createLogger, isFunction, isString } from "@fourze/core";
 import type {
   DelayMsType,
   FourzeApp,
   FourzeAppOptions,
   FourzeBaseRoute,
   FourzeMiddleware
+
 } from "@fourze/core";
-import { createApp, createLogger, isFunction, isString } from "@fourze/core";
 import type { FSWatcher } from "chokidar";
 import { defineEnvs, normalizePath } from "./utils";
 
@@ -71,7 +72,7 @@ export interface FourzeProxyOption extends Omit<FourzeBaseRoute, "handle"> {
 
 export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
   const delay = options.delay ?? 0;
-  const rootDir = resolve(process.cwd(), options.dir ?? "routes");
+  const rootDir = resolve(process.cwd(), options.dir ?? "router");
 
   const pattern = transformPattern(options.pattern ?? [".ts", ".js"]);
   const moduleNames = new Set(Array.from(options.moduleNames ?? []));
@@ -156,16 +157,20 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
       }
     };
 
-    const stat = await fs.promises.stat(moduleName);
-    if (stat.isDirectory()) {
-      const files = await fs.promises.readdir(moduleName);
-      const tasks = files.map((name) => this.load(join(moduleName, name)));
-      return await Promise.all(tasks).then((r) => r.some((f) => f));
-    } else if (stat.isFile()) {
-      if (!pattern.some((e) => e.test(moduleName))) {
-        return false;
+    if (fs.existsSync(moduleName)) {
+      const stat = await fs.promises.stat(moduleName);
+      if (stat.isDirectory()) {
+        const files = await fs.promises.readdir(moduleName);
+        const tasks = files.map((name) => this.load(join(moduleName, name)));
+        return await Promise.all(tasks).then((r) => r.some((f) => f));
+      } else if (stat.isFile()) {
+        if (!pattern.some((e) => e.test(moduleName))) {
+          return false;
+        }
+        return loadModule(moduleName);
       }
-      return loadModule(moduleName);
+    } else {
+      logger.warn(`load file ${moduleName} not found`);
     }
     return false;
   };
@@ -241,6 +246,13 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
       Object.assign(env, name);
     }
     return this;
+  };
+
+  const _getMiddlewares = app.getMiddlewares;
+
+  app.getMiddlewares = function (this: FourzeHmrApp) {
+    const middlewares = _getMiddlewares.call(this);
+    return [...middlewares];
   };
 
   return Object.defineProperties(app, {

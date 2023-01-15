@@ -11,7 +11,7 @@ describe("overload", async () => {
     {
       name: "method",
       type: "string",
-      default: "get",
+      default:()=> "get",
     },
     {
       name: "props",

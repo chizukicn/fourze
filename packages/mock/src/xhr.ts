@@ -16,8 +16,8 @@ const XHR_EVENTS
     " "
   );
 
-export function createProxyXMLHttpRequest(router: FourzeMockApp) {
-  const OriginalXmlHttpRequest = router.originalXMLHttpRequest;
+export function createProxyXMLHttpRequest(app: FourzeMockApp) {
+  const OriginalXmlHttpRequest = app.originalXMLHttpRequest;
   const logger = createLogger("@fourze/mock");
 
   return class {
@@ -185,16 +185,16 @@ export function createProxyXMLHttpRequest(router: FourzeMockApp) {
       this.dispatchEvent(new Event("readystatechange"));
     }
 
-    async originalSend(data: any) {
+    async originalSend(payload: any) {
       if (this.$base) {
         this.$base.timeout = this.timeout;
         this.$base.responseType = this.responseType;
         this.$base.withCredentials = this.withCredentials;
-        this.$base.send(data);
+        this.$base.send(payload);
       }
     }
 
-    async mockSend(data: any) {
+    async mockSend(payload: any) {
       const { url, method } = this;
 
       this.setRequestHeader("X-Requested-With", "Fourze XHR Proxy");
@@ -204,14 +204,14 @@ export function createProxyXMLHttpRequest(router: FourzeMockApp) {
       this.dispatchEvent(new Event("readystatechange"));
       this.readyState = this.LOADING;
 
-      const { response } = await router.service({
+      const { response } = await app.service({
         url,
         method,
         headers: this.requestHeaders,
-        body: data
+        body: payload
+      }, () => {
+        this.matched = false;
       });
-
-      this.matched = !!response.matched;
 
       if (this.matched) {
         logger.success(`Found route by -> ${normalizeRoute(url, method)}.`);
@@ -234,11 +234,11 @@ export function createProxyXMLHttpRequest(router: FourzeMockApp) {
         this.dispatchEvent(new Event("loadend"));
       } else {
         logger.debug(`Not found route by ${normalizeRoute(url, method)}.`);
-        this.originalSend(data);
+        this.originalSend(payload);
       }
     }
 
-    async send(data?: Document | XMLHttpRequestBodyInit | null | undefined) {
+    async send(payload?: Document | XMLHttpRequestBodyInit | null | undefined) {
       const useMock = getHeaderValue(this.requestHeaders, "X-Fourze-Mock");
       const { url, method } = this;
 
@@ -249,9 +249,9 @@ export function createProxyXMLHttpRequest(router: FourzeMockApp) {
             method
           )}.`
         );
-        await this.originalSend(data);
+        await this.originalSend(payload);
       } else {
-        await this.mockSend(data);
+        await this.mockSend(payload);
       }
     }
 

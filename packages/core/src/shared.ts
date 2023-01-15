@@ -6,8 +6,10 @@ import { version } from "../package.json";
 import {
   isDef,
   isFunction,
+  isObject,
   isString,
   isUint8Array,
+  overload,
   relativePath,
   resolvePath
 } from "./utils";
@@ -16,6 +18,7 @@ import type { PolyfillHeaderInit } from "./polyfill/header";
 import { flatHeaders, getHeaderValue } from "./polyfill/header";
 import { PolyfillServerResponse } from "./polyfill/response";
 import { createLogger } from "./logger";
+import type { FourzeMiddlewareNode } from "./app";
 
 export const FOURZE_VERSION = version;
 
@@ -144,16 +147,15 @@ export interface FourzeRequest<
 
 export interface FourzeBaseResponse extends ServerResponse {
   method?: string
-  matched?: boolean
 }
 export interface FourzeResponse extends FourzeBaseResponse {
-  json(data: any): this
+  json(payload: any): this
 
-  image(data: Buffer): this
+  image(payload: Buffer): this
 
-  text(data: string): this
+  text(payload: string): this
 
-  binary(data: Buffer): this
+  binary(payload: Buffer): this
 
   redirect(url: string): this
 
@@ -161,9 +163,9 @@ export interface FourzeResponse extends FourzeBaseResponse {
 
   removeHeader(key: string): this
 
-  send(data: any, contentType?: string | null): this
+  send(payload: any, contentType?: string | null): this
 
-  getContentType(data?: any): string | undefined
+  getContentType(payload?: any): string | undefined
 
   setContentType(contentType: string): this
 
@@ -299,7 +301,7 @@ type Prop<T, D = T> = PropOptions<T, D> | PropType<T>;
 
 type PropConstructor<T = any> =
   | {
-    new (...args: any[]): T & {}
+    new(...args: any[]): T & {}
   }
   | {
     (): T
@@ -310,7 +312,7 @@ type PropMethod<T, TConstructor = any> = [T] extends [
   ((...args: any) => any) | undefined
 ]
   ? {
-      new (): TConstructor
+      new(): TConstructor
       (): T
       readonly prototype: TConstructor
     }
@@ -475,6 +477,8 @@ export interface FourzeApp extends FourzeMiddleware {
 
   use(...middleware: FourzeMiddleware[]): this
 
+  use(plugin: FourzePlugin): this
+
   /**
    *  是否允许
    * @param url
@@ -487,15 +491,20 @@ export interface FourzeApp extends FourzeMiddleware {
 
   relative(url: string): string | null
 
+  getMiddlewares(): FourzeMiddlewareNode[]
+
   match(url: string): FourzeMiddleware[]
 
-  service(context: FourzeContextOptions): Promise<FourzeContext>
+  service(context: FourzeContextOptions, fallback?: FourzeHandle): Promise<FourzeContext>
 
-  mount(): Promise<void>
+  ready(): Promise<void>
 
   readonly base: string
 
   readonly middlewares: FourzeMiddleware[]
+
+  readonly isReady: boolean
+
 }
 
 export interface CommonMiddleware {
@@ -565,22 +574,24 @@ export function createResponse(options: FourzeResponseOptions) {
     if (!contentType && isDef(data)) {
       if (isUint8Array(data)) {
         contentType = "application/octet-stream";
-      } else {
+      } else if (isObject(data)) {
         contentType = "application/json";
+      } else if (isString(data)) {
+        contentType = "text/plain";
       }
     }
     return contentType;
   };
 
-  response.send = function (data: any, contentType?: string) {
-    contentType = contentType ?? this.getContentType(data);
+  response.send = function (payload: any, contentType?: string) {
+    contentType = contentType ?? this.getContentType(payload);
     switch (contentType) {
       case "application/json":
-        data = JSON.stringify(data);
+        payload = JSON.stringify(payload);
         break;
       case "text/plain":
       case "text/html":
-        data = data.toString();
+        payload = payload.toString();
         break;
       default:
         break;
@@ -588,7 +599,7 @@ export function createResponse(options: FourzeResponseOptions) {
     if (contentType) {
       response.setContentType(contentType);
     }
-    _data = data;
+    _data = payload;
     return this;
   };
 
@@ -601,11 +612,11 @@ export function createResponse(options: FourzeResponseOptions) {
 
   const _end = response.end.bind(response);
 
-  response.end = function (data: any) {
-    if (data) {
-      this.send(data);
+  response.end = function (payload: any) {
+    if (payload) {
+      this.send(payload);
     }
-    _end(_data);
+    _end(payload);
     return response;
   };
 
@@ -628,20 +639,20 @@ export function createResponse(options: FourzeResponseOptions) {
     return this;
   };
 
-  response.json = function (data: any) {
-    return this.send(data, "application/json");
+  response.json = function (payload: any) {
+    return this.send(payload, "application/json");
   };
 
-  response.binary = function (data: Buffer) {
-    return this.send(data, "application/octet-stream");
+  response.binary = function (payload: Buffer) {
+    return this.send(payload, "application/octet-stream");
   };
 
-  response.image = function (data: Buffer) {
-    return this.send(data, "image/jpeg");
+  response.image = function (payload: Buffer) {
+    return this.send(payload, "image/jpeg");
   };
 
-  response.text = function (data: string) {
-    return this.send(data, "text/plain");
+  response.text = function (payload: string) {
+    return this.send(payload, "text/plain");
   };
 
   response.redirect = function (url: string) {
@@ -847,6 +858,46 @@ export function createRequest(options: FourzeRequestOptions) {
   });
 
   return request;
+}
+
+const FOURZE_PLUGIN_SYMBOL = Symbol("FOURZE_PLUGIN_SYMBOL");
+export interface FourzePluginInstall {
+  (app: FourzeApp): MaybePromise<void>
+}
+
+export interface FourzePlugin {
+  name: string
+  install: FourzePluginInstall
+  readonly [FOURZE_PLUGIN_SYMBOL]: boolean
+}
+
+export function definePlugin(install: FourzePluginInstall): FourzePlugin;
+export function definePlugin(name: string, install: FourzePluginInstall): FourzePlugin;
+
+export function definePlugin(...args: [FourzePluginInstall] | [string, FourzePluginInstall]): FourzePlugin {
+  const { name, install } = overload([
+    {
+      name: "name",
+      type: "string",
+      required: false
+    },
+    {
+      name: "install",
+      type: "function",
+      required: true
+    }
+  ], args);
+  return {
+    name,
+    install,
+    get [FOURZE_PLUGIN_SYMBOL]() {
+      return true;
+    }
+  };
+}
+
+export function isFourzePlugin(obj: any): obj is FourzePlugin {
+  return !!obj && !!obj[FOURZE_PLUGIN_SYMBOL];
 }
 
 export function isFourzeResponse(obj: any): obj is FourzeResponse {

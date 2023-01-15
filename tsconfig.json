@@ -22,7 +22,7 @@
             "@fourze/unplugin": [
                 "./packages/integrations/unplugin/src/index.ts"
             ],
-            "@fourze/nuxt": ["./packages/integrations/nuxt/src/index.ts"],
+            "@fourze/nuxt": ["./packages/integrations/nuxt/src/module.ts"],
             "@fourze/swagger": [
               "./packages/integrations/swagger/src/index.ts"
           ],

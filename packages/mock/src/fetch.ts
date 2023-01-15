@@ -59,10 +59,7 @@ class ProxyFetchResponse implements Response {
   }
 
   async json() {
-    if (isString(this.data)) {
-      return JSON.parse(this.data);
-    }
-    return this.data;
+    return JSON.parse(String(this.data));
   }
 
   clone(): Response {
@@ -105,23 +102,22 @@ export function createProxyFetch(app: FourzeMockApp) {
 
     async function mockRequest() {
       headers["X-Request-With"] = "Fourze Fetch Proxy";
+      let isMatched = true;
       const { response } = await app.service({
         url,
         method,
         body,
         headers
+      }, async () => {
+        isMatched = false;
       });
-      if (response.matched) {
-        logger.success(`Found route by -> ${normalizeRoute(url, method)}.`);
-        return new ProxyFetchResponse(response);
+      if (!isMatched) {
+        logger.debug(
+          `No matched mock for ${normalizeRoute(url, method)}, fallback to original.`
+        );
+        return originalFetch(input, init);
       }
-      logger.debug(
-        `Not found route, fallback to original -> ${normalizeRoute(
-          url,
-          method
-        )}.`
-      );
-      return originalFetch(input, init);
+      return new ProxyFetchResponse(response);
     }
 
     if (useMock === "off") {

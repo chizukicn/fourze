@@ -129,7 +129,7 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
 
     async buildStart() {
       try {
-        await router.mount();
+        await router.ready();
 
         logger.info("Fourze plugin is ready.");
       } catch (error) {

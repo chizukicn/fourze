@@ -35,9 +35,9 @@ export function createSingletonPromise<T>(
 ): SingletonPromiseReturn<T> {
   let _promise: Promise<T> | undefined;
 
-  function wrapper() {
+  function wrapper(this: any) {
     if (!_promise) {
-      _promise = Promise.resolve(fn());
+      _promise = Promise.resolve(fn.call(this));
     }
     return _promise;
   }

@@ -134,20 +134,16 @@ export function defineRouter(
       };
     }
 
-    response.matched = !!route;
-    try {
+    if (route) {
       let _result: any;
-      if (route) {
+      try {
         _result = await route.handle(request, response);
         if (_result) {
           response.send(_result);
         }
+      } catch (error: any) {
+        response.sendError(500, error.message);
       }
-    } catch (error: any) {
-      response.sendError(500, error.message);
-    }
-
-    if (response.matched) {
       logger.info(
         `Request matched -> ${normalizeRoute(request.path, method)}.`
       );

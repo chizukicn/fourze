@@ -1,10 +1,10 @@
 import { isUndef } from "./is";
 
-export type OverloadConfig<T = object, V = T[keyof T]> = {
+export type OverloadConfig<T = object, V = T[keyof T], D = V> = {
   name: keyof T
   required?: boolean
   type: "string" | "number" | "boolean" | "array" | "object" | "function"
-  default?: any
+  default?: () => D
   transform?: (value: V) => any
   match?: (value: V) => boolean
   rest?: boolean
@@ -45,8 +45,8 @@ export function defineOverload<T extends Record<string, any>>(
         if (matchValue(value)) {
           result[name] = transform ? transform(value) : value;
           continue;
-        } else {
-          result[name] = defaultValue;
+        } else if (defaultValue) {
+          result[name] = defaultValue();
         }
 
         parameters.unshift(value);

@@ -32,7 +32,7 @@ describe("fetch", async () => {
 
     app.use(router);
 
-    await app.mount();
+    await app.ready();
 
     const fetchReturn = await fetch("http://localhost:7609/hello");
 

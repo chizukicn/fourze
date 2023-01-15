@@ -1,4 +1,4 @@
 export * from "./server";
 export * from "./renderer";
-export * from "./router";
+export * from "./hmr";
 export * from "./utils";

@@ -1,14 +1,13 @@
-import { createRouter } from "@fourze/core";
+import { createApp } from "@fourze/core";
 
-import { createFourzeServer } from "@fourze/server";
+import { createServer } from "@fourze/server";
 
-const router = createRouter();
-router.get("/", () => {
+const app = createApp();
+app.get("/", () => {
   return {
     hello: "world"
   };
 });
 
-const server = createFourzeServer();
-server.use(router);
+const server = createServer(app);
 server.listen(3000);

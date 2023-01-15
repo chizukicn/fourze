@@ -1,16 +1,15 @@
 import fs from "fs";
 import path from "path";
-import type { FourzeHandle, ObjectProps } from "@fourze/core";
+import { defineRouter, FourzeHandle, ObjectProps } from "@fourze/core";
 import {
   PolyfillFile,
   createStorage,
-  defineFourze,
   isNode,
-  jsonWrapperHook,
   randomArray,
   randomDate,
   randomInt
-  , randomItem
+  , randomItem,
+
 } from "@fourze/core";
 import {
   failResponseWrap,
@@ -26,15 +25,8 @@ export interface SwaggerMeta extends Record<string, any> {
   summary: string
 }
 
-export default defineFourze((fourze) => {
-  fourze.hook(
-    jsonWrapperHook(
-      (data) => successResponseWrap(data),
-      (error) => failResponseWrap(error.message)
-    )
-  );
-
-  fourze.get(
+export default defineRouter((router) => {
+  router.get(
     "/test",
     {
       name: {
@@ -111,10 +103,9 @@ export default defineFourze((fourze) => {
       return slicePage(items, { page, pageSize });
     };
 
-  fourze("GET /item/list", handleSearch);
+  router.get("/item/list", handleSearch);
 
-  fourze(
-    "DELETE /item/{id}",
+  router.delete("/item/{id}",
     {
       id: {
         type: String,
@@ -131,7 +122,7 @@ export default defineFourze((fourze) => {
     }
   );
 
-  fourze("/img/avatar.jpg", async (req, res) => {
+  router.route("/img/avatar.jpg", async (req, res) => {
     let avatarPath = path.resolve(__dirname, ".tmp/avatar.jpg");
     if (!fs.existsSync(avatarPath)) {
       avatarPath = path.resolve(__dirname, "./test.webp");
@@ -141,7 +132,7 @@ export default defineFourze((fourze) => {
     res.image(f);
   });
 
-  fourze(
+  router.post(
     "/upload/avatar",
     {
       file: {

@@ -1,16 +1,21 @@
 import { defineRouter } from '@fourze/core';
 import { createMockApp } from "@fourze/mock";
 import { describe, expect, it } from "vitest";
+import nodeFetch from "node-fetch";
 
 describe("hooks", async () => {
   it("test-hooks", async () => {
+
+    globalThis.fetch = nodeFetch as typeof globalThis.fetch;
+
     const data = {
       token: "test-token",
     };
 
-    const router = createMockApp({
+    const app = createMockApp({
       delay: "200-500",
       mode: ["fetch"],
+
     })
       .use("/api", async (req, res, next) => {
         if (req.headers["token"]) {
@@ -49,7 +54,7 @@ describe("hooks", async () => {
       }))
 
 
-    await router.mount();
+    await app.ready();
 
     const res = await fetch("/api/test", {
       headers: {
@@ -62,6 +67,12 @@ describe("hooks", async () => {
     const res2 = await fetch("/api/test", { method: "post" });
 
     const resToken = res2.headers.get("token");
+
+    // 请求一个swagger示例的json接口
+    const res3 = await fetch("https://petstore.swagger.io/v2/pet/findByStatus?status=available").then(r=>r.json())
+
+    expect(res3).toBeInstanceOf(Array);
+
 
     expect(resToken).toEqual(data.token);
 

@@ -140,28 +140,31 @@ export function createProxyRequest(app: FourzeMockApp) {
     async _mockRequest() {
       const url = app.relative(this._url);
       if (url) {
+        let isMatched = true;
         const { response } = await app.service({
           url,
           method: this.method,
           headers: this._requestHeaders,
           body: this.buffer.toString("utf-8")
+        }, () => {
+          isMatched = false;
         });
-        if (response.matched) {
-          const res = new ProxyClientResponse(response);
-          this.emit("response", res);
-          logger.success(
-            `Found route by ${normalizeRoute(this._url, this.method)}.`
+        if (!isMatched) {
+          logger.debug(
+            `Not found route, fallback to original ${normalizeRoute(
+              this._url,
+              this.method
+            )}.`
           );
+          this._nativeRequest();
           return;
         }
+        const res = new ProxyClientResponse(response);
+        this.emit("response", res);
+        logger.success(
+          `Found route by ${normalizeRoute(this._url, this.method)}.`
+        );
       }
-      logger.debug(
-        `Not found route, fallback to original ${normalizeRoute(
-          this._url,
-          this.method
-        )}.`
-      );
-      this._nativeRequest();
     }
 
     async _nativeRequest() {

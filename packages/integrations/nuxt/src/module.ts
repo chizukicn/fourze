@@ -33,23 +33,23 @@ export default defineNuxtModule<ModuleOptions>({
         write: true,
         getContents() {
           return dedent`
-                    import pkg from "@fourze/server"
+                    import { createServer,createHmrApp } from "@fourze/server"
                     import { defineEventHandler } from "h3"
 
-                    const { createFourzeServer, createHotRouter } = pkg
-                    const fourzeServer = createFourzeServer()
-                    const hotRouter = createHotRouter({
+                    const hmrApp = createHmrApp({
                         base: "${options.base ?? "/api"}",
                         dir: "${options.dir ?? "./mock"}",
                         delay: ${JSON.stringify(options.delay ?? 0)},
                     })
-                    fourzeServer.use(hotRouter)
+
+                    const service = createServer(hmrApp)
+
                     const onNotFound = () => {
                         /** empty */
                     }
 
                     export default defineEventHandler(async event => {
-                        await fourzeServer(event.req, event.res, onNotFound)
+                        await service(event.req, event.res, onNotFound)
                     })
                   `;
         }

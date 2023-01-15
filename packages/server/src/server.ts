@@ -8,7 +8,8 @@ import {
   createApp,
   createLogger,
   createServiceContext,
-  isString
+  isString,
+  overload
 } from "@fourze/core";
 import type {
   FourzeApp,
@@ -20,7 +21,6 @@ import type {
 import { injectEventEmitter } from "./utils";
 
 export interface FourzeServerOptions {
-  app?: FourzeApp
   host?: string
   port?: number
   server?: Server
@@ -42,8 +42,6 @@ export interface FourzeServer extends EventEmitter {
 
   readonly server?: Server
   readonly protocol: "http" | "https"
-
-  createServer(): Server
 
   listen(port?: number, host?: string): Promise<Server>
 
@@ -92,7 +90,27 @@ function normalizeAddress(address?: AddressInfo | string | null): string {
   return "unknown";
 }
 
-export function createServer(options: FourzeServerOptions = {}) {
+export function createServer(): FourzeServer;
+
+export function createServer(app: FourzeApp): FourzeServer;
+
+export function createServer(options: FourzeServerOptions): FourzeServer;
+
+export function createServer(app: FourzeApp, options: FourzeServerOptions): FourzeServer;
+
+export function createServer(...args: [FourzeApp, FourzeServerOptions] | [FourzeApp] | [FourzeServerOptions]): FourzeServer {
+  const { app, options } = overload<{ app: FourzeApp; options: FourzeServerOptions }>([
+    {
+      name: "app",
+      type: "function",
+      default: () => createApp()
+    }, {
+      name: "options",
+      type: "object",
+      default: () => ({})
+    }
+  ], args);
+
   let _host = options.host ?? "localhost";
   let _port = options.port ?? 7609;
   let _server = options.server;
@@ -100,8 +118,6 @@ export function createServer(options: FourzeServerOptions = {}) {
   const _protocol = options.protocol ?? "http";
 
   const logger = options.logger ?? createLogger("@fourze/server");
-
-  const app = options.app ?? createApp();
 
   const serverApp = async function (
     req: IncomingMessage,
@@ -140,7 +156,7 @@ export function createServer(options: FourzeServerOptions = {}) {
     logger.error(error);
   });
 
-  serverApp.createServer = function () {
+  const _createServer = function () {
     switch (_protocol) {
       case "https":
         _server = https.createServer(serverApp);
@@ -156,9 +172,9 @@ export function createServer(options: FourzeServerOptions = {}) {
   serverApp.listen = async function (port: number, hostname = "localhost") {
     _port = port ?? _port;
     _host = hostname ?? _host;
-    _server = _server ?? this.createServer();
+    _server = _server ?? _createServer();
 
-    await app.mount();
+    await app.ready();
 
     return new Promise((resolve, reject) => {
       logger.info(`Start server process [${process.pid}]`);
@@ -201,7 +217,7 @@ export function createServer(options: FourzeServerOptions = {}) {
   serverApp.use = function (
     ...args: [string, ...FourzeMiddleware[]] | FourzeMiddleware[]
   ) {
-    app.use(...(args as Parameters<FourzeApp["use"]>));
+    app.use(...args as FourzeMiddleware[]);
     return this;
   };
 

@@ -34,12 +34,12 @@ export function jsonWrapperHook(
     if (!hasMark(res)) {
       const _send = res.send.bind(res);
 
-      res.send = function (data, contentType) {
-        contentType = contentType ?? res.getContentType(data);
+      res.send = function (payload, contentType) {
+        contentType = contentType ?? res.getContentType(payload);
         if (contentType?.startsWith("application/json")) {
-          data = resolve(data);
+          payload = resolve(payload);
         }
-        return _send(data, contentType);
+        return _send(payload, contentType);
       };
 
       if (reject) {

@@ -109,11 +109,11 @@ export function createMockApp(
 
   const _service = app.service.bind(app);
 
-  app.service = function (context: FourzeContextOptions) {
+  app.service = function (context: FourzeContextOptions, fallback) {
     return _service({
       ...context,
       url: context.url.replace(origin, "")
-    });
+    }, fallback);
   };
 
   Object.defineProperties(app, {

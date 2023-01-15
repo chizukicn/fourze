@@ -4,17 +4,17 @@ import comporession from "compression";
 import ejs from "ejs";
 import express from "express";
 
-import type { CommonMiddleware, FourzeRequest, FourzeResponse } from "@fourze/core";
+import { CommonMiddleware, defineRouter, FourzeRequest, FourzeResponse } from "@fourze/core";
 import type { FourzeRendererContext } from "@fourze/server";
 import { createHmrApp, createRenderer, createServer } from "@fourze/server";
 
-const router = createHmrApp().use(route => {
-  route("GET /hello", () => {
+const router = createHmrApp().use(defineRouter(router =>
+  router.route("GET /hello", () => {
     return {
       msg: "hello router 1"
     };
-  });
-});
+  })
+));
 
 export async function renderEjs(request: FourzeRequest, response: FourzeResponse, context: FourzeRendererContext) {
   const file = path.normalize(context.file);
@@ -27,7 +27,7 @@ const renderer = createRenderer({ dir: path.resolve(process.cwd(), "./"), fallba
 
 renderer.use(renderEjs);
 
-const app = createServer({});
+const app = createServer();
 
 app.use(router);
 
