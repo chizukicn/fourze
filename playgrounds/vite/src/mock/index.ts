@@ -1,19 +1,19 @@
 import fs from "fs";
 import path from "path";
-import { defineRouter, FourzeHandle, ObjectProps } from "@fourze/core";
+import type { FourzeHandle, ObjectProps } from "@fourze/core";
 import {
   PolyfillFile,
   createStorage,
+  defineRouter,
   isNode,
   randomArray,
   randomDate,
   randomInt
-  , randomItem,
+  , randomItem
 
 } from "@fourze/core";
 import {
-  failResponseWrap,
-  slicePage, successResponseWrap
+  slicePage
 } from "../utils/setup-mock";
 
 interface Pagination {

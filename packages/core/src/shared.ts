@@ -479,6 +479,8 @@ export interface FourzeApp extends FourzeMiddleware {
 
   use(plugin: FourzePlugin): this
 
+  remove(name: string): this
+
   /**
    *  是否允许
    * @param url
@@ -515,12 +517,15 @@ export interface CommonMiddleware {
   ): MaybePromise<void>
 }
 
-export interface FourzeMiddleware<T = any> {
+export interface FourzeMiddlewareHandler<T = any> {
   (
     req: FourzeRequest,
     res: FourzeResponse,
     next: FourzeNext<T>
   ): MaybePromise<T>
+}
+
+export interface FourzeMiddleware<T = any> extends FourzeMiddlewareHandler<T> {
   name?: string
   base?: string
   setup?: (app: FourzeApp) => MaybePromise<void>
@@ -858,6 +863,28 @@ export function createRequest(options: FourzeRequestOptions) {
   });
 
   return request;
+}
+
+const FOURZE_MIDDLEWARE_SYMBOL = Symbol("FOURZE_PLUGIN_SYMBOL");
+
+export function defineMiddleware(name: string, handler: FourzeMiddlewareHandler): FourzeMiddleware {
+  Object.defineProperties(handler, {
+    name: {
+      value: name,
+      configurable: true
+    },
+    [FOURZE_MIDDLEWARE_SYMBOL]: {
+      get() {
+        return true;
+      },
+      configurable: true
+    }
+  });
+  return handler;
+}
+
+export function isFourzeMiddleware(obj: any): obj is FourzeMiddleware {
+  return obj && obj[FOURZE_MIDDLEWARE_SYMBOL];
 }
 
 const FOURZE_PLUGIN_SYMBOL = Symbol("FOURZE_PLUGIN_SYMBOL");

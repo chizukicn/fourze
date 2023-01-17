@@ -13,7 +13,10 @@ import type {
   ObjectProps,
   PropType
 } from "./shared";
-import { FOURZE_METHODS, defineRoute } from "./shared";
+import {
+  FOURZE_METHODS
+  , defineMiddleware, defineRoute
+} from "./shared";
 import {
   createSingletonPromise,
   isConstructor,
@@ -99,11 +102,11 @@ export function defineRouter(
 
   const logger = createLogger("@fourze/core");
 
-  const router = async function (
+  const router = defineMiddleware(options.name ?? "Router", async (
     request: FourzeRequest,
     response: FourzeResponse,
     next?: FourzeNext
-  ) {
+  ) => {
     request.contextPath = router.base;
 
     const { path, method } = request;
@@ -154,7 +157,7 @@ export function defineRouter(
       await next?.();
     }
     return response.data;
-  } as FourzeRouter;
+  }) as FourzeRouter;
 
   router.match = function (
     this: FourzeRouter,
@@ -163,7 +166,7 @@ export function defineRouter(
   ): [FourzeRoute, RegExpMatchArray] | [] {
     const path = this.relative(url);
     if (path) {
-      for (const route of this.routes) {
+      for (const route of routes) {
         const matches = route.match(path, method);
         if (matches) {
           return [route, matches];
@@ -264,11 +267,6 @@ export function defineRouter(
         }
       ])
     ),
-    name: {
-      get() {
-        return "FourzeRouter";
-      }
-    },
     base: {
       // default base
       get() {

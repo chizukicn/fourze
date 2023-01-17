@@ -1,4 +1,5 @@
 import type { MaybePromise, MaybeRegex } from "maybe-types";
+import { createLogger } from "./logger";
 import type {
   FourzeApp,
   FourzeContextOptions,
@@ -63,13 +64,14 @@ export function createApp(args: FourzeAppOptions | FourzeAppSetup = {}): FourzeA
   const isSetup = typeof args === "function";
   const isRoutes = Array.isArray(args);
   const isOptions = !isSetup && !isRoutes && isObject(args);
+  const logger = createLogger("@fourze/core");
 
   const options = isOptions ? args : {};
   const setup = isSetup ? args : options.setup ?? (() => { });
 
   const { fallback } = options;
 
-  const middlewareStore = createQuery<FourzeMiddlewareNode>();
+  const middlewareStore = createQuery<FourzeMiddlewareNode>((options.middlewares ?? []).map(r => ({ middleware: r, path: "/" })));
 
   const plugins = createQuery<FourzePlugin>();
 
@@ -128,7 +130,15 @@ export function createApp(args: FourzeAppOptions | FourzeAppSetup = {}): FourzeA
         });
 
         middlewareStore.append(...ms.map((middleware) => ({ path, middleware })));
+        logger.info(`use middleware ${r.name} at ${path}`);
       });
+    }
+    return this;
+  };
+
+  app.remove = function (arg: FourzeMiddleware | string) {
+    if (isString(arg)) {
+      middlewareStore.delete((r) => r.middleware.name === arg);
     }
     return this;
   };
@@ -138,6 +148,7 @@ export function createApp(args: FourzeAppOptions | FourzeAppSetup = {}): FourzeA
     await this(request, response, async () => {
       await next?.(request, response);
     });
+    logger.info(`service ${request.url} done`);
     return { request, response };
   };
 

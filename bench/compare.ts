@@ -56,7 +56,7 @@ ${compareResults(true)}
   writeFileSync("README.md", md.split("# Benchmarks")[0] + benchmarkMd, "utf8");
 }
 
-async function compareResults(markdown: boolean) {
+function compareResults(markdown: boolean) {
   const tableStyle = !markdown
     ? {}
     : {

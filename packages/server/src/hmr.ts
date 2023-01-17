@@ -1,21 +1,20 @@
 import fs from "fs";
 import { join, resolve } from "path";
-import { createApp, createLogger, isFunction, isString } from "@fourze/core";
+import { createApp, createLogger, defineMiddleware, isFourzePlugin, isFunction, isString } from "@fourze/core";
 import type {
   DelayMsType,
   FourzeApp,
   FourzeAppOptions,
-  FourzeBaseRoute,
-  FourzeMiddleware
+  FourzeBaseRoute
 
 } from "@fourze/core";
 import type { FSWatcher } from "chokidar";
 import { defineEnvs, normalizePath } from "./utils";
 
-export interface FourzeHmrOptions extends FourzeAppOptions {
+export interface FourzeHmrOptions extends Exclude<FourzeAppOptions, "setup"> {
   /**
    * 路由模块目录
-   * @default "routes"
+   * @default "router"
    */
   dir?: string
   /**
@@ -41,9 +40,6 @@ export interface FourzeHmrOptions extends FourzeAppOptions {
 }
 
 export interface FourzeHmrApp extends FourzeApp {
-  load(): Promise<boolean>
-  load(moduleName: string): Promise<boolean>
-  remove(moduleName: string): this
   watch(watcher?: FSWatcher): this
   watch(dir?: string, watcher?: FSWatcher): this
   proxy(p: string | FourzeProxyOption): this
@@ -79,15 +75,16 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
 
   const logger = createLogger("@fourze/server");
 
-  const extraModuleMap = new Map<string, FourzeMiddleware[]>();
-
   const app = createApp({
-    ...options
+    ...options,
+    async setup() {
+      await load();
+    }
   }) as FourzeHmrApp;
 
   const env: Record<string, any> = {};
 
-  app.load = async function (this: FourzeHmrApp, moduleName: string = rootDir) {
+  async function load(moduleName: string = rootDir): Promise<boolean> {
     if (!fs.existsSync(moduleName)) {
       return false;
     }
@@ -97,15 +94,14 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
         delete require.cache[f];
         const mod = require(f);
         const instance = mod?.default ?? mod;
-        const extras: FourzeMiddleware[] = [];
-
         if (isFunction(instance)) {
-          extras.push(instance);
-          extraModuleMap.set(f, extras);
+          app.use(defineMiddleware(f, instance));
           moduleNames.add(f);
+          return true;
         }
 
-        if (extras.length > 0) {
+        if (isFourzePlugin(instance)) {
+          app.use(instance);
           return true;
         }
         logger.warn(`find not route with "${f}" `);
@@ -161,7 +157,7 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
       const stat = await fs.promises.stat(moduleName);
       if (stat.isDirectory()) {
         const files = await fs.promises.readdir(moduleName);
-        const tasks = files.map((name) => this.load(join(moduleName, name)));
+        const tasks = files.map((name) => load(join(moduleName, name)));
         return await Promise.all(tasks).then((r) => r.some((f) => f));
       } else if (stat.isFile()) {
         if (!pattern.some((e) => e.test(moduleName))) {
@@ -173,6 +169,15 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
       logger.warn(`load file ${moduleName} not found`);
     }
     return false;
+  }
+
+  const _remove = app.remove;
+
+  app.remove = function (this: FourzeHmrApp, moduleName: string) {
+    _remove(moduleName);
+    moduleNames.delete(moduleName);
+    delete require.cache[moduleName];
+    return this;
   };
 
   app.watch = function (
@@ -205,16 +210,16 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
 
       switch (event) {
         case "add": {
-          const load = await this.load(path);
-          if (load) {
+          const isLoaded = await load(path);
+          if (isLoaded) {
             logger.info(`load module ${path}`);
           }
           break;
         }
         case "change": {
           this.remove(path);
-          const load = await this.load(path);
-          if (load) {
+          const isLoaded = await load(path);
+          if (isLoaded) {
             logger.info(`reload module ${normalizePath(path)}`);
           }
           break;
@@ -225,13 +230,6 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
           break;
       }
     });
-    return this;
-  };
-
-  app.remove = function (this: FourzeHmrApp, moduleName: string) {
-    moduleNames.delete(moduleName);
-    extraModuleMap.delete(moduleName);
-    delete require.cache[moduleName];
     return this;
   };
 

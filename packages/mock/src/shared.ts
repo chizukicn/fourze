@@ -12,7 +12,7 @@ declare global {
 
 export type FourzeMockRequestMode = "xhr" | "fetch" | "request";
 
-export interface FourzeMockAppOptions extends FourzeAppOptions {
+export interface FourzeMockAppOptions extends Exclude<FourzeAppOptions, "setup"> {
   base?: string
   /**
    * @default ["xhr","fetch"]

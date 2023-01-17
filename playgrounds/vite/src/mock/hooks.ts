@@ -1,7 +1,6 @@
-import { failResponseWrap, successResponseWrap } from '@/utils/setup-mock';
-import { definePlugin, FourzeApp, FourzeMiddleware, jsonWrapperHook } from '@fourze/core';
+import { definePlugin, jsonWrapperHook } from "@fourze/core";
+import { failResponseWrap, successResponseWrap } from "@/utils/setup-mock";
 
-
-export default definePlugin((app)=>{
-  app.use(jsonWrapperHook(successResponseWrap,failResponseWrap))
-})
+export default definePlugin((app) => {
+  app.use(jsonWrapperHook(successResponseWrap, failResponseWrap));
+});

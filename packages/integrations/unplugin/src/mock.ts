@@ -1,4 +1,4 @@
-import type { FourzeMockRouterOptions } from "@fourze/mock";
+import type { FourzeMockAppOptions } from "@fourze/mock";
 import type { FourzeHmrApp } from "@fourze/server";
 import { normalizePath } from "@fourze/server";
 import dedent from "dedent";
@@ -6,15 +6,15 @@ import dedent from "dedent";
 const TEMPORARY_FILE_SUFFIX = ".tmp.js";
 
 export function defaultMockCode(
-  router: FourzeHmrApp,
-  options: FourzeMockRouterOptions
+  app: FourzeHmrApp,
+  options: FourzeMockAppOptions
 ) {
-  let code = "import {createMockRouter} from \"@fourze/mock\";";
+  let code = "import {createMockApp} from \"@fourze/mock\";";
 
   const names: string[] = [];
-  for (let i = 0; i < router.moduleNames.length; i++) {
-    let modName = router.moduleNames[i];
-    names[i] = `fourze_module_${i}`;
+  for (let i = 0; i < app.moduleNames.length; i++) {
+    let modName = app.moduleNames[i];
+    names[i] = `fourze_middleware_${i}`;
     modName = modName.replace(TEMPORARY_FILE_SUFFIX, "");
     modName = normalizePath(modName);
 
@@ -23,13 +23,12 @@ export function defaultMockCode(
     `;
   }
   code += dedent`
-  createMockRouter({
-    base:"${router.base}",
-    modules:[${names.join(",")}].flat(),
+  createMockApp({
+    base:"${app.base}",
+    middlewares:[${names.join(",")}].flat(),
     delay:${JSON.stringify(options.delay)},
     mode:${JSON.stringify(options.mode)},
     allow:${JSON.stringify(options.allow)},
-    global:true
   });`;
   return code;
 }

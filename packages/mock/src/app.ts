@@ -3,6 +3,7 @@ import {
   FOURZE_VERSION,
   createApp,
   createLogger,
+  defineMiddleware,
   isDef,
   isNode
 } from "@fourze/core";
@@ -107,9 +108,10 @@ export function createMockApp(
     return this;
   };
 
-  const _service = app.service.bind(app);
+  const _service = app.service;
 
   app.service = function (context: FourzeContextOptions, fallback) {
+    logger.info(`Fourze Mock is processing [${context.url}]`);
     return _service({
       ...context,
       url: context.url.replace(origin, "")
@@ -138,12 +140,12 @@ export function createMockApp(
     app.enable();
   }
 
-  app.use(async (req, res, next) => {
+  app.use(defineMiddleware("FourzeMockHeader", async (req, res, next) => {
     if (!req.headers["X-Fourze-Mock"]) {
       req.headers["X-Fourze-Mock"] = "on";
     }
     await next?.();
-  });
+  }));
 
   return app;
 }

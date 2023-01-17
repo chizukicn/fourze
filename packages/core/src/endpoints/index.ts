@@ -1,16 +1,17 @@
-import type { FourzeMiddleware } from "@fourze/core";
 import type { MaybePromise } from "maybe-types";
+import type { FourzeMiddleware } from "../shared";
+import { defineMiddleware } from "../shared";
 import type { DelayMsType } from "../utils";
 import { delay } from "../utils";
 
 export function delayHook(ms: DelayMsType): FourzeMiddleware {
-  return async (req, res, next) => {
+  return defineMiddleware("Delay", async (req, res, next) => {
     await next?.();
     const delayMs
       = res.getHeader("Fourze-Delay") ?? req.headers["Fourze-Delay"] ?? ms;
     const time = await delay(delayMs);
     res.setHeader("Fourze-Delay", time);
-  };
+  });
 }
 
 export function jsonWrapperHook(
@@ -30,7 +31,7 @@ export function jsonWrapperHook(
     });
   }
 
-  return async (req, res, next) => {
+  return defineMiddleware("JsonWrapper", async (req, res, next) => {
     if (!hasMark(res)) {
       const _send = res.send.bind(res);
 
@@ -53,5 +54,5 @@ export function jsonWrapperHook(
       mark(res);
     }
     await next();
-  };
+  });
 }

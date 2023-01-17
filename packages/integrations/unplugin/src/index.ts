@@ -101,18 +101,19 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
 
   setLoggerLevel(options.logLevel ?? "info");
 
-  const proxy = Array.isArray(options.proxy)
-    ? options.proxy
-    : Object.entries(options.proxy ?? {}).map<FourzeProxyOption>(
-      ([path, target]) => {
-        return {
-          path,
-          target
-        };
-      }
-    );
+  // const proxy = Array.isArray(options.proxy)
+  //   ? options.proxy
+  //   : Object.entries(options.proxy ?? {}).map<FourzeProxyOption>(
+  //     ([path, target]) => {
+  //       return {
+  //         path,
+  //         target
+  //       };
+  //     }
+  //   );
 
-  const router = createHmrApp({
+  const app = createHmrApp({
+    base,
     dir,
     pattern,
     delay,
@@ -120,7 +121,7 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
     deny
   });
 
-  proxy.forEach(router.proxy);
+  // proxy.forEach(router.proxy);
 
   const transformCode = options.transformCode ?? defaultTransformCode;
 
@@ -129,7 +130,7 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
 
     async buildStart() {
       try {
-        await router.ready();
+        await app.ready();
 
         logger.info("Fourze plugin is ready.");
       } catch (error) {
@@ -146,13 +147,12 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
 
     async load(id) {
       if (isClientID(id)) {
-        return transformCode(router, options);
+        return transformCode(app, options);
       }
     },
     async webpack() {
-      const app = createServer();
-      app.use(base, router);
-      await app.listen(port, host);
+      const server = createServer(app);
+      await server.listen(port, host);
       logger.info("Webpack Server listening on port", options.server?.port);
     },
 
@@ -187,25 +187,24 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
         };
       },
       async configResolved(config) {
-        router.define(config.env);
+        app.define(config.env);
       },
 
       configureServer({ middlewares, watcher }) {
         if (hmr) {
-          router.watch(watcher);
+          app.watch(watcher);
         }
-        const app = createServer();
-        app.use(base, router);
+        const service = createServer(app);
         // app.use("/v2", swaggerRouter);
 
         if (options.server?.port) {
           try {
-            app.listen(port, host);
+            service.listen(port, host);
           } catch (error) {
             logger.error("Server listen failed.", error);
           }
         } else {
-          middlewares.use(app);
+          middlewares.use(service);
         }
       }
     }

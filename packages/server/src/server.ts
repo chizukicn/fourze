@@ -99,15 +99,13 @@ export function createServer(options: FourzeServerOptions): FourzeServer;
 export function createServer(app: FourzeApp, options: FourzeServerOptions): FourzeServer;
 
 export function createServer(...args: [FourzeApp, FourzeServerOptions] | [FourzeApp] | [FourzeServerOptions]): FourzeServer {
-  const { app, options } = overload<{ app: FourzeApp; options: FourzeServerOptions }>([
+  const { app = createApp(), options = {} } = overload<{ app?: FourzeApp; options?: FourzeServerOptions }>([
     {
       name: "app",
-      type: "function",
-      default: () => createApp()
+      type: "function"
     }, {
       name: "options",
-      type: "object",
-      default: () => ({})
+      type: "object"
     }
   ], args);
 
