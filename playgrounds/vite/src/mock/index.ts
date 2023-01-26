@@ -29,18 +29,20 @@ export default defineRouter((router) => {
   router.get(
     "/test",
     {
-      name: {
-        type: String,
-        required: true,
-        meta: {
-          title: "姓名"
+      props: {
+        name: {
+          type: String,
+          required: true,
+          meta: {
+            title: "姓名"
+          }
         }
-      }
-    },
-    {
-      summary: "测试",
-      response: {
-        type: String
+      },
+      meta: {
+        summary: "测试",
+        response: {
+          type: String
+        }
       }
     },
     (req) => {
@@ -107,10 +109,12 @@ export default defineRouter((router) => {
 
   router.delete("/item/{id}",
     {
-      id: {
-        type: String,
-        required: true,
-        in: "path"
+      props: {
+        id: {
+          type: String,
+          required: true,
+          in: "path"
+        }
       }
     },
     async (req) => {
@@ -135,13 +139,14 @@ export default defineRouter((router) => {
   router.post(
     "/upload/avatar",
     {
-      file: {
-        type: PolyfillFile,
-        required: true,
-        in: "body"
+      props: {
+        file: {
+          type: PolyfillFile,
+          required: true,
+          in: "body"
+        }
       }
     },
-    {},
     async (req) => {
       const file = req.body.file;
       if (!fs.existsSync(path.resolve(__dirname, ".tmp"))) {

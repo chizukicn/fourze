@@ -204,6 +204,8 @@ export function createProxyXMLHttpRequest(app: FourzeMockApp) {
       this.dispatchEvent(new Event("readystatechange"));
       this.readyState = this.LOADING;
 
+      this.matched = true;
+
       const { response } = await app.service({
         url,
         method,
@@ -222,7 +224,7 @@ export function createProxyXMLHttpRequest(app: FourzeMockApp) {
         this.status = 200;
         this.statusText = HTTP_STATUS_CODES[200];
 
-        this.response = response.data;
+        this.response = response.payload;
 
         this.responseHeaders = flatHeaders(response.getHeaders());
 

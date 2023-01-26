@@ -29,6 +29,6 @@ export function defaultMockCode(
     delay:${JSON.stringify(options.delay)},
     mode:${JSON.stringify(options.mode)},
     allow:${JSON.stringify(options.allow)},
-  });`;
+  }).ready();`;
   return code;
 }

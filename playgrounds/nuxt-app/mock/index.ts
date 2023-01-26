@@ -1,44 +1,167 @@
-import { defineFourze, FourzeHandle, jsonWrapperHook, randomDate, randomInt } from "@fourze/core";
-import dayjs from "dayjs";
 import fs from "fs";
 import path from "path";
-import { successResponseWrap } from "../utils/setup-mock";
+import type { FourzeHandle, ObjectProps } from "@fourze/core";
+import {
+  PolyfillFile,
+  createStorage,
+  defineRouter,
+  isNode,
+  randomArray,
+  randomDate,
+  randomInt
+  , randomItem
 
-const keymap = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+} from "@fourze/core";
+import {
+  slicePage
+} from "../utils/setup-mock";
 
-export default defineFourze(fourze => {
-  fourze.hook(jsonWrapperHook((data, req, res) => successResponseWrap(data, req.url)));
+interface Pagination {
+  page: number
+  pageSize: number
+}
 
-  const handleSearch: FourzeHandle = async (req, res) => {
-    const num = Number(req.params.name ?? 0);
-    const phone: number = req.body.phone ?? 1;
-    const rs: Record<string, string> = {};
-    for (let i = 0; i < num + phone; i++) {
-      const len = 10;
-      let str = "";
-      for (let j = 0; j < len; j++) {
-        str += keymap[randomInt(0, keymap.length - 1)];
+export interface SwaggerMeta extends Record<string, any> {
+  summary: string
+}
+
+export default defineRouter((router) => {
+  router.get(
+    "/test",
+    {
+      props: {
+        name: {
+          type: String,
+          required: true,
+          meta: {
+            title: "姓名"
+          }
+        }
+      },
+      meta: {
+        summary: "测试",
+        response: {
+          type: String
+        }
       }
-      rs[str] = `---[${dayjs(randomDate("2022-07-09", "2024-08-12")).format("YYYY-MM-DD HH:mm:ss")}] ---- ${phone}`;
+    },
+    (req) => {
+      return {
+        summary: req.meta.summary
+      };
     }
-    return rs;
+  );
+
+  // person names
+
+  const storage = createStorage();
+  const createData = (source: "server" | "mock") => {
+    if (storage.hasItem("fz_cache_data")) {
+      return storage.getItem("fz_cache_data") as UserInfo[];
+    }
+
+    const data = randomArray<UserInfo>(
+      (value) => {
+        return {
+          id: `${randomInt(100, 999)}${String(value).padStart(4, "0")}`,
+          username: randomItem([
+            "Zhangsan",
+            "Lisi",
+            "Wangwu",
+            "Zhaoliu",
+            "Yan7",
+            "Jack",
+            "Rose",
+            "Tom",
+            "Jerry",
+            "Henry",
+            "Nancy"
+          ]),
+          phone: randomInt("13000000000-19999999999"),
+          createdTime: randomDate("2020-01-01", "2021-01-01"),
+          allow: randomItem(["fetch", "xhr"]),
+          source
+        };
+      },
+      40,
+      80
+    );
+    storage.setItem("fz_cache_data", data);
+    return data;
   };
 
-  fourze("POST http://test.com/Search/{name}", handleSearch);
+  const data = isNode() ? createData("server") : createData("mock");
 
-  fourze("POST /search/{name}", handleSearch);
+  const handleSearch: FourzeHandle<
+    PagingData<UserInfo>,
+    ObjectProps<Pagination>,
+    any> = async (req) => {
+      const {
+        page = 1,
+        pageSize = 10,
+        keyword = ""
+      } = req.query as unknown as Pagination & { keyword?: string };
+      const items = data.filter((item) => item.username.includes(keyword));
+      return slicePage(items, { page, pageSize });
+    };
 
-  fourze("/img/a.jpg", async (req, res) => {
-    const f = await fs.promises.readFile(path.resolve(__dirname, "./test.webp"));
+  router.get("/item/list", handleSearch);
+
+  router.delete("/item/{id}",
+    {
+      props: {
+        id: {
+          type: String,
+          required: true,
+          in: "path"
+        }
+      }
+    },
+    async (req) => {
+      const { id } = req.params;
+      const index = data.findIndex((item) => item.id === id);
+      data.splice(index, 1);
+      storage.setItem("fz_cache_data", data);
+      return { result: true };
+    }
+  );
+
+  router.route("/img/avatar.jpg", async (req, res) => {
+    let avatarPath = path.resolve(__dirname, ".tmp/avatar.jpg");
+    if (!fs.existsSync(avatarPath)) {
+      avatarPath = path.resolve(__dirname, "./test.webp");
+    }
+    res.setHeader("Fourze-Delay", 0);
+    const f = await fs.promises.readFile(avatarPath);
     res.image(f);
   });
 
-  fourze("/download/a", async (req, res) => {
-    const f = await fs.promises.readFile(path.resolve(__dirname, "./index.ts"));
-    res.binary(f);
-  });
+  router.post(
+    "/upload/avatar",
+    {
+      props: {
+        file: {
+          type: PolyfillFile,
+          required: true,
+          in: "body"
+        }
+      }
+    },
+    async (req) => {
+      const file = req.body.file;
+      if (!fs.existsSync(path.resolve(__dirname, ".tmp"))) {
+        fs.mkdirSync(path.resolve(__dirname, ".tmp"));
+      }
 
-  fourze("post /upload", async (req, res) => {});
+      await fs.promises.writeFile(
+        path.resolve(__dirname, ".tmp/avatar.jpg"),
+        file.body
+      );
+      return {
+        size: file.size
+      };
+    }
+  );
 
   return [];
 });

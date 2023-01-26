@@ -37,7 +37,7 @@ class ProxyFetchResponse implements Response {
     this.url = response.url;
     this.status = response.statusCode;
     this.statusText = response.statusMessage;
-    this.data = response.data;
+    this.data = response.payload;
     this.headers = new PolyfillHeaders(response.getHeaders());
     this._response = response;
   }
@@ -111,6 +111,7 @@ export function createProxyFetch(app: FourzeMockApp) {
       }, async () => {
         isMatched = false;
       });
+
       if (!isMatched) {
         logger.debug(
           `No matched mock for ${normalizeRoute(url, method)}, fallback to original.`

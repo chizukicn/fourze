@@ -102,6 +102,7 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
 
         if (isFourzePlugin(instance)) {
           app.use(instance);
+          moduleNames.add(f);
           return true;
         }
         logger.warn(`find not route with "${f}" `);

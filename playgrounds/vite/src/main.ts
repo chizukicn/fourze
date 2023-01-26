@@ -9,17 +9,17 @@ createApp(RouterView)
       routes: [
         {
           path: "/",
-          redirect: "/home",
+          redirect: "/home"
         },
         {
           path: "/home",
-          component: () => import("./app.vue"),
+          component: () => import("./app.vue")
         },
         {
           path: "/fallback",
-          component: () => import("./app.vue"),
-        },
-      ],
+          component: () => import("./app.vue")
+        }
+      ]
     })
   )
   .mount("#app");

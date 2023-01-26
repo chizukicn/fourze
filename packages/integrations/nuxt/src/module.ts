@@ -49,7 +49,7 @@ export default defineNuxtModule<ModuleOptions>({
                     }
 
                     export default defineEventHandler(async event => {
-                        await service(event.req, event.res, onNotFound)
+                        await service(event.node.req, event.node.res, onNotFound)
                     })
                   `;
         }

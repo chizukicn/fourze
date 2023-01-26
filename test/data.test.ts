@@ -19,7 +19,11 @@ describe("data", async () => {
     });
 
     const router = defineRouter({})
-      .route("/hello-1", "get", { name: String }, (req) => {
+      .route("/hello-1", "get", {
+        props: {
+          name: String
+        }
+      }, (req) => {
         return {
           name: req.data.name,
         };
@@ -27,17 +31,23 @@ describe("data", async () => {
       .route("/hello-2", "get", () => {
         return testData;
       })
-      .route("GET /hello-3", { test: String }, () => {
+      .route("GET /hello-3", {
+        props: {
+          test: String
+        }
+      }, () => {
         return testData;
       })
       .post(
         "/hello",
         {
-          name: {
-            type: String,
-            required: true,
-            in: "body",
-          },
+          props: {
+            name: {
+              type: String,
+              required: true,
+              in: "body",
+            },
+          }
         },
         (req) => {
           return {
@@ -53,8 +63,8 @@ describe("data", async () => {
 
     await server.listen();
 
-    const axiosInstance =axios.create({
-      baseURL:server.origin
+    const axiosInstance = axios.create({
+      baseURL: server.origin
     })
 
     const { name } = await axiosInstance

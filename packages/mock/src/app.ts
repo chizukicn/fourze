@@ -108,7 +108,7 @@ export function createMockApp(
     return this;
   };
 
-  const _service = app.service;
+  const _service = app.service.bind(app);
 
   app.service = function (context: FourzeContextOptions, fallback) {
     logger.info(`Fourze Mock is processing [${context.url}]`);

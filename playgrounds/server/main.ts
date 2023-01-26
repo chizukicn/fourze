@@ -4,7 +4,8 @@ import comporession from "compression";
 import ejs from "ejs";
 import express from "express";
 
-import { CommonMiddleware, defineRouter, FourzeRequest, FourzeResponse } from "@fourze/core";
+import type { CommonMiddleware, FourzeRequest, FourzeResponse } from "@fourze/core";
+import { defineRouter } from "@fourze/core";
 import type { FourzeRendererContext } from "@fourze/server";
 import { createHmrApp, createRenderer, createServer } from "@fourze/server";
 

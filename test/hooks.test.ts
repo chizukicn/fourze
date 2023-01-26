@@ -76,7 +76,7 @@ describe("hooks", async () => {
 
     expect(resToken).toEqual(data.token);
 
-    const text = await res2.json();
+    const text = await res2.text();
 
     expect(text).toEqual("post");
   });

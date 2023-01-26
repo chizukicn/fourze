@@ -42,7 +42,6 @@ export interface FourzeRouter
   match(
     url: string,
     method?: string,
-    allowed?: boolean
   ): [FourzeRoute, RegExpMatchArray] | []
 
   refresh(): void
@@ -113,7 +112,7 @@ export function defineRouter(
 
     await router.setup();
 
-    const [route, matches] = router.match(path, method, true);
+    const [route, matches] = router.match(path, method);
 
     if (route && matches) {
       for (let i = 0; i < route.pathParams.length; i++) {
@@ -135,28 +134,28 @@ export function defineRouter(
         ...request.meta,
         ...route.meta
       };
-    }
 
-    if (route) {
-      let _result: any;
       try {
-        _result = await route.handle(request, response);
+        const _result = await route.handle(request, response);
         if (_result) {
           response.send(_result);
         }
       } catch (error: any) {
         response.sendError(500, error.message);
       }
+
       logger.info(
         `Request matched -> ${normalizeRoute(request.path, method)}.`
       );
+
       if (!response.writableEnded) {
         response.end();
       }
     } else {
       await next?.();
     }
-    return response.data;
+
+    return response.payload;
   }) as FourzeRouter;
 
   router.match = function (
@@ -186,7 +185,7 @@ export function defineRouter(
     } else if (isObject(param0)) {
       routes.push(defineRoute(param0) as FourzeRoute);
     } else {
-      const route = overload(
+      const { path, method, options, handle } = overload(
         [
           {
             type: "string",
@@ -199,11 +198,7 @@ export function defineRouter(
           },
           {
             type: "object",
-            name: "props"
-          },
-          {
-            type: "object",
-            name: "meta"
+            name: "options"
           },
           {
             type: "function",
@@ -213,6 +208,14 @@ export function defineRouter(
         ],
         [...args]
       );
+
+      const route = {
+        path,
+        method,
+        handle,
+        ...options
+      };
+
       if (isDef(route)) {
         routes.push(defineRoute(route));
       }
@@ -312,7 +315,7 @@ function isExtends<D>(types: PropType<D>, type: PropType<D>): boolean {
 
 export function validateProps(
   props: ObjectProps,
-  data: Record<string, unknown>
+  data: Record<string, any>
 ) {
   for (const [key, propsOption] of Object.entries(props)) {
     let value = data[key];

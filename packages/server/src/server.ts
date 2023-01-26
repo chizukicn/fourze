@@ -122,6 +122,7 @@ export function createServer(...args: [FourzeApp, FourzeServerOptions] | [Fourze
     res: OutgoingMessage,
     next?: FourzeNext
   ) {
+    await app.ready();
     const context = await createServerContext(req, res);
     const { request, response } = context;
 

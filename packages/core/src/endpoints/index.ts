@@ -18,41 +18,28 @@ export function jsonWrapperHook(
   resolve: (data: any) => MaybePromise<any>,
   reject?: (error: any) => MaybePromise<any>
 ): FourzeMiddleware {
-  const JSON_WRAPPER_MARK = Symbol("JSON_WRAPPER_MARK");
-  function hasMark(value: any) {
-    return value && value[JSON_WRAPPER_MARK];
-  }
+  return defineMiddleware("JsonWrapper", -1, async (req, res, next) => {
+    const _send = res.send.bind(res);
 
-  function mark(value: any) {
-    Object.defineProperty(value, JSON_WRAPPER_MARK, {
-      get() {
-        return true;
+    res.send = function (payload, contentType) {
+      contentType = contentType ?? res.getContentType(payload);
+      if (contentType?.startsWith("application/json")) {
+        payload = resolve(payload);
       }
-    });
-  }
+      _send(payload, contentType);
+      return res;
+    };
 
-  return defineMiddleware("JsonWrapper", async (req, res, next) => {
-    if (!hasMark(res)) {
-      const _send = res.send.bind(res);
-
-      res.send = function (payload, contentType) {
-        contentType = contentType ?? res.getContentType(payload);
-        if (contentType?.startsWith("application/json")) {
-          payload = resolve(payload);
-        }
-        return _send(payload, contentType);
+    if (reject) {
+      const _sendError = res.sendError.bind(res);
+      res.sendError = function (code, message) {
+        _sendError(code, message);
+        _send(reject(message), "application/json");
+        return this;
       };
-
-      if (reject) {
-        const _sendError = res.sendError.bind(res);
-        res.sendError = function (code, message) {
-          _sendError(code, message);
-          _send(reject(message), "application/json");
-          return this;
-        };
-      }
-      mark(res);
     }
+
     await next();
   });
 }
+

@@ -91,8 +91,9 @@ export interface CollectionQuery<T> extends Iterable<T> {
   toArray(): T[]
   toSet(): Set<T>
   includes(value: T, fromIndex?: number): boolean
-  count(): number
   reset(source?: Iterable<T>): this
+
+  readonly length: number
   // set(index: number, value: T): this
   // get(index: number): T | undefined
 }
@@ -254,11 +255,11 @@ export function createQuery<T>(
     toSet() {
       return new Set(source);
     },
-    count() {
-      return source.length;
-    },
     [Symbol.iterator]() {
       return source[Symbol.iterator]();
+    },
+    get length() {
+      return source.length;
     }
   };
 }
