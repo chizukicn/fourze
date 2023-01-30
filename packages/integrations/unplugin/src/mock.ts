@@ -7,7 +7,7 @@ const TEMPORARY_FILE_SUFFIX = ".tmp.js";
 
 export function defaultMockCode(
   app: FourzeHmrApp,
-  options: FourzeMockAppOptions
+  options: FourzeMockAppOptions = {}
 ) {
   let code = "import {createMockApp} from \"@fourze/mock\";";
 

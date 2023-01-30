@@ -1,3 +1,4 @@
+import path from "path";
 import type { DelayMsType, FourzeLogLevelKey } from "@fourze/core";
 import { createLogger, setLoggerLevel } from "@fourze/core";
 import { createUnplugin } from "unplugin";
@@ -10,8 +11,10 @@ import type {
 } from "@fourze/server";
 import { createHmrApp, createServer } from "@fourze/server";
 
-import type { SwaggerOptions } from "@fourze/swagger";
+import type { SwaggerRouterOptions } from "@fourze/swagger";
 import { createSwaggerRouter } from "@fourze/swagger";
+import type { InlineConfig } from "vite";
+import { build } from "./swagger";
 import { defaultMockCode as defaultTransformCode } from "./mock";
 
 const PLUGIN_NAME = "unplugin-fourze";
@@ -20,6 +23,10 @@ const CLIENT_ID = "@fourze/client";
 
 function isClientID(id: string) {
   return id.endsWith(CLIENT_ID);
+}
+
+export interface SwaggerPluginOption extends SwaggerRouterOptions {
+  generateDocument?: boolean
 }
 
 export interface UnpluginFourzeOptions {
@@ -80,12 +87,12 @@ export interface UnpluginFourzeOptions {
 
   deny?: string[]
 
-  swagger?: SwaggerOptions
+  swagger?: SwaggerPluginOption | true
 
   transformCode?: (router: FourzeHmrApp, options?: FourzeHmrOptions) => string
 }
 
-export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
+export const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions = {}) => {
   const dir = options.dir ?? "./src/mock";
 
   const base = options.base ?? "/api";
@@ -129,90 +136,114 @@ export default createUnplugin((options: UnpluginFourzeOptions = {}) => {
 
   const transformCode = options.transformCode ?? defaultTransformCode;
 
-  return {
-    name: PLUGIN_NAME,
+  const viteConfig: InlineConfig = {};
+  const swaggerOptions = (options.swagger === true) ? {} : options.swagger ?? {};
+  const generateDocument = swaggerOptions.generateDocument ?? !!options.swagger;
 
-    async buildStart() {
-      try {
-        await app.ready();
-
-        logger.info("Fourze plugin is ready.");
-      } catch (error) {
-        logger.error("Fourze plugin is not ready.");
-        logger.error(error);
+  return [
+    {
+      name: `${PLUGIN_NAME}-swagger-builder`,
+      async writeBundle() {
+        if (generateDocument) {
+          await build(app, {
+            mock: true,
+            vite: viteConfig
+          });
+        }
       }
     },
+    {
+      name: PLUGIN_NAME,
 
-    resolveId(id) {
-      if (isClientID(id)) {
-        return id;
-      }
-    },
+      async buildStart() {
+        try {
+          await app.ready();
 
-    async load(id) {
-      if (isClientID(id)) {
-        return transformCode(app, options);
-      }
-    },
-    async webpack() {
-      const server = createServer(app);
-      await server.listen(port, host);
-      logger.info("Webpack Server listening on port", options.server?.port);
-    },
+          logger.info("Fourze plugin is ready.");
+        } catch (error) {
+          logger.error("Fourze plugin is not ready.");
+          logger.error(error);
+        }
+      },
+      resolveId(id) {
+        if (isClientID(id)) {
+          return id;
+        }
+      },
 
-    vite: {
-      transformIndexHtml: {
-        enforce: "pre",
-        transform(html) {
-          if (options.mock && injectScript) {
-            return {
-              html,
-              tags: [
-                {
-                  tag: "script",
-                  attrs: {
-                    type: "module",
-                    src: `/${CLIENT_ID}`
+      async load(id) {
+        if (isClientID(id)) {
+          return transformCode(app, options);
+        }
+      },
+      async webpack() {
+        const server = createServer(app);
+        await server.listen(port, host);
+        logger.info("Webpack Server listening on port", options.server?.port);
+      },
+
+      vite: {
+        transformIndexHtml: {
+          enforce: "pre",
+          transform(html) {
+            if (options.mock && injectScript) {
+              return {
+                html,
+                tags: [
+                  {
+                    tag: "script",
+                    attrs: {
+                      type: "module",
+                      src: `/${CLIENT_ID}`
+                    }
                   }
-                }
-              ]
-            };
+                ]
+              };
+            }
+            return html;
           }
-          return html;
-        }
-      },
-      async config(_, env) {
-        options.mock
-          = options.mock ?? (env.command === "build" || env.mode === "mock");
-        return {
-          define: {
-            VITE_PLUGIN_FOURZE_MOCK: options.mock
+        },
+        async config(_, env) {
+          options.mock
+            = options.mock ?? (env.command === "build" || env.mode === "mock");
+          return {
+            define: {
+              VITE_PLUGIN_FOURZE_MOCK: options.mock
+            }
+          };
+        },
+        async configResolved(config) {
+          app.define(config.env);
+          viteConfig.envDir = path.resolve(config.root, config.envDir ?? "");
+          viteConfig.envPrefix = config.envPrefix ?? "VITE_";
+          viteConfig.resolve = config.resolve;
+        },
+
+        configureServer({ middlewares, watcher }) {
+          if (hmr) {
+            app.watch(watcher);
           }
-        };
-      },
-      async configResolved(config) {
-        app.define(config.env);
-      },
 
-      configureServer({ middlewares, watcher }) {
-        if (hmr) {
-          app.watch(watcher);
-        }
+          const swaggerRouter = createSwaggerRouter({
+            documentUrl: path.resolve(viteConfig.base ?? "/", "swagger-ui"),
+            ...swaggerOptions
+          });
+          app.use(swaggerRouter);
 
-        const swaggerRouter = createSwaggerRouter(options.swagger);
-        app.use(swaggerRouter);
-
-        const service = createServer(app);
-        if (options.server?.port) {
-          try {
-            service.listen(port, host);
-          } catch (error) {
-            logger.error("Server listen failed.", error);
+          const service = createServer(app);
+          if (options.server?.port) {
+            try {
+              service.listen(port, host);
+            } catch (error) {
+              logger.error("Server listen failed.", error);
+            }
+          } else {
+            middlewares.use(service);
           }
-        } else {
-          middlewares.use(service);
         }
       }
     }
-  };
+  ];
 });
+
+export default createFourzePlugin;

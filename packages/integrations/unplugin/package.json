@@ -25,13 +25,14 @@
         "@fourze/server": "workspace:*",
         "@fourze/swagger": "workspace:*",
         "dedent": "^0.7.0",
+        "fs-extra": "^11.1.0",
         "swagger-ui": "^4.15.5",
         "unplugin": "^1.0.1"
     },
     "devDependencies": {
         "@types/webpack": "^5.28.0",
-        "esbuild": "^0.14.54",
-        "rollup": "^2.77.2",
+        "esbuild": "^0.17.5",
+        "rollup": "^3.2.2",
         "vite": "^4.0.4",
         "webpack": "^5.74.0",
         "webpack-dev-server": "^4.9.3"

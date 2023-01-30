@@ -55,6 +55,12 @@ export interface FourzeRouter
 
   resolve(path: string): string
 
+  setMeta(key: string, value: any): this
+
+  getMeta<T = any>(key: string): T | undefined
+
+  readonly meta: Record<string, any>
+
   readonly base: string
 
   readonly name: string
@@ -72,6 +78,7 @@ export type FourzeRouterSetup = (
 export interface FourzeRouterOptions {
   name?: string
   base?: string
+  meta?: Record<string, any>
   routes?: FourzeBaseRoute[]
   setup?: FourzeRouterSetup
 }
@@ -97,6 +104,8 @@ export function defineRouter(
     : isFunc
       ? params
       : () => params;
+
+  const meta: Record<string, any> = { ...options.meta };
 
   const routes: FourzeRoute[] = [];
 
@@ -131,6 +140,7 @@ export function defineRouter(
 
       request.meta = {
         ...request.meta,
+        ...router.meta,
         ...route.meta
       };
 
@@ -156,6 +166,15 @@ export function defineRouter(
 
     return response.payload;
   }) as FourzeRouter;
+
+  router.setMeta = function (this: FourzeRouter, key: string, value: any) {
+    meta[key] = value;
+    return this;
+  };
+
+  router.getMeta = function<T = any>(this: FourzeRouter, key: string): T | undefined {
+    return meta[key];
+  };
 
   router.match = function (
     this: FourzeRouter,
@@ -285,6 +304,11 @@ export function defineRouter(
     routes: {
       get() {
         return Array.from(routes);
+      }
+    },
+    meta: {
+      get() {
+        return meta;
       }
     },
     [FourzeRouterSymbol]: {

@@ -1,5 +1,5 @@
-import type { UnpluginFourzeOptions } from "@fourze/unplugin";
-import fourzeUnplugin from "@fourze/unplugin";
+import type { UnpluginFourzeOptions } from "@fourze/vite";
+import { createFourzeVitePlugin } from "@fourze/vite";
 import {
   addServerHandler,
   addTemplate,
@@ -24,7 +24,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   setup(options, nuxt) {
     if (!nuxt.options.ssr) {
-      addVitePlugin(fourzeUnplugin.vite(options));
+      addVitePlugin(createFourzeVitePlugin(options));
     } else {
       const mockHandlerPath = join(nuxt.options.buildDir, "@fourze/client");
 

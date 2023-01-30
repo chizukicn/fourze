@@ -157,3 +157,4 @@ export function getGlobalMockRouter() {
 export function isMockRouter(router: any): router is FourzeMockApp {
   return !!router && router[FOURZE_MOCK_APP_SYMBOL];
 }
+

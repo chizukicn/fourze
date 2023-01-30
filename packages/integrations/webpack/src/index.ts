@@ -1,7 +1,7 @@
-import type { UnpluginFourzeOptions } from "@fourze/unplugin";
-import fourzePlugin from "@fourze/unplugin";
-import type { WebpackPluginInstance } from "webpack";
+import { UnpluginFourzeOptions, createFourzePlugin } from "@fourze/unplugin";
 
-export default fourzePlugin.webpack as (
-  options: UnpluginFourzeOptions
-) => WebpackPluginInstance;
+export const createFourzeWebpackPlugin = createFourzePlugin.webpack;
+
+export default createFourzeWebpackPlugin;
+
+export { UnpluginFourzeOptions };

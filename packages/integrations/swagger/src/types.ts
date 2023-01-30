@@ -4,6 +4,8 @@ export interface SwaggerPathSchema {
   tags?: string[]
   operationId?: string
   deprecated?: boolean
+  consumes?: string[]
+  produces?: string[]
   responses?: Record<
     string,
     {
@@ -47,4 +49,12 @@ export interface SwaggerDocument extends Record<string, any> {
 export interface SwaggerUIInitOptions {
   url?: string
   urls?: string[]
+}
+
+export interface SwaggerOptions {
+  info?: SwaggerInfo
+  schemas?: string[]
+  consumes?: string[]
+  produces?: string[]
+  host?: string
 }

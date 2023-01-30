@@ -322,6 +322,8 @@ export interface FourzeApp extends FourzeMiddleware {
 
   readonly isReady: boolean
 
+  readonly isReadying: boolean
+
 }
 
 export interface CommonMiddleware {

@@ -1,8 +1,6 @@
-import fs from "fs";
-import path from "path";
-import { defineRoute, resolvePath, slash } from "@fourze/core";
-import { getAbsoluteFSPath } from "swagger-ui-dist";
-import { staticFile } from "@fourze/server";
+import type { FourzeMockAppOptions } from "@fourze/mock";
+import type { FourzeHmrApp } from "@fourze/server";
+import { normalizePath } from "@fourze/server";
 import type { SwaggerUIInitOptions } from "./types";
 
 const htmlTemplateString = `
@@ -13,6 +11,8 @@ const htmlTemplateString = `
   <meta charset="UTF-8">
   <title><% title %></title>
   <link rel="stylesheet" type="text/css" href="./swagger-ui.css" >
+  <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
   <style>
     html {
       box-sizing: border-box;
@@ -39,6 +39,7 @@ const htmlTemplateString = `
 </head>
 <body>
 <div id="swagger-ui"></div>
+<script src="./mock.ts" type="module"></script>
 <script src="./swagger-ui-bundle.js"> </script>
 <script src="./swagger-ui-standalone-preset.js"> </script>
 <script>
@@ -157,42 +158,32 @@ export function generateHtmlString(options: GenerateHtmlOptions = {}) {
   return htmlString;
 }
 
-export interface SwaggerUIServiceOptions {
-  routePath?: string
-  base?: string
-  documentUrl?: string
-}
+const TEMPORARY_FILE_SUFFIX = ".tmp.js";
 
-export async function build(distPath = "dist") {
-  distPath = path.resolve(distPath);
-  const swaggerUIPath = getAbsoluteFSPath();
-  await fs.promises.copyFile(swaggerUIPath, distPath);
-}
-
-export function service(
-  options: SwaggerUIServiceOptions = {}
+export function defaultMockCode(
+  app: FourzeHmrApp,
+  options: FourzeMockAppOptions = {}
 ) {
-  const base = options.base ?? "/";
-  const routePath = options.routePath ?? "/swagger-ui/";
-  const contextPath = resolvePath(routePath, base);
-  const swaggerUIPath = getAbsoluteFSPath();
-  const render = staticFile(swaggerUIPath, contextPath);
+  let code = "import {createMockApp} from \"@fourze/mock\";";
 
-  return defineRoute({
-    path: slash(routePath, "*"),
-    handle: async (req, res) => {
-      const documentUrl = resolvePath(
-        options.documentUrl ?? "/api-docs",
-        req.contextPath
-      );
-      await render(req, res, () => {
-        const htmlString = generateHtmlString({
-          initOptions: {
-            url: documentUrl
-          }
-        });
-        res.send(htmlString, "text/html");
-      });
-    }
-  });
+  const names: string[] = [];
+  for (let i = 0; i < app.moduleNames.length; i++) {
+    let modName = app.moduleNames[i];
+    names[i] = `fourze_module_${i}`;
+    modName = modName.replace(TEMPORARY_FILE_SUFFIX, "");
+    modName = normalizePath(modName);
+
+    code += `
+      \nimport ${names[i]} from "${modName}";\n
+    `;
+  }
+  code += `
+  createMockApp({
+    base:"${app.base}",
+    modules:[${names.join(",")}].flat(),
+    delay:${JSON.stringify(options.delay)},
+    mode:${JSON.stringify(options.mode)},
+    allow:${JSON.stringify(options.allow)},
+  }).ready();`;
+  return code;
 }
