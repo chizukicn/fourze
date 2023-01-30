@@ -22,28 +22,28 @@ export function createSwaggerPlugin(options: SwaggerRouterOptions = {}) {
 }
 
 export interface SwaggerUIServiceOptions {
-  routePath?: string
+  uiPath?: string
   base?: string
-  documentUrl?: string
+  documentPath?: string
 }
 
 export function service(
   options: SwaggerUIServiceOptions = {}
 ) {
   const base = options.base ?? "/";
-  const routePath = options.routePath ?? "/swagger-ui/";
-  const contextPath = resolvePath(routePath, base);
+  const uiPath = options.uiPath ?? "/swagger-ui/";
+  const contextPath = resolvePath(uiPath, base);
   const swaggerUIPath = getAbsoluteFSPath();
   const render = staticFile(swaggerUIPath, contextPath);
 
   return defineRoute({
-    path: slash(routePath, "*"),
+    path: slash(uiPath, "*"),
     meta: {
       swagger: false
     },
     handle: async (req, res) => {
       const documentUrl = resolvePath(
-        options.documentUrl ?? "/api-docs",
+        options.documentPath ?? "/swagger.json",
         req.contextPath
       );
       await render(req, res, () => {
@@ -59,16 +59,16 @@ export function service(
 }
 
 export interface SwaggerRouterOptions {
-  routePath?: string
-  documentUrl?: string
+  uiPath?: string
+  documentPath?: string
   swagger?: SwaggerOptions
 }
 
 export function createSwaggerRouter(
   options: SwaggerRouterOptions = {}
 ): FourzeRouter {
-  const routerPath = options.routePath ?? "/swagger.json";
-  const documentUrl = options.documentUrl ?? "/api-docs";
+  const uiPath = options.uiPath ?? "/swagger-ui/";
+  const documentPath = options.documentPath ?? "/swagger.json";
   return defineRouter({
     name: "SwaggerRouter",
     meta: {
@@ -76,11 +76,11 @@ export function createSwaggerRouter(
     },
     setup(router, app) {
       router.route(service({
-        routePath: routerPath,
-        documentUrl,
+        uiPath,
+        documentPath,
         base: app.base
       }));
-      router.get(routerPath, (req, res) => {
+      router.get(documentPath, (req, res) => {
         const docs = createApiDocs(app, options.swagger);
         res.setHeader(DISABLE_JSON_WRAPPER_HEADER, "true");
         res.send(docs, "application/json");

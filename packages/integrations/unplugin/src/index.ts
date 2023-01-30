@@ -224,8 +224,12 @@ export const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions
             app.watch(watcher);
           }
 
+          const uiPath = "/swagger-ui/";
+
+          logger.info("Swagger document is ready at ", uiPath);
+
           const swaggerRouter = createSwaggerRouter({
-            documentUrl: path.resolve(viteConfig.base ?? "/", "swagger-ui"),
+            uiPath,
             ...swaggerOptions
           });
           app.use(swaggerRouter);
