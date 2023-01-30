@@ -19,6 +19,7 @@ import { flatHeaders, getHeaderValue } from "./polyfill/header";
 import { PolyfillServerResponse } from "./polyfill/response";
 import { createLogger } from "./logger";
 import type { ExtractPropTypes, NormalizedObjectProps, ObjectProps, PropType } from "./props";
+import type { MetaInstance } from "./meta";
 
 export const FOURZE_VERSION = version;
 
@@ -26,18 +27,24 @@ const FOURZE_ROUTE_SYMBOL = Symbol("FourzeRoute");
 const FOURZE_REQUEST_SYMBOL = Symbol("FourzeRequest");
 const FOURZE_RESPONSE_SYMBOL = Symbol("FourzeResponse");
 
+export interface FourzeAppMeta extends Record<string, any> {}
+
+export interface FourzeRouterMeta extends FourzeAppMeta {}
+
+export interface FourzeRouteMeta extends FourzeRouterMeta {}
+
 export type DefaultData = Record<string, unknown>;
 
-export interface FourzeRouteOptions<Props extends ObjectProps = ObjectProps, Meta = Record<string, unknown>> {
+export interface FourzeRouteOptions<Props extends ObjectProps = ObjectProps, Meta = FourzeRouteMeta> {
   method?: RequestMethod
   props: Props
-  meta?: Meta
+  meta?: Meta & FourzeRouteMeta
 }
 
 export interface FourzeRouteFunction<This> {
 
   <
-    Method extends RequestMethod, Result = unknown, Props extends ObjectProps = ObjectProps, Meta = Record<string, unknown>
+    Method extends RequestMethod, Result = unknown, Props extends ObjectProps = ObjectProps, Meta = FourzeRouteMeta
   >(
     path: string,
     method: Method,
@@ -46,7 +53,7 @@ export interface FourzeRouteFunction<This> {
   ): This
 
   <
-    Result = unknown, Props extends ObjectProps = ObjectProps, Meta = Record<string, unknown>
+    Result = unknown, Props extends ObjectProps = ObjectProps, Meta = FourzeRouteMeta
   >(
     path: string,
     options: FourzeRouteOptions<Props, Meta>,
@@ -62,7 +69,7 @@ export interface FourzeRouteFunction<This> {
   <Result = unknown>(path: string, handle: FourzeHandle<Result>): This
 
   <
-    Result = unknown, Props extends ObjectProps = ObjectProps, Meta = Record<string, unknown>
+    Result = unknown, Props extends ObjectProps = ObjectProps, Meta = FourzeRouteMeta
   >(
     route: FourzeBaseRoute<Result, Props, Meta>
   ): This
@@ -71,7 +78,7 @@ export interface FourzeRouteFunction<This> {
 export type FourzeRouteGenerator<This> = {
   [K in RequestMethod]: {
     <
-      Result = any, Props extends ObjectProps = ObjectProps, Meta = Record<string, any>
+      Result = any, Props extends ObjectProps = ObjectProps, Meta = FourzeRouteMeta
     >(
       path: string,
       options: FourzeRouteOptions<Props, Meta>,
@@ -82,14 +89,14 @@ export type FourzeRouteGenerator<This> = {
 };
 
 export interface FourzeRequest<
-  Props extends ObjectProps = ObjectProps, Meta = Record<string, any>, Data = ExtractPropTypes<Props>, Query = ExtractPropTypes<Props, "query">, Body = ExtractPropTypes<Props, "body">, Params = ExtractPropTypes<Props, "path">
+  Props extends ObjectProps = ObjectProps, Meta = FourzeRouteMeta, Data = ExtractPropTypes<Props>, Query = ExtractPropTypes<Props, "query">, Body = ExtractPropTypes<Props, "body">, Params = ExtractPropTypes<Props, "path">
 > extends IncomingMessage {
   url: string
   method: string
   headers: Record<string, string | string[] | undefined>
 
   route: FourzeRoute
-  meta: Meta
+  meta: Meta & FourzeRouteMeta
 
   relative(path: string): string | null
 
@@ -150,7 +157,7 @@ export interface FourzeResponse extends FourzeBaseResponse {
 }
 
 export interface FourzeBaseRoute<
-  Result = unknown, Props extends ObjectProps = ObjectProps, Meta = Record<string, unknown>
+  Result = unknown, Props extends ObjectProps = ObjectProps, Meta = FourzeRouteMeta
 > {
   path: string
   method?: RequestMethod
@@ -167,7 +174,7 @@ export interface FourzeBaseRoute<
 // #endregion
 
 export interface FourzeRoute<
-  Result = unknown, Props extends ObjectProps = ObjectProps, Meta = Record<string, unknown>
+  Result = unknown, Props extends ObjectProps = ObjectProps, Meta = FourzeRouteMeta
 > extends FourzeBaseRoute<Result, Props, Meta> {
   readonly [FOURZE_ROUTE_SYMBOL]: true
   readonly pathParams: RegExpMatchArray | string[]
@@ -183,7 +190,7 @@ export interface FourzeRoute<
 export type FourzeNext<T = any> = () => MaybePromise<T>;
 
 export type FourzeHandle<
-  R = unknown, Props extends ObjectProps = ObjectProps, Meta = Record<string, unknown>
+  R = unknown, Props extends ObjectProps = ObjectProps, Meta = FourzeRouteMeta
 > = (
   request: FourzeRequest<Props, Meta>,
   response: FourzeResponse
@@ -230,7 +237,7 @@ export function defineRouteProps<Props extends ObjectProps = ObjectProps>(
 }
 
 export function defineRoute<
-  Result = unknown, Props extends ObjectProps = ObjectProps, Meta = Record<string, unknown>
+  Result = unknown, Props extends ObjectProps = ObjectProps, Meta = FourzeRouteMeta
 >(
   route: FourzeBaseRoute<Result, Props, Meta> & { base?: string }
 ): FourzeRoute<Result, Props, Meta> {
@@ -289,7 +296,7 @@ export interface FourzeInstance {
   routes: FourzeRoute[]
 }
 
-export interface FourzeApp extends FourzeMiddleware {
+export interface FourzeApp extends FourzeMiddleware, MetaInstance<FourzeApp, FourzeAppMeta> {
   use(path: string, ...middlewares: FourzeMiddleware[]): this
 
   use(...modules: FourzeModule[]): this
@@ -315,6 +322,8 @@ export interface FourzeApp extends FourzeMiddleware {
   ready(): Promise<void>
 
   reset(): Promise<void>
+
+  readonly meta: FourzeAppMeta
 
   readonly base: string
 

@@ -77,28 +77,28 @@ export function jsonWrapperHook(
   }
 
   return defineMiddleware("JsonWrapper", -1, async (req, res, next) => {
-    const disableJsonWrapper = res.getHeader(DISABLE_JSON_WRAPPER_HEADER) as string;
-    const isAllow = (!disableJsonWrapper || ["false", "0", "off"].includes(disableJsonWrapper)) && !isExclude(req.path);
+    const _send = res.send.bind(res);
+    res.send = function (payload, contentType) {
+      contentType = contentType ?? req.meta.contentType ?? res.getContentType(payload);
+      const disableJsonWrapper = res.getHeader(DISABLE_JSON_WRAPPER_HEADER) as string;
+      const isAllow = (!disableJsonWrapper || ["false", "0", "off"].includes(disableJsonWrapper)) && !isExclude(req.path);
 
-    if (isAllow) {
-      const _send = res.send.bind(res);
-      res.send = function (payload, contentType) {
-        contentType = contentType ?? req.meta.contentType ?? res.getContentType(payload);
+      if (isAllow) {
         if (contentType?.startsWith("application/json")) {
           payload = resolve(payload) ?? payload;
         }
-        _send(payload, contentType);
-        return res;
-      };
-
-      if (reject) {
-        const _sendError = res.sendError.bind(res);
-        res.sendError = function (code, message) {
-          _sendError(code, message);
-          _send(reject(message), "application/json");
-          return this;
-        };
       }
+      _send(payload, contentType);
+      return res;
+    };
+
+    if (reject) {
+      const _sendError = res.sendError.bind(res);
+      res.sendError = function (code, message) {
+        _sendError(code, message);
+        _send(reject(message), "application/json");
+        return this;
+      };
     }
 
     await next();

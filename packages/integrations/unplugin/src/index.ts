@@ -147,7 +147,9 @@ export const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions
         if (generateDocument) {
           await build(app, {
             mock: true,
-            vite: viteConfig
+            vite: {
+              ...viteConfig
+            }
           });
         }
       }
@@ -214,6 +216,7 @@ export const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions
         },
         async configResolved(config) {
           app.define(config.env);
+          viteConfig.base = config.base;
           viteConfig.envDir = path.resolve(config.root, config.envDir ?? "");
           viteConfig.envPrefix = config.envPrefix ?? "VITE_";
           viteConfig.resolve = config.resolve;

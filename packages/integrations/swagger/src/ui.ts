@@ -39,12 +39,12 @@ const htmlTemplateString = `
 </head>
 <body>
 <div id="swagger-ui"></div>
-<script src="./mock.ts" type="module"></script>
 <script src="./swagger-ui-bundle.js"> </script>
 <script src="./swagger-ui-standalone-preset.js"> </script>
 <script>
   <% inlineScriptCode %>
 </script>
+<% externalScriptTags %>
 </body>
 </html>
 `;
@@ -54,7 +54,7 @@ const defaultScriptTemplate = `
 window.onload = function() {
   // Build a system
   const options  = <% initOptions %>;
-  url = options.url ?? url;
+  url = options?.url ?? url;
   const customOptions = options.customOptions ?? {};
   const swaggerOptions = {
     url,
@@ -84,8 +84,13 @@ window.onload = function() {
 }
 `;
 
-export function toExternalScriptTag(url: string) {
-  return `<script src='${url}'></script>`;
+export interface ScriptTagAttributes extends Record<string, any> {
+  src?: string
+  type?: string
+}
+
+export function toExternalTag(tag: string, attrs: ScriptTagAttributes) {
+  return `<${tag} ${Object.entries(attrs).map(([key, value]) => `${key}='${value}'`).join(" ")}></${tag}>`;
 }
 
 export function toInlineScriptTag(scriptCode: string) {
@@ -121,6 +126,10 @@ export interface GenerateHtmlOptions {
   tags?: HtmlTag[]
   htmlTemplate?: string
   scriptTemplate?: string
+  externalScripts?: (string | {
+    src: string
+    type?: string
+  })[]
 }
 
 function stringifyOptions(obj: Record<string, any>): string {
@@ -147,12 +156,23 @@ export function generateHtmlString(options: GenerateHtmlOptions = {}) {
   const scriptTemplate = options.scriptTemplate ?? defaultScriptTemplate;
 
   const inlineScriptCode = transformTemplate(scriptTemplate, {
+    inlineScriptCode: options.inlineScript ?? "",
     initOptions: stringifyOptions({
       ...options.initOptions
     })
   });
+
+  const externalScripts = (options.externalScripts ?? []).map(r => {
+    if (typeof r === "string") {
+      return toExternalTag("script", { src: r });
+    }
+    const { src, type } = r;
+    return toExternalTag("script", { src, type });
+  });
+
   const htmlString = transformTemplate(htmlTemplateString, {
     inlineScriptCode,
+    externalScriptTags: externalScripts.join("\r\n"),
     favicon: "<meta></meta>"
   });
   return htmlString;

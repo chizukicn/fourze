@@ -24,7 +24,7 @@ export interface SwaggerUIBuildOptions {
   /**
    *  @default "/swagger-ui/"
    */
-  base?: string
+  uiPath?: string
 
   /**
    *  @default "swagger.json"
@@ -40,7 +40,6 @@ export interface SwaggerUIBuildOptions {
 
 export async function build(app: FourzeHmrApp, options: SwaggerUIBuildOptions = {}) {
   const swaggerFsPath = getSwaggerFSPath();
-  const base = options.base ?? "./";
   const distPath = options.distPath ?? path.join(process.cwd(), "dist", "swagger-ui");
   const documentUrl = options.documentUrl ?? "./swagger.json";
 
@@ -48,11 +47,23 @@ export async function build(app: FourzeHmrApp, options: SwaggerUIBuildOptions = 
 
   await fs.emptyDir(tmpDir);
 
+  if (options.mock) {
+    const hmrApp = app as FourzeHmrApp;
+    const code = defaultMockCode(hmrApp);
+    await fs.outputFile(path.join(tmpDir, "mock.ts"), code);
+  }
+
   await fs.outputFile(path.join(tmpDir, "index.html"), generateHtmlString(
     {
       initOptions: {
         url: documentUrl
-      }
+      },
+      externalScripts: [
+        {
+          src: "./mock.ts",
+          type: "module"
+        }
+      ]
     }
   ));
 
@@ -62,16 +73,10 @@ export async function build(app: FourzeHmrApp, options: SwaggerUIBuildOptions = 
   });
   await fs.copy(swaggerFsPath, path.join(tmpDir, "public"), { filter });
 
-  if (options.mock) {
-    const hmrApp = app as FourzeHmrApp;
-    const mockCode = defaultMockCode(hmrApp);
-    await fs.outputFile(path.join(tmpDir, "mock.ts"), mockCode);
-  }
-
   // 打包接口文档 这里会有更好的方案吗???
 
   await vite.build(vite.mergeConfig(vite.defineConfig({
-    base,
+    base: "./",
     root: tmpDir,
     build: {
       outDir: distPath,

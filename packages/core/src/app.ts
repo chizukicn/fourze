@@ -3,6 +3,7 @@ import { isArray } from "./utils/is";
 import { createLogger } from "./logger";
 import type {
   FourzeApp,
+  FourzeAppMeta,
   FourzeContextOptions,
   FourzeHandle,
   FourzeMiddleware,
@@ -23,6 +24,7 @@ import {
   relativePath,
   resolvePath
 } from "./utils";
+import { injectMeta } from "./meta";
 
 export type FourzeAppSetup = (app: FourzeApp) => MaybePromise<void | FourzeModule[] | FourzeAppOptions>;
 
@@ -45,6 +47,8 @@ export interface FourzeAppOptions {
    *  不允许的路径规则
    */
   deny?: MaybeRegex[]
+
+  meta?: FourzeAppMeta
 
   setup?: FourzeAppSetup
 
@@ -86,6 +90,8 @@ export function createApp(args: FourzeAppOptions | FourzeAppSetup = {}): FourzeA
 
   const allows = createQuery<MaybeRegex>();
 
+  const meta = { ...options.meta };
+
   const app = (async (request, response, next?: FourzeNext) => {
     next = next ?? fallback;
     const { url } = request;
@@ -111,6 +117,8 @@ export function createApp(args: FourzeAppOptions | FourzeAppSetup = {}): FourzeA
       response.sendError(500, error);
     }
   }) as FourzeApp;
+
+  injectMeta(app, meta);
 
   app.match = function (_url: string) {
     const url = this.relative(_url);
