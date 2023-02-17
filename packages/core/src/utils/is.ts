@@ -37,7 +37,7 @@ export function isFunction<T extends Function>(value: any): value is T {
 }
 
 export function isConstructor<T>(value: unknown): value is Constructor<T> {
-  return isFunction(value) && value.prototype !== undefined;
+  return isFunction(value) && value.prototype?.constructor === value;
 }
 
 export function isBuffer(value: unknown): value is Buffer {

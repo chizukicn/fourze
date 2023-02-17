@@ -16,7 +16,8 @@ import type {
   FourzeLogger,
   FourzeMiddleware,
   FourzeMiddlewareHandler,
-  FourzeServiceContext,
+  FourzeServiceContext
+  ,
   PropType
 } from "@fourze/core";
 import { injectEventEmitter, normalizeAddress } from "./utils";

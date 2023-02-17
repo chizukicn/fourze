@@ -17,15 +17,18 @@
   "dependencies": {
     "@fourze/core": "workspace:*",
     "chokidar": "^3.5.3",
+    "create-require": "^1.1.1",
     "esbuild": "^0.17.5",
+    "fast-glob": "^3.2.12",
     "fs-extra": "^11.1.0",
+    "micromatch": "^4.0.5",
     "mime": "^3.0.0",
     "mlly": "^1.1.0",
-    "vm": "^0.1.0",
-    "create-require": "^1.1.1",
-    "pathe": "^0.3.9"
+    "pathe": "^0.3.9",
+    "vm": "^0.1.0"
   },
   "devDependencies": {
+    "@types/micromatch": "^4.0.2",
     "@types/mime": "^2.0.3",
     "pkg-types": "^1.0.1"
   }

@@ -12,6 +12,8 @@ import type {
   FourzePlugin
 } from "./shared";
 import {
+  FOURZE_VERSION
+  ,
   createServiceContext
 } from "./shared";
 import type { DelayMsType } from "./utils";
@@ -102,6 +104,7 @@ export function createApp(args: FourzeAppOptions | FourzeAppSetup = {}): FourzeA
         const ms = app.match(url);
 
         request.app = app;
+        response.setHeader("X-Powered-By", `Fourze App/v${FOURZE_VERSION}`);
 
         const oldContextPath = request.contextPath;
 

@@ -33,6 +33,15 @@ export interface SwaggerPluginOption {
   defaultMethod?: RequestMethod
 }
 
+export type MockEnable = boolean | "auto";
+
+export interface MockOptions {
+  enable?: MockEnable
+  ignore?: string[]
+  mode?: FourzeMockAppOptions["mode"]
+  injectScript?: boolean
+}
+
 export interface UnpluginFourzeOptions {
   /**
    * @default 'src/mock'
@@ -43,20 +52,10 @@ export interface UnpluginFourzeOptions {
    * @default '/api'
    */
   base?: string
-
-  /**
-   *  [/\.[t|js]$/]
-   */
-  filePattern?: (string | RegExp)[]
   /**
    * @default env.command == 'build' || env.mode === 'mock'
    */
-  mock?: boolean
-
-  /**
-   *  mock mode
-   */
-  mode?: FourzeMockAppOptions["mode"]
+  mock?: MockOptions | boolean
 
   /**
    *  @default true
@@ -81,7 +80,13 @@ export interface UnpluginFourzeOptions {
     port?: number
   }
 
-  injectScript?: boolean
+  files?: {
+    /**
+     * @default ["*.ts","*.js"]
+     */
+    pattern?: string[]
+    ignore?: string[]
+  } | string[]
 
   proxy?: (FourzeProxyOption | string)[] | Record<string, string>
 
@@ -108,9 +113,30 @@ const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions = {}) 
   const port = options.server?.port ?? 7609;
   const host = options.server?.host ?? "localhost";
 
-  const pattern = options.filePattern ?? ["*.ts", "*.js"];
   const hmr = options.hmr ?? true;
-  const injectScript = options.injectScript ?? true;
+
+  const defaultEnableMockOptions: MockOptions = {
+    enable: true,
+    injectScript: true,
+    mode: ["xhr", "fetch"]
+  };
+
+  const defaultDisableMockOptions: MockOptions = {
+    enable: false,
+    injectScript: false,
+    mode: []
+  };
+
+  const mockOptions: MockOptions = isBoolean(options.mock)
+    ? options.mock
+      ? defaultEnableMockOptions
+      : defaultDisableMockOptions
+    : options.mock ?? {
+      ...defaultEnableMockOptions,
+      enable: "auto"
+    };
+
+  const injectScript = mockOptions.injectScript ?? true;
 
   const logger = createLogger("@fourze/unplugin");
 
@@ -129,11 +155,10 @@ const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions = {}) 
 
   const hmrApp = createHmrApp({
     base,
-    dir,
-    pattern,
-    delay,
     allow,
-    deny
+    deny,
+    dir,
+    files: options.files
   });
 
   if (delay) {
@@ -182,7 +207,11 @@ const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions = {}) 
 
       async load(id) {
         if (isClientID(id)) {
-          return transformCode(hmrApp.moduleNames, options);
+          const moduleNames = hmrApp.moduleNames;
+          return transformCode(moduleNames, {
+            ...options,
+            mode: mockOptions.mode
+          });
         }
       },
       async webpack() {
@@ -195,7 +224,7 @@ const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions = {}) 
         transformIndexHtml: {
           enforce: "pre",
           transform(html) {
-            if (options.mock && injectScript) {
+            if (mockOptions.enable && injectScript) {
               return {
                 html,
                 tags: [
@@ -213,10 +242,12 @@ const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions = {}) 
           }
         },
         async config(_, env) {
-          options.mock ??= (env.command === "build" || env.mode === "mock");
+          if (mockOptions.enable === "auto") {
+            mockOptions.enable = env.command === "build" || env.mode === "mock";
+          }
           return {
             define: {
-              VITE_PLUGIN_FOURZE_MOCK: options.mock
+              VITE_PLUGIN_FOURZE_MOCK: mockOptions.enable
             },
             resolve: {
               alias: env.command === "build" ? getModuleAlias() : []
@@ -250,12 +281,12 @@ const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions = {}) 
           }
 
           const server = createServer();
+          server.use(hmrApp);
           if (options.swagger !== false) {
             const swaggerMiddleware = service(hmrApp, {
               base: resolves(viteConfig.base, "/swagger-ui/"),
               ...swaggerOptions
             });
-
             server.use(swaggerMiddleware);
           }
           if (options.server?.port) {
@@ -265,7 +296,6 @@ const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions = {}) 
               logger.error("Server listen failed.", error);
             }
           } else {
-            server.use(hmrApp);
             middlewares.use(server);
           }
         }

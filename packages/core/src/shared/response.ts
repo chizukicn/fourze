@@ -3,7 +3,6 @@ import { createLogger } from "../logger";
 import { PolyfillServerResponse, getHeaderValue } from "../polyfill";
 import { isDef, isObject, isString, isUint8Array } from "../utils";
 import type { FourzeRequest } from "./request";
-import { FOURZE_VERSION } from "./version";
 
 export interface FourzeResponseOptions {
   url: string
@@ -149,8 +148,6 @@ export function createResponse(options: FourzeResponseOptions) {
     this.setHeader("Location", url);
     return this;
   };
-
-  response.setHeader("X-Powered-By", `Fourze Server/v${FOURZE_VERSION}`);
 
   Object.defineProperties(response, {
     [FOURZE_RESPONSE_SYMBOL]: {

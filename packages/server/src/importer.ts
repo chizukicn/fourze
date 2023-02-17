@@ -307,11 +307,12 @@ export function createImporter(_filename: string, opts: ModuleImporterOptions = 
   _require.extensions = nativeRequire.extensions;
   _require.main = nativeRequire.main;
   _require.remove = function (id: string) {
-    const cacheName = _resolve(id);
-    if (cacheName) {
-      delete nativeRequire.cache[cacheName];
-      logger.debug("[delete cache]", cacheName);
+    try {
+      id = _resolve(id) ?? id;
+    } catch (e) {
     }
+    delete nativeRequire.cache[id];
+    logger.debug("[delete cache]", id);
   };
 
   _require.configure = _configure;

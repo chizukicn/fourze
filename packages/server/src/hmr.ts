@@ -1,12 +1,12 @@
 import { basename, extname, join, normalize, resolve } from "pathe";
 import fs from "fs-extra";
+import glob from "fast-glob";
 import {
   createApp,
   createLogger,
   defineMiddleware,
   isFourzeModule,
   isFunction,
-  isMatch,
   overload
 } from "@fourze/core";
 import type {
@@ -18,19 +18,17 @@ import type {
   PropType
 } from "@fourze/core";
 import type { FSWatcher } from "chokidar";
+import micromatch from "micromatch";
 import { createImporter } from "./importer";
 
 export interface FourzeHmrOptions extends Exclude<FourzeAppOptions, "setup"> {
-  /**
-   * 路由模块目录
-   * @default "router"
-   */
+
   dir?: string
-  /**
-   * 文件匹配规则
-   * @default ["*.ts", "*.js"]
-   */
-  pattern?: (string | RegExp)[]
+
+  files?: {
+    pattern?: string[]
+    ignore?: string[]
+  } | string[]
 
 }
 
@@ -58,7 +56,12 @@ export interface FourzeProxyOption extends Omit<FourzeBaseRoute, "handle"> {
 export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
   const rootDir = normalize(resolve(process.cwd(), options.dir ?? "router"));
 
-  const pattern = options.pattern ?? ["*.ts", "*.js"];
+  const fsOptions = options.files ?? {};
+  const isFsPattern = Array.isArray(fsOptions);
+
+  const fsPattern = isFsPattern ? fsOptions : fsOptions.pattern ?? ["**/*.ts", "**/*.js"];
+  const fsIgnore = isFsPattern ? [] : fsOptions.ignore ?? [];
+
   const moduleMap = new Map<string, FourzeModule>();
 
   const logger = createLogger("@fourze/server");
@@ -67,6 +70,8 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
     define: {},
     alias: {}
   };
+
+  logger.debug(`create hmr app with root dir ${rootDir} with base ${options.base ?? "/"}`);
 
   const app = createApp({
     ...options,
@@ -96,15 +101,18 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
     if (fs.existsSync(moduleName)) {
       const stat = await fs.promises.stat(moduleName);
       if (stat.isDirectory()) {
-        const files = await fs.promises.readdir(moduleName);
+        const files = await glob(fsPattern, { cwd: moduleName });
         const tasks = files.map((name) => load(join(moduleName, name)));
         return await Promise.all(tasks).then((r) => r.some((f) => f));
       } else if (stat.isFile()) {
-        if (pattern.length && !isMatch(moduleName, ...pattern)) {
-          logger.debug("[hmr]", `load file ${moduleName} not match pattern`);
+        if (!micromatch.some(moduleName, fsPattern, {
+          dot: true,
+          matchBase: true,
+          ignore: fsIgnore
+        })) {
+          logger.warn(`load file ${moduleName} not match pattern ${fsPattern.join(",")}`);
           return false;
         }
-
         try {
           const instance = _import(moduleName);
 
@@ -162,7 +170,7 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
       args
     );
 
-    logger.debug("[hmr]", `watch ${dir} with pattern ${pattern.join(",")}`);
+    logger.debug("[hmr]", `watch ${dir} with pattern ${fsPattern.join(",")}`);
 
     watcher.add(dir);
 
@@ -171,6 +179,8 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
       if (!path.startsWith(dir)) {
         return;
       }
+
+      logger.debug("[hmr]", `watcher event ${event} ${path}`);
 
       switch (event) {
         case "add": {

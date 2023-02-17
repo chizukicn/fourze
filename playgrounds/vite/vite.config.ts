@@ -43,7 +43,9 @@ export default defineConfig({
     windicss(),
     fourze({
       base: "/api",
-      filePattern: ["*.ts", "*.js"],
+      files: {
+        pattern: ["*.ts", "*.js"]
+      },
       hmr: true,
       mock: true,
       delay: "200-500",
