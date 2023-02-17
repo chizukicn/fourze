@@ -1,6 +1,7 @@
 import path from "path";
+import type { MaybeRegex } from "maybe-types";
 import type { DelayMsType, FourzeLogLevelKey, RequestMethod } from "@fourze/core";
-import { createLogger, delayHook, isBoolean, resolves, setLoggerLevel } from "@fourze/core";
+import { createLogger, delayHook, isBoolean, isMatch, resolves, setLoggerLevel } from "@fourze/core";
 import { createUnplugin } from "unplugin";
 
 import type { FourzeMockAppOptions } from "@fourze/mock";
@@ -33,6 +34,8 @@ export interface SwaggerPluginOption {
   defaultMethod?: RequestMethod
 }
 
+export type MockEnable = boolean | "auto";
+
 export interface UnpluginFourzeOptions {
   /**
    * @default 'src/mock'
@@ -51,7 +54,13 @@ export interface UnpluginFourzeOptions {
   /**
    * @default env.command == 'build' || env.mode === 'mock'
    */
-  mock?: boolean
+  mock?: {
+    /**
+     * @default "auto"
+     */
+    enable?: MockEnable
+    ignore?: MaybeRegex[]
+  } | boolean
 
   /**
    *  mock mode
@@ -112,6 +121,8 @@ const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions = {}) 
   const hmr = options.hmr ?? true;
   const injectScript = options.injectScript ?? true;
 
+  const mockIgnore = typeof options.mock === "boolean" ? [] : options.mock?.ignore ?? [];
+
   const logger = createLogger("@fourze/unplugin");
 
   setLoggerLevel(options.logLevel ?? "info");
@@ -149,6 +160,8 @@ const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions = {}) 
   const swaggerOptions = isBoolean(options.swagger) ? {} : options.swagger ?? {};
   const generateDocument = swaggerOptions.generateDocument ?? !!options.swagger;
 
+  let mockEnable = false;
+
   return [
     {
       name: PLUGIN_NAME,
@@ -182,7 +195,8 @@ const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions = {}) 
 
       async load(id) {
         if (isClientID(id)) {
-          return transformCode(hmrApp.moduleNames, options);
+          const moduleNames = hmrApp.moduleNames.filter((name) => !isMatch(name, ...mockIgnore));
+          return transformCode(moduleNames, options);
         }
       },
       async webpack() {
@@ -195,7 +209,7 @@ const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions = {}) 
         transformIndexHtml: {
           enforce: "pre",
           transform(html) {
-            if (options.mock && injectScript) {
+            if (mockEnable && injectScript) {
               return {
                 html,
                 tags: [
@@ -213,10 +227,10 @@ const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions = {}) 
           }
         },
         async config(_, env) {
-          options.mock ??= (env.command === "build" || env.mode === "mock");
+          mockEnable = typeof options.mock === "boolean" ? options.mock : options.mock?.enable ?? "auto";
           return {
             define: {
-              VITE_PLUGIN_FOURZE_MOCK: options.mock
+              VITE_PLUGIN_FOURZE_MOCK: mockEnable
             },
             resolve: {
               alias: env.command === "build" ? getModuleAlias() : []

@@ -58,7 +58,7 @@ export interface FourzeProxyOption extends Omit<FourzeBaseRoute, "handle"> {
 export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
   const rootDir = normalize(resolve(process.cwd(), options.dir ?? "router"));
 
-  const pattern = options.pattern ?? ["*.ts", "*.js"];
+  const pattern = options.pattern ?? [/\.ts$/, /\.js$/];
   const moduleMap = new Map<string, FourzeModule>();
 
   const logger = createLogger("@fourze/server");
