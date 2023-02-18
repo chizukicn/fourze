@@ -110,7 +110,7 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
           matchBase: true,
           ignore: fsIgnore
         })) {
-          logger.warn(`load file ${moduleName} not match pattern ${fsPattern.join(",")}`);
+          logger.debug("[hmr]", `load file ${moduleName} not match pattern ${fsPattern.join(",")}`);
           return false;
         }
         try {
@@ -125,14 +125,14 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
             moduleMap.set(moduleName, defineMiddleware(basename(moduleName, extname(moduleName)), instance));
             return true;
           }
-          logger.warn(`load module "${moduleName}" is not a valid module`);
+          logger.warn("[hmr]", `load module "${moduleName}" is not a valid module`);
         } catch (e) {
-          logger.error(`load module "${moduleName}" error`, e);
+          logger.error("[hmr]", `load module "${moduleName}" error`, e);
         }
         return false;
       }
     }
-    logger.warn(`load file ${moduleName} not found`);
+    logger.warn("[hmr]", `load file ${moduleName} not found`);
 
     return false;
   }

@@ -37,7 +37,6 @@ export type MockEnable = boolean | "auto";
 
 export interface MockOptions {
   enable?: MockEnable
-  ignore?: string[]
   mode?: FourzeMockAppOptions["mode"]
   injectScript?: boolean
 }
@@ -207,8 +206,7 @@ const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions = {}) 
 
       async load(id) {
         if (isClientID(id)) {
-          const moduleNames = hmrApp.moduleNames;
-          return transformCode(moduleNames, {
+          return transformCode(hmrApp.moduleNames, {
             ...options,
             mode: mockOptions.mode
           });
