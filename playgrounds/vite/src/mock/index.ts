@@ -2,8 +2,6 @@ import fs from "fs";
 import path from "path";
 import type { FourzeHandle, ObjectProps } from "@fourze/core";
 import {
-  DELAY_HEADER,
-  JSON_WRAPPER_HEADER,
   PolyfillFile,
   createStorage,
   defineRouter,
@@ -13,6 +11,7 @@ import {
   randomInt,
   randomItem
 } from "@fourze/core";
+import { DELAY_HEADER, RESOLVE_HEADER } from "@fourze/middlewares";
 import {
   slicePage
 } from "@/utils/setup-mock";
@@ -114,8 +113,12 @@ export default defineRouter((router) => {
   });
 
   router.route("/error-nowrapper", (_, res) => {
-    res.setTimeout(0);
-    res.setHeader(JSON_WRAPPER_HEADER, "false");
+    res.setHeader(RESOLVE_HEADER, "false");
+  });
+
+  router.route("/not-found", (_, res) => {
+    res.setHeader(RESOLVE_HEADER, "false");
+    res.sendError(404, "not found");
   });
 
   router.route("/nowrapper", (_, res) => {

@@ -1,8 +1,8 @@
 import type { FourzeApp, FourzeMiddleware, FourzeNext, FourzeRequest, FourzeResponse } from "@fourze/core";
 import { resolves } from "@fourze/core";
 import { getAbsoluteFSPath } from "swagger-ui-dist";
-import { createSwaggerMiddleware } from "@fourze/swagger-middleware";
-import type { SwaggerOptions } from "@fourze/swagger-middleware";
+import { createSwaggerMiddleware } from "@fourze/middlewares";
+import type { SwaggerOptions } from "@fourze/middlewares";
 import { renderIndexHtml } from "./ui";
 
 export interface SwaggerUIServiceOptions extends SwaggerOptions {

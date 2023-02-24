@@ -46,8 +46,6 @@ export interface FourzeAppOptions {
 
   meta?: FourzeAppMeta
 
-  timeout?: number
-
   setup?: FourzeAppSetup
 
   fallback?: FourzeNext
@@ -74,7 +72,7 @@ export function createApp(args: FourzeAppOptions | FourzeAppSetup = {}): FourzeA
   const options = isOptions ? args : {};
   const setup = isSetup ? args : options.setup ?? (() => { });
 
-  const { fallback, timeout = 5000 } = options;
+  const { fallback } = options;
 
   const persistenceMiddlewareStore = createQuery<FourzeMiddlewareNode>();
 
@@ -98,13 +96,10 @@ export function createApp(args: FourzeAppOptions | FourzeAppSetup = {}): FourzeA
 
     try {
       if (app.isAllow(url)) {
-        const timer = setTimeout(() => {
-          response.sendError(408, "Request Timeout");
-        }, timeout);
         const ms = app.match(url);
 
         request.app = app;
-        response.setHeader("X-Powered-By", `Fourze App/v${FOURZE_VERSION}`);
+        response.setHeader("X-Powered-By", `Fourze/v${FOURZE_VERSION}`);
 
         const oldContextPath = request.contextPath;
 
@@ -115,12 +110,11 @@ export function createApp(args: FourzeAppOptions | FourzeAppSetup = {}): FourzeA
             await middleware(request, response, doNext);
           } else {
             request.contextPath = oldContextPath;
-            return await next?.();
+            await next?.();
           }
         }
         await doNext();
         await response.done();
-        clearTimeout(timer);
       } else {
         await next?.();
       }
@@ -135,6 +129,7 @@ export function createApp(args: FourzeAppOptions | FourzeAppSetup = {}): FourzeA
     const url = this.relative(_url);
     if (url) {
       return middlewareStore
+        .sort((a, b) => a.order - b.order)
         .where((r) => isMatch(url, r.path))
         .select(r => [r.path, r.middleware] as [string, FourzeMiddleware])
         .toArray();

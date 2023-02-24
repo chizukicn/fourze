@@ -19,11 +19,8 @@ export function createMockClient(
 
   code += dedent`
   createMockApp({
-    base:"${options.base}",
+    ...${JSON.stringify(options)},
     modules:[${names.join(",")}].flat(),
-    delay:${JSON.stringify(options.delay)},
-    mode:${JSON.stringify(options.mode)},
-    allow:${JSON.stringify(options.allow)},
   });
   `;
   return code;

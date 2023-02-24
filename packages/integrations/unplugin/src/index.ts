@@ -1,6 +1,7 @@
 import path from "path";
 import type { DelayMsType, FourzeLogLevelKey, RequestMethod } from "@fourze/core";
-import { createLogger, delayHook, isBoolean, resolves, setLoggerLevel } from "@fourze/core";
+import { createLogger, isBoolean, resolves, setLoggerLevel } from "@fourze/core";
+import { createDelayMiddleware, createTimeoutMiddleware } from "@fourze/middlewares";
 import { createUnplugin } from "unplugin";
 
 import type { FourzeMockAppOptions } from "@fourze/mock";
@@ -111,6 +112,8 @@ const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions = {}) 
   const base = options.base ?? "/api";
 
   const delay = options.delay ?? 0;
+  const timeout = options.timeout ?? 5000;
+
   const allow = options.allow ?? [];
   const deny = options.deny ?? [];
 
@@ -162,12 +165,15 @@ const createFourzePlugin = createUnplugin((options: UnpluginFourzeOptions = {}) 
     allow,
     deny,
     dir,
-    timeout: options.timeout ?? 5000,
     files: options.files
   });
 
+  if (timeout > 0) {
+    hmrApp.use(createTimeoutMiddleware(timeout));
+  }
+
   if (delay) {
-    hmrApp.use(delayHook(delay));
+    hmrApp.use(createDelayMiddleware(delay));
   }
 
   // proxy.forEach(router.proxy);

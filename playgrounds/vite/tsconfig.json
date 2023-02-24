@@ -19,6 +19,7 @@
       "@fourze/unplugin": ["../../packages/integrations/unplugin/src/index.ts"],
       "@fourze/nuxt": ["../../packages/integrations/nuxt/src/index.ts"],
       "@fourze/swagger": ["../../packages/integrations/swagger/src/index.ts"],
+      "@fourze/middlewares": ["../../packages/middlewares/src/index.ts"],
       "@/*": ["src/*"]
     }
   },

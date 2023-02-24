@@ -16,6 +16,7 @@
     "license": "MIT",
     "dependencies": {
         "@fourze/core": "workspace:*",
+        "@fourze/middlewares": "workspace:*",
         "dedent": "^0.7.0"
     },
     "devDependencies": {

@@ -1,7 +1,7 @@
 import type { OutgoingMessage, ServerResponse } from "http";
 import { createLogger } from "../logger";
 import { PolyfillServerResponse, getHeaderValue } from "../polyfill";
-import { isDef, isError, isObject, isString, isUint8Array, overload } from "../utils";
+import { isDef, isObject, isString, isUint8Array } from "../utils";
 import { FourzeError } from "./error";
 import type { FourzeRequest } from "./request";
 
@@ -78,7 +78,7 @@ export interface FourzeResponse extends FourzeBaseResponse {
 
   readonly payload: any
 
-  readonly error: Error | undefined
+  readonly error: FourzeError | undefined
 
   readonly [FOURZE_RESPONSE_SYMBOL]: true
 }
@@ -89,7 +89,7 @@ export function createResponse(options: FourzeResponseOptions) {
   const logger = createLogger("@fourze/core");
 
   let _payload: any;
-  let _error: Error;
+  let _error: FourzeError;
 
   response.setContentType = function (contentType) {
     if (!response.headersSent) {
@@ -113,9 +113,6 @@ export function createResponse(options: FourzeResponseOptions) {
   };
 
   response.send = function (payload: any, contentType?: string) {
-    if (isError(payload)) {
-      payload = payload.message;
-    }
     contentType = contentType ?? this.getContentType(payload);
     switch (contentType) {
       case "application/json":
@@ -142,21 +139,9 @@ export function createResponse(options: FourzeResponseOptions) {
   };
 
   response.sendError = function (...args: any[]) {
-    const { code, error } = overload({
-      code: {
-        type: Number
-      },
-      error: {
-        type: [String, Error],
-        default: () => "Internal Server Error"
-      }
-    }, args);
-
-    _error = isString(error) ? new Error(error) : error;
-
-    const defaultStatusCode = _error instanceof FourzeError ? _error.statusCode : 500;
-    this.statusCode = code ?? defaultStatusCode;
-    logger.error(_error);
+    _error = new FourzeError(...args);
+    this.statusCode = _error.statusCode;
+    logger.error(JSON.stringify(_error));
     return this.send(_error);
   };
 

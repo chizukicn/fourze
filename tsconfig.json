@@ -26,8 +26,8 @@
             "@fourze/swagger": [
               "./packages/integrations/swagger/src/index.ts"
             ],
-            "@fourze/swagger-middleware": [
-              "./packages/integrations/swagger-middleware/src/index.ts"
+            "@fourze/middlewares": [
+              "./packages/middlewares/src/index.ts"
             ]
         }
     },

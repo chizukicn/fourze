@@ -23,7 +23,7 @@
     "@fourze/core": "workspace:*",
     "@fourze/mock": "workspace:*",
     "@fourze/server": "workspace:*",
-    "@fourze/swagger-middleware": "workspace:*",
+    "@fourze/middlewares": "workspace:*",
     "swagger-ui-dist": "^4.15.5",
     "fs-extra": "^11.1.0"
   },

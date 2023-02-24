@@ -22,6 +22,8 @@ export interface FourzeMockAppOptions extends Exclude<FourzeAppOptions, "setup">
   global?: boolean
 
   delay?: DelayMsType
+
+  timeout?: number
 }
 
 export const FOURZE_MOCK_APP_SYMBOL = Symbol("FOURZE_MOCK_APP_SYMBOL");

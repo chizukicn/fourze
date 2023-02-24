@@ -1,6 +1,5 @@
 export * from "./app";
 export * from "./element";
-export * from "./endpoints";
 export * from "./logger";
 export * from "./polyfill";
 export * from "./router";

@@ -1,4 +1,4 @@
-export * from "@fourze/swagger-middleware";
+export { createSwaggerMiddleware } from "@fourze/middlewares";
 
 export * from "./service";
 

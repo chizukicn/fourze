@@ -7,7 +7,7 @@ import fs from "fs-extra";
 import type { RequestMethod } from "@fourze/core";
 import { resolves } from "@fourze/core";
 import { createMockClient } from "@fourze/mock";
-import type { SwaggerOptions } from "@fourze/swagger-middleware";
+import type { SwaggerOptions } from "@fourze/middlewares";
 import { getSwaggerFSPath } from "./service";
 import { renderIndexHtml } from "./ui";
 

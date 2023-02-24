@@ -24,7 +24,7 @@
         "@fourze/mock": "workspace:*",
         "@fourze/server": "workspace:*",
         "@fourze/swagger": "workspace:*",
-        "@fourze/swagger-middleware": "workspace:*",
+        "@fourze/middlewares": "workspace:*",
         "dedent": "^0.7.0",
         "fs-extra": "^11.1.0",
         "unplugin": "^1.0.1"

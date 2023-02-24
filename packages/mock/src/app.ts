@@ -5,10 +5,10 @@ import {
   createApp,
   createLogger,
   defineMiddleware,
-  delayHook,
   isDef,
   isNode
 } from "@fourze/core";
+import { createDelayMiddleware, createTimeoutMiddleware } from "@fourze/middlewares";
 import { createProxyRequest } from "./request";
 
 import type {
@@ -47,8 +47,12 @@ export function createMockApp(
     globalThis.__FOURZE_VERSION__ = FOURZE_VERSION;
   }
 
+  if (options.timeout) {
+    app.use(createTimeoutMiddleware(options.timeout));
+  }
+
   if (options.delay) {
-    app.use(delayHook(options.delay));
+    app.use(createDelayMiddleware(options.delay));
   }
 
   const notSupport = () => {

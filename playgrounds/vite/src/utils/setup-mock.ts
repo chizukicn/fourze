@@ -41,12 +41,15 @@ export function slicePage<T>(
   };
 }
 
-export const successResponseWrap = (data?: unknown, msg?: string) => {
+export const successResponseWrap = (data?: unknown, contentType?: string | null) => {
+  if (!contentType?.startsWith("application/json")) {
+    return data;
+  }
+
   return {
-    data,
+    data: data ?? null,
     code: "Success",
-    succ: true,
-    msg
+    succ: true
   };
 };
 

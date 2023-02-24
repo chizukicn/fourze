@@ -1,0 +1,26 @@
+{
+  "name": "@fourze/middlewares",
+  "version": "0.27.0-beta.0",
+  "description": "",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "keywords": [
+      "vite",
+      "mock",
+      "hmr"
+  ],
+  "files": [
+      "dist/"
+  ],
+  "scripts": {
+      "build": "unbuild",
+      "stub": "unbuild --stub"
+  },
+  "author": "chizuki",
+  "license": "MIT",
+  "dependencies": {
+      "@fourze/core": "workspace:*"
+  },
+  "devDependencies": {}
+}
