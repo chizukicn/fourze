@@ -9,12 +9,9 @@ import type {
   FourzeResponse
 } from "@fourze/core";
 import {
-  createLogger
-  ,
-  defineFourzeComponent
-  ,
-  isFourzeComponent
-  ,
+  createLogger,
+  defineFourzeComponent,
+  isFourzeComponent,
   isFunction,
   isObject,
   isString,

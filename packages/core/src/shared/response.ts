@@ -141,7 +141,7 @@ export function createResponse(options: FourzeResponseOptions) {
   response.sendError = function (...args: any[]) {
     _error = new FourzeError(...args);
     this.statusCode = _error.statusCode;
-    logger.error(JSON.stringify(_error));
+    logger.error(_error);
     return this.send(_error);
   };
 

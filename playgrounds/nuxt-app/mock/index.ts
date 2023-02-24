@@ -8,9 +8,8 @@ import {
   isNode,
   randomArray,
   randomDate,
-  randomInt
-  , randomItem
-
+  randomInt,
+  randomItem
 } from "@fourze/core";
 import {
   slicePage
