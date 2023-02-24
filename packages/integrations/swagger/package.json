@@ -1,34 +1,36 @@
 {
-    "name": "@fourze/swagger",
-    "version": "0.27.0-beta.0",
-    "description": "",
-    "main": "dist/index.cjs",
-    "module": "dist/index.mjs",
-    "types": "dist/index.d.ts",
-    "keywords": [
-        "vite",
-        "mock",
-        "hmr"
-    ],
-    "files": [
-        "dist/"
-    ],
-    "scripts": {
-        "build": "unbuild",
-        "stub": "unbuild --stub"
-    },
-    "author": "chizuki",
-    "license": "MIT",
-    "dependencies": {
-        "@fourze/core": "workspace:*",
-        "@fourze/mock": "workspace:*",
-        "@fourze/server": "workspace:*",
-        "@fourze/swagger-middleware": "workspace:*",
-        "swagger-ui-dist": "^4.15.5",
-        "vite": "^4.0.4",
-        "fs-extra": "^11.1.0"
-    },
-    "devDependencies": {
-        "@types/swagger-ui-dist": "^3.30.1"
-    }
+  "name": "@fourze/swagger",
+  "version": "0.27.0-beta.0",
+  "description": "",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "keywords": [
+    "vite",
+    "mock",
+    "hmr"
+  ],
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "stub": "unbuild --stub"
+  },
+  "author": "chizuki",
+  "license": "MIT",
+  "dependencies": {
+    "@fourze/core": "workspace:*",
+    "@fourze/mock": "workspace:*",
+    "@fourze/server": "workspace:*",
+    "@fourze/swagger-middleware": "workspace:*",
+    "swagger-ui-dist": "^4.15.5",
+    "fs-extra": "^11.1.0"
+  },
+  "peerDependencies": {
+    "vite": "^4.0.4"
+  },
+  "devDependencies": {
+    "@types/swagger-ui-dist": "^3.30.1"
+  }
 }

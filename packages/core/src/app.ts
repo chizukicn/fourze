@@ -119,8 +119,7 @@ export function createApp(args: FourzeAppOptions | FourzeAppSetup = {}): FourzeA
           }
         }
         await doNext();
-
-        await response.wait();
+        await response.done();
         clearTimeout(timer);
       } else {
         await next?.();

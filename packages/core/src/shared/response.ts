@@ -31,19 +31,44 @@ export interface FourzeResponse extends FourzeBaseResponse {
 
   removeHeader(key: string): this
 
+  /**
+   * 发送数据
+   * @param payload
+   * @param contentType
+   */
   send(payload: any, contentType?: string | null): this
 
+  /**
+   * 获取Content-Type
+   * @param payload 如果没有指定contentType，则会根据payload的类型自动推断
+   */
   getContentType(payload?: any): string | undefined
 
+  /**
+   * 设置Content-Type
+   * @param contentType
+   */
   setContentType(contentType: string): this
 
   status(code: number): this
 
+  /**
+   * 发送错误
+   * @param code
+   * @param error
+   */
   sendError(code: number, error?: string | Error): this
 
+  /**
+   * 发送错误
+   * @param error
+   */
   sendError(error?: string | Error): this
 
-  wait(): Promise<void>
+  /**
+   *  等待所有的异步操作完成
+   */
+  done(): Promise<void>
 
   readonly res?: OutgoingMessage
 
@@ -177,8 +202,12 @@ export function createResponse(options: FourzeResponseOptions) {
     return this;
   };
 
-  response.wait = function () {
+  response.done = function () {
     return new Promise((resolve) => {
+      if (this.writableEnded) {
+        resolve();
+        return;
+      }
       this.on("finish", () => {
         resolve();
       });
