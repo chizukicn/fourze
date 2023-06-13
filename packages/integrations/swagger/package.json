@@ -24,7 +24,7 @@
     "@fourze/mock": "workspace:*",
     "@fourze/server": "workspace:*",
     "@fourze/middlewares": "workspace:*",
-    "swagger-ui-dist": "^4.19.1",
+    "swagger-ui-dist": "^5.0.0",
     "fs-extra": "^11.1.1"
   },
   "peerDependencies": {

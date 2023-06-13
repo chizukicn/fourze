@@ -216,8 +216,8 @@ importers:
         specifier: ^11.1.1
         version: 11.1.1
       swagger-ui-dist:
-        specifier: ^4.19.1
-        version: 4.19.1
+        specifier: ^5.0.0
+        version: 5.0.0
       vite:
         specifier: ^4.3.9
         version: 4.3.9(@types/node@18.16.18)(sass@1.63.3)
@@ -9025,8 +9025,8 @@ packages:
       picocolors: 1.0.0
     dev: true
 
-  /swagger-ui-dist@4.19.1:
-    resolution: {integrity: sha512-n/gFn+R7G/BXWwl5UZLw6F1YgWOlf3zkwGlsPhTMhNtAAolBGKg0JS5b2RKt5NI6/hSopVaSrki2wTIMUDDy2w==}
+  /swagger-ui-dist@5.0.0:
+    resolution: {integrity: sha512-bwl6og9I9CAHKGSnYLKydjhBuH7d3oU6RX6uKN8oDCkLusTHXOW3sZMyBWjRtjGFnCMmN085oZoaR/4Wm9nIaQ==}
     dev: false
 
   /symbol-tree@3.2.4:
