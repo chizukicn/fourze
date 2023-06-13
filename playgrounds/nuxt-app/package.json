@@ -9,7 +9,7 @@
         "preview": "nuxt generate && nuxt preview"
     },
     "dependencies": {
-        "@vueuse/core": "^9.1.1",
+        "@vueuse/core": "^10.1.2",
         "axios": "^0.27.2",
         "dayjs": "^1.11.4",
         "jquery": "^3.6.0",
