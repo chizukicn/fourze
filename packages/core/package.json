@@ -24,7 +24,7 @@
         "minimatch": "^7.4.6",
         "overload-js": "^1.0.0",
         "query-string": "^7.1.3",
-        "tiny-lru": "^10.4.1"
+        "tiny-lru": "^11.0.1"
     },
     "devDependencies": {
         "@types/micromatch": "^4.0.2",
