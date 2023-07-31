@@ -22,7 +22,7 @@
         "@fourze/server": "workspace:*",
         "@fourze/vite": "workspace:*",
         "@nuxt/kit": "^3.5.3",
-        "dedent": "^0.7.0",
+        "dedent": "^1.5.1",
         "pathe": "^1.1.1"
     },
     "devDependencies": {
