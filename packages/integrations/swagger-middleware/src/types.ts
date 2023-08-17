@@ -9,11 +9,11 @@ export interface SwaggerPathSchema {
   consumes?: string[]
   produces?: string[]
   responses?: Record<
-    string,
-    {
-      description: string
-      schema?: Record<string, any>
-    }
+  string,
+  {
+    description: string
+    schema?: Record<string, any>
+  }
   >
 }
 

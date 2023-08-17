@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 import type { FourzeHmrApp } from "@fourze/server";
 
 import type { InlineConfig } from "vite";

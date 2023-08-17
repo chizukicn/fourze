@@ -1,4 +1,4 @@
-import type http from "http";
+import type http from "node:http";
 import type { FourzeContextOptions } from "@fourze/core";
 import {
   FOURZE_VERSION,
@@ -67,8 +67,8 @@ export function createMockApp(
   let _request: typeof http.request;
 
   if (isNode()) {
-    const http = require("http");
-    const https = require("https");
+    const http = require("node:http");
+    const https = require("node:https");
 
     app.originalHttpRequest = http.request;
     app.originalHttpsRequest = https.request;
@@ -145,8 +145,8 @@ export function createMockApp(
         globalThis.fetch = app.fetch;
       }
       if (isNode() && activeMode.has("request")) {
-        const http = require("http") as typeof import("http");
-        const https = require("https") as typeof import("https");
+        const http = require("node:http") as typeof import("http");
+        const https = require("node:https") as typeof import("https");
         http.request = app.request;
         https.request = app.request;
       }
@@ -166,8 +166,8 @@ export function createMockApp(
         globalThis.fetch = app.originalFetch;
       }
       if (_mode.includes("request") && isNode()) {
-        const http = require("http") as typeof import("http");
-        const https = require("https") as typeof import("https");
+        const http = require("node:http") as typeof import("http");
+        const https = require("node:https") as typeof import("https");
         http.request = this.originalHttpRequest;
         https.request = this.originalHttpsRequest;
       }

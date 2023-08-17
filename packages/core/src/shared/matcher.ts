@@ -209,7 +209,7 @@ export function createRouteMatcher<T>(options: RouteMatcherOptions = {}): RouteM
       const data = node.payload.get(method);
 
       if (data) {
-        const lastSection = sections[sections.length - 1];
+        const lastSection = sections.at(-1);
         node.payload.delete(method);
         if (Object.keys(node.children).length === 0) {
           const parentNode = node.parent!;
@@ -235,7 +235,7 @@ export function createRouteMatcher<T>(options: RouteMatcherOptions = {}): RouteM
   };
 }
 
-const PARAM_KEY_REGEX = /^\{.*\}$/;
+const PARAM_KEY_REGEX = /^{.*}$/;
 
 function getNodeType(path: string) {
   if (path.startsWith("**")) {

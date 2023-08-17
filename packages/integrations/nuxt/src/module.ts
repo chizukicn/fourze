@@ -33,25 +33,25 @@ export default defineNuxtModule<ModuleOptions>({
         write: true,
         getContents() {
           return dedent`
-                    import { createServer,createHmrApp } from "@fourze/server"
-                    import { defineEventHandler } from "h3"
+            import { createServer,createHmrApp } from "@fourze/server"
+            import { defineEventHandler } from "h3"
 
-                    const hmrApp = createHmrApp({
-                        base: "${options.base ?? "/api"}",
-                        dir: "${options.dir ?? "./mock"}",
-                        delay: ${JSON.stringify(options.delay ?? 0)},
-                    })
+            const hmrApp = createHmrApp({
+                base: "${options.base ?? "/api"}",
+                dir: "${options.dir ?? "./mock"}",
+                delay: ${JSON.stringify(options.delay ?? 0)},
+            })
 
-                    const service = createServer(hmrApp)
+            const service = createServer(hmrApp)
 
-                    const onNotFound = () => {
-                        /** empty */
-                    }
+            const onNotFound = () => {
+                /** empty */
+            }
 
-                    export default defineEventHandler(async event => {
-                        await service(event.node.req, event.node.res, onNotFound)
-                    })
-                  `;
+            export default defineEventHandler(async event => {
+                await service(event.node.req, event.node.res, onNotFound)
+            })
+          `;
         }
       });
 

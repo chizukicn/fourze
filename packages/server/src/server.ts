@@ -1,7 +1,7 @@
-import type EventEmitter from "events";
-import type { IncomingMessage, OutgoingMessage, Server } from "http";
-import http from "http";
-import https from "https";
+import type EventEmitter from "node:events";
+import type { IncomingMessage, OutgoingMessage, Server } from "node:http";
+import http from "node:http";
+import https from "node:https";
 import {
   FOURZE_VERSION,
   createApp,

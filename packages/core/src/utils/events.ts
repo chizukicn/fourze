@@ -1,4 +1,4 @@
-import EventEmitter from "events";
+import EventEmitter from "node:events";
 
 export function injectEventEmitter<T extends EventEmitter>(app: T) {
   const _emitter = new EventEmitter();

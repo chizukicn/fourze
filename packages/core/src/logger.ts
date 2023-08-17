@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-duplicate-enum-values */
 import { createConsola } from "consola";
 import type { ConsolaInstance } from "consola";
 
@@ -79,11 +80,11 @@ export function setLoggerLevel(
         break;
       case "silent":
       case FourzeLogLevel.Silent:
-        logger.level = -Infinity;
+        logger.level = Number.NEGATIVE_INFINITY;
         break;
       case "verbose":
       case FourzeLogLevel.Verbose:
-        logger.level = Infinity;
+        logger.level = Number.POSITIVE_INFINITY;
         break;
     }
   };

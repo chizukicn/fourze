@@ -61,11 +61,7 @@ export function createResolveMiddleware(
       const isAllow = (isUndef(useResolve) || !["false", "0", "off"].includes(useResolve));
 
       if (isAllow) {
-        if (isError(payload) && reject) {
-          payload = reject(payload) ?? payload;
-        } else {
-          payload = resolve(payload, contentType) ?? payload;
-        }
+        payload = isError(payload) && reject ? reject(payload) ?? payload : resolve(payload, contentType) ?? payload;
       }
 
       _send(payload, statusCode, contentType);

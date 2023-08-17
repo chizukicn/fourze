@@ -78,7 +78,7 @@ export function createStorage(options: StorageOptions = {}): Storage {
   function emitChange() {
     if (persistence) {
       if (isNode()) {
-        const fs = require("fs") as typeof import("fs");
+        const fs = require("node:fs") as typeof import("fs");
         fs.writeFileSync(`${dir}/${id}`, JSON.stringify(storage));
       } else {
         const _store = target === "local" ? localStorage : sessionStorage;
@@ -89,8 +89,8 @@ export function createStorage(options: StorageOptions = {}): Storage {
 
   function initStorage() {
     if (isNode()) {
-      const fs = require("fs") as typeof import("fs");
-      const path = require("path") as typeof import("path");
+      const fs = require("node:fs") as typeof import("fs");
+      const path = require("node:path") as typeof import("path");
       const storagePath = path.resolve(dir);
       if (!fs.existsSync(storagePath)) {
         fs.mkdirSync(storagePath);

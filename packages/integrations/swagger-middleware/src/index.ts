@@ -70,8 +70,8 @@ export function createSwaggerMiddleware(
 
     function getPaths() {
       const paths = new Map<
-        string,
-        Record<RequestMethod, SwaggerPathSchema> | SwaggerPathSchema
+      string,
+      Record<RequestMethod, SwaggerPathSchema> | SwaggerPathSchema
       >();
       const groups = routes.groupBy((e) => e.path);
       for (const [path, routes] of groups) {
@@ -105,8 +105,8 @@ export function createSwaggerMiddleware(
           }
         }
         const newPath = Object.fromEntries(map.entries()) as Record<
-          RequestMethod,
-          SwaggerPathSchema
+        RequestMethod,
+        SwaggerPathSchema
         >;
         let exist = paths.get(path);
         if (exist) {

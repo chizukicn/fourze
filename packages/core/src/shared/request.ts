@@ -1,8 +1,7 @@
-import type { IncomingMessage } from "http";
-import {parseQuery} from "ufo";
+import type { IncomingMessage } from "node:http";
+import { getQuery, parseQuery, parseURL, withoutBase } from "ufo";
 import type { MaybeRegex } from "maybe-types";
 import { safeParse } from "fast-content-type-parse";
-import { getQuery, parseURL, withoutBase } from "ufo";
 import type { PolyfillHeaderInit } from "../polyfill";
 import { decodeFormData, flatHeaders, getHeaderValue } from "../polyfill";
 import { isString, isUint8Array, parseJson } from "../utils";

@@ -23,10 +23,6 @@ export function createFilterMiddleware<T>(
   }
   return defineMiddleware(middleware.name ?? "Match", middleware.order ?? -1, async (req, res, next) => {
     const { path } = req;
-    if (isInclude(path)) {
-      await middleware(req, res, next);
-    } else {
-      await next?.();
-    }
+    await (isInclude(path) ? middleware(req, res, next) : next?.());
   });
 }

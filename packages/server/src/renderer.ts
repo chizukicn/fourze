@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import type {
   FourzeComponent,
   FourzeLogger,
@@ -152,7 +152,7 @@ export async function renderTsx(
     requireCache: false
   });
 
-  const maybes = file.match(/\.[t|j]sx$/) ? [file] : [];
+  const maybes = file.match(/\.[jt|]sx$/) ? [file] : [];
   maybes.push(
     ...["index.tsx", "index.jsx"].map((ext) => path.normalize(`${file}/${ext}`))
   );
