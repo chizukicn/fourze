@@ -1,6 +1,6 @@
 import type { MaybeRegex } from "maybe-types";
 import { hasProtocol, isEmptyURL, isRelative, joinURL, normalizeURL, withLeadingSlash, withTrailingSlash, withoutBase, withoutLeadingSlash, withoutTrailingSlash } from "ufo";
-import minimatch from "minimatch";
+import { minimatch } from "minimatch";
 import { isRegExp } from "./is";
 
 export function isMatch(path: string, ...pattern: MaybeRegex[]) {

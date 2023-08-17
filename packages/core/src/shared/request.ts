@@ -1,5 +1,5 @@
 import type { IncomingMessage } from "http";
-import qs from "query-string";
+import {parseQuery} from "ufo";
 import type { MaybeRegex } from "maybe-types";
 import { safeParse } from "fast-content-type-parse";
 import { getQuery, parseURL, withoutBase } from "ufo";
@@ -123,7 +123,7 @@ export function createRequest(options: FourzeRequestOptions) {
           break;
         }
         case "application/x-www-form-urlencoded":{
-          body = qs.parse(bodyRaw.toString(charset));
+          body = parseQuery(bodyRaw.toString(charset));
           break;
         }
         case "multipart/form-data": {
