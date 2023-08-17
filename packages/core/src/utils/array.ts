@@ -256,7 +256,7 @@ export class CollectionQueryClass<T> implements ArrayLike<T> {
     deleteProperty(target, prop) {
       if (isString(prop)) {
         let index = +prop;
-        if (!isNaN(index)) {
+        if (!Number.isNaN(index)) {
           index = normalizeIndex(index, target.length);
           return delete target.source[index];
         }
@@ -655,7 +655,7 @@ export class CollectionQueryClass<T> implements ArrayLike<T> {
   }
 
   last() {
-    return this.source[this.source.length - 1];
+    return this.source.at(-1);
   }
 
   toMap(keySelector: MapFn<T, any>, valueSelector?: MapFn<T, any>) {

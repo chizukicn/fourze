@@ -1,10 +1,10 @@
-import os from "os";
-import path from "path";
-import { promises as dns } from "dns";
-import net from "net";
+import os from "node:os";
+import path from "node:path";
+import { promises as dns } from "node:dns";
+import net from "node:net";
 
-import type { AddressInfo } from "net";
-import type { Server } from "http";
+import type { AddressInfo } from "node:net";
+import type { Server } from "node:http";
 import { isNumber, isString, normalizeURL } from "@fourze/core";
 import { loopbackHosts, wildcardHosts } from "./constants";
 
@@ -28,7 +28,7 @@ export function defineEnvs(
 }
 
 export async function getLocalhostAddressIfDiffersFromDNS(): Promise<
-  string | undefined
+string | undefined
 > {
   const [nodeResult, dnsResult] = await Promise.all([
     dns.lookup("localhost"),

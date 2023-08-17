@@ -1,4 +1,4 @@
-import EventEmitter from "events";
+import EventEmitter from "node:events";
 import { getHeaderRawValue } from "./header";
 
 export class PolyfillServerResponse extends EventEmitter {

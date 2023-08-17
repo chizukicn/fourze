@@ -1,5 +1,5 @@
-import type http from "http";
-import type https from "https";
+import type http from "node:http";
+import type https from "node:https";
 import type { DelayMsType, FourzeApp, FourzeAppOptions } from "@fourze/core";
 
 export type FourzeMockRequestMode = "xhr" | "fetch" | "request";

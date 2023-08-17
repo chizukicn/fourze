@@ -3,9 +3,9 @@ import type {
   ClientRequestArgs,
   IncomingMessage,
   RequestOptions
-} from "http";
-import type http from "http";
-import type https from "https";
+} from "node:http";
+import type http from "node:http";
+import type https from "node:https";
 import {
   assert,
   createLogger,
@@ -52,7 +52,7 @@ export function createProxyRequest(app: FourzeMockApp) {
     return;
   }
 
-  const { Writable, Readable } = require("stream") as typeof import("stream");
+  const { Writable, Readable } = require("node:stream") as typeof import("stream");
 
   class ProxyClientResponse extends Readable {
     headers: IncomingMessage["headers"];

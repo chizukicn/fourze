@@ -18,10 +18,10 @@ export function createMockClient(
   }
 
   code += dedent`
-  createMockApp({
-    ...${JSON.stringify(options)},
-    modules:[${names.join(",")}].flat(),
-  });
+    createMockApp({
+      ...${JSON.stringify(options)},
+      modules:[${names.join(",")}].flat(),
+    });
   `;
   return code;
 }

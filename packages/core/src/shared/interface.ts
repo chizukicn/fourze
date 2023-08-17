@@ -1,4 +1,4 @@
-import type { IncomingMessage, OutgoingMessage } from "http";
+import type { IncomingMessage, OutgoingMessage } from "node:http";
 import type { MaybePromise, MaybeRegex } from "maybe-types";
 import { overload } from "../utils";
 import type { FourzeContextOptions, FourzeServiceContext } from "./context";

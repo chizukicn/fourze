@@ -1,4 +1,4 @@
-import type { OutgoingMessage, ServerResponse } from "http";
+import type { OutgoingMessage, ServerResponse } from "node:http";
 import { safeParse } from "fast-content-type-parse";
 import { PolyfillServerResponse, getHeaderValue } from "../polyfill";
 import { assert, defineOverload, isDef, isNumber, isObject, isString, isUint8Array, isUndefined } from "../utils";

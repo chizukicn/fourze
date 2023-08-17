@@ -20,7 +20,7 @@ export function parseFakerNumber(num: MaybeArray<MaybeNumber>): number {
     if (num.match(/^\d+-\d+$/g)) {
       return randomInt(num);
     }
-    return parseInt(num);
+    return Number.parseInt(num);
   }
   return num;
 }
@@ -92,11 +92,11 @@ export function parseFakerValue(
   context: any = {}
 ) {
   if (isString(val)) {
-    if (val.match(/^\{[^}]*\}$/g)) {
+    if (val.match(/^{[^}]*}$/g)) {
       return parseFakerDynamic(val.slice(1, -1), context);
     }
 
-    const matches = val.match(/\{[^}]*}/g);
+    const matches = val.match(/{[^}]*}/g);
     if (matches) {
       for (const match of matches) {
         const matchValue = match.slice(1, -1);

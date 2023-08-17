@@ -1,4 +1,4 @@
-import type { IncomingMessage, OutgoingMessage } from "http";
+import type { IncomingMessage, OutgoingMessage } from "node:http";
 import type { FourzeRequest } from "./request";
 import { createRequest } from "./request";
 import type { FourzeResponse } from "./response";

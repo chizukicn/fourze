@@ -1,5 +1,6 @@
-import consola from "consola";
-import type { Consola } from "consola";
+/* eslint-disable @typescript-eslint/no-duplicate-enum-values */
+import { createConsola } from "consola";
+import type { ConsolaInstance } from "consola";
 
 export enum FourzeLogLevel {
   Fatal = 0,
@@ -27,7 +28,7 @@ export const noopLogger = {
 
 export type FourzeLogLevelKey = Uncapitalize<keyof typeof FourzeLogLevel>;
 
-export type FourzeLogger = Consola;
+export type FourzeLogger = ConsolaInstance;
 
 let globalLoggerLevel: FourzeLogLevelKey | FourzeLogLevel = "fatal";
 
@@ -37,7 +38,8 @@ export function createLogger(tag: string) {
   // return noopLogger as unknown as FourzeLogger;
   let logger = loggerStore.get(tag);
   if (!logger) {
-    logger = consola.withTag(tag);
+    logger = createConsola({
+    });
     loggerStore.set(tag, logger);
     setLoggerLevel(globalLoggerLevel, tag);
   }
@@ -78,11 +80,11 @@ export function setLoggerLevel(
         break;
       case "silent":
       case FourzeLogLevel.Silent:
-        logger.level = -Infinity;
+        logger.level = Number.NEGATIVE_INFINITY;
         break;
       case "verbose":
       case FourzeLogLevel.Verbose:
-        logger.level = Infinity;
+        logger.level = Number.POSITIVE_INFINITY;
         break;
     }
   };

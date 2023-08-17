@@ -21,14 +21,14 @@
     "dependencies": {
         "@fourze/server": "workspace:*",
         "@fourze/vite": "workspace:*",
-        "@nuxt/kit": "^3.5.3",
-        "dedent": "^0.7.0",
+        "@nuxt/kit": "^3.6.5",
+        "dedent": "^1.5.1",
         "pathe": "^1.1.1"
     },
     "devDependencies": {
         "@nuxt/module-builder": "^0.4.0",
-        "@nuxt/schema": "^3.5.3",
+        "@nuxt/schema": "^3.6.5",
         "@types/dedent": "^0.7.0",
-        "nuxt": "^3.5.3"
+        "nuxt": "^3.6.5"
     }
 }

@@ -18,8 +18,8 @@ export function randomInt(param0: number | string, max?: number) {
   let min: number;
   if (isString(param0)) {
     const [minStr, maxStr] = param0.split("-");
-    min = parseInt(minStr);
-    max = parseInt(maxStr);
+    min = Number.parseInt(minStr);
+    max = Number.parseInt(maxStr);
   } else {
     min = param0;
   }

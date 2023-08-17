@@ -9,15 +9,15 @@
         "preview": "nuxt generate && nuxt preview"
     },
     "dependencies": {
-        "@vueuse/core": "^10.1.2",
-        "axios": "^0.27.2",
-        "dayjs": "^1.11.8",
+        "@vueuse/core": "^10.3.0",
+        "axios": "^1.4.0",
+        "dayjs": "^1.11.9",
         "jquery": "^3.7.0",
-        "query-string": "^7.1.3"
+        "query-string": "^8.1.0"
     },
     "devDependencies": {
         "@fourze/nuxt": "workspace:*",
-        "nuxt": "3.5.3",
+        "nuxt": "3.6.5",
         "nuxt-windicss": "^2.6.1"
     }
 }

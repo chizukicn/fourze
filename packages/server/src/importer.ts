@@ -1,7 +1,7 @@
-import { runInThisContext } from "vm";
-import { Module, builtinModules } from "module";
-import { platform } from "os";
-import { pathToFileURL } from "url";
+import { runInThisContext } from "node:vm";
+import { Module, builtinModules } from "node:module";
+import { platform } from "node:os";
+import { pathToFileURL } from "node:url";
 import { dirname, extname, join } from "pathe";
 import { normalizeAliases, resolveAlias } from "pathe/utils";
 import { createLogger, escapeStringRegexp, parseJson } from "@fourze/core";
