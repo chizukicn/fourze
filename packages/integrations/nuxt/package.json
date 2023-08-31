@@ -1,7 +1,7 @@
 {
   "name": "@fourze/nuxt",
   "type": "module",
-  "version": "0.28.3",
+  "version": "0.28.4",
   "license": "MIT",
   "exports": {
     ".": {
