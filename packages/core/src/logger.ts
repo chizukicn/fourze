@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-duplicate-enum-values */
-import { createConsola } from "consola";
+import { createConsola } from "consola/core";
 import type { ConsolaInstance } from "consola";
 
 export enum FourzeLogLevel {
