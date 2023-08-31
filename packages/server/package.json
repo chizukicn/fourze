@@ -2,6 +2,8 @@
   "name": "@fourze/server",
   "version": "0.28.3",
   "description": "",
+  "author": "chizuki",
+  "license": "MIT",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -12,8 +14,6 @@
     "build": "unbuild",
     "stub": "unbuild --stub"
   },
-  "author": "chizuki",
-  "license": "MIT",
   "dependencies": {
     "@fourze/core": "workspace:*",
     "chokidar": "^3.5.3",
@@ -23,7 +23,7 @@
     "fs-extra": "^11.1.1",
     "micromatch": "^4.0.5",
     "mime": "^3.0.0",
-    "mlly": "^1.4.0",
+    "mlly": "^1.4.1",
     "pathe": "^1.1.1",
     "vm": "^0.1.0"
   },

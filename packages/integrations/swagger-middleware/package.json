@@ -2,14 +2,16 @@
   "name": "@fourze/swagger-middleware",
   "version": "0.28.3",
   "description": "",
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "author": "chizuki",
+  "license": "MIT",
   "keywords": [
     "vite",
     "mock",
     "hmr"
   ],
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "files": [
     "dist/"
   ],
@@ -17,8 +19,6 @@
     "build": "unbuild",
     "stub": "unbuild --stub"
   },
-  "author": "chizuki",
-  "license": "MIT",
   "dependencies": {
     "@fourze/core": "workspace:*",
     "maybe-types": "^0.0.3"

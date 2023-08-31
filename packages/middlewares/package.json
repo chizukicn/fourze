@@ -1,26 +1,26 @@
 {
-    "name": "@fourze/middlewares",
-    "version": "0.28.3",
-    "description": "",
-    "main": "dist/index.cjs",
-    "module": "dist/index.mjs",
-    "types": "dist/index.d.ts",
-    "keywords": [
-        "vite",
-        "mock",
-        "hmr"
-    ],
-    "files": [
-        "dist/"
-    ],
-    "scripts": {
-        "build": "unbuild",
-        "stub": "unbuild --stub"
-    },
-    "author": "chizuki",
-    "license": "MIT",
-    "dependencies": {
-        "@fourze/core": "workspace:*",
-        "maybe-types": "^0.0.3"
-    }
+  "name": "@fourze/middlewares",
+  "version": "0.28.3",
+  "description": "",
+  "author": "chizuki",
+  "license": "MIT",
+  "keywords": [
+    "vite",
+    "mock",
+    "hmr"
+  ],
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "stub": "unbuild --stub"
+  },
+  "dependencies": {
+    "@fourze/core": "workspace:*",
+    "maybe-types": "^0.0.3"
+  }
 }

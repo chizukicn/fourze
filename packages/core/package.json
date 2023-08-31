@@ -1,33 +1,33 @@
 {
-    "name": "@fourze/core",
-    "version": "0.28.3",
-    "description": "",
-    "main": "dist/index.cjs",
-    "module": "dist/index.mjs",
-    "types": "dist/index.d.ts",
-    "files": [
-        "dist/"
-    ],
-    "type": "module",
-    "scripts": {
-        "build": "unbuild",
-        "stub": "unbuild --stub"
-    },
-    "author": "chizuki",
-    "license": "MIT",
-    "dependencies": {
-        "consola": "^3.2.3",
-        "destr": "^2.0.1",
-        "events": "^3.3.0",
-        "fast-content-type-parse": "^1.0.0",
-        "maybe-types": "^0.0.3",
-        "micromatch": "^4.0.5",
-        "minimatch": "^9.0.3",
-        "tiny-lru": "^11.0.1",
-        "ufo": "^1.2.0"
-    },
-    "devDependencies": {
-        "@types/micromatch": "^4.0.2",
-        "@types/minimatch": "^5.1.2"
-    }
+  "name": "@fourze/core",
+  "type": "module",
+  "version": "0.28.3",
+  "description": "",
+  "author": "chizuki",
+  "license": "MIT",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "stub": "unbuild --stub"
+  },
+  "dependencies": {
+    "consola": "^3.2.3",
+    "destr": "^2.0.1",
+    "events": "^3.3.0",
+    "fast-content-type-parse": "^1.0.0",
+    "maybe-types": "^0.0.3",
+    "micromatch": "^4.0.5",
+    "minimatch": "^9.0.3",
+    "tiny-lru": "^11.0.1",
+    "ufo": "^1.3.0"
+  },
+  "devDependencies": {
+    "@types/micromatch": "^4.0.2",
+    "@types/minimatch": "^5.1.2"
+  }
 }

@@ -1,25 +1,25 @@
 {
-    "name": "@fourze/mock",
-    "version": "0.28.3",
-    "description": "",
-    "main": "dist/index.cjs",
-    "module": "dist/index.mjs",
-    "types": "dist/index.d.ts",
-    "files": [
-        "dist/"
-    ],
-    "scripts": {
-        "build": "unbuild",
-        "stub": "unbuild --stub"
-    },
-    "author": "chizuki",
-    "license": "MIT",
-    "dependencies": {
-        "@fourze/core": "workspace:*",
-        "@fourze/middlewares": "workspace:*",
-        "dedent": "^1.5.1"
-    },
-    "devDependencies": {
-        "@types/dedent": "^0.7.0"
-    }
+  "name": "@fourze/mock",
+  "version": "0.28.3",
+  "description": "",
+  "author": "chizuki",
+  "license": "MIT",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "stub": "unbuild --stub"
+  },
+  "dependencies": {
+    "@fourze/core": "workspace:*",
+    "@fourze/middlewares": "workspace:*",
+    "dedent": "^1.5.1"
+  },
+  "devDependencies": {
+    "@types/dedent": "^0.7.0"
+  }
 }

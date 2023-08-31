@@ -2,14 +2,16 @@
   "name": "@fourze/swagger",
   "version": "0.28.3",
   "description": "",
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "author": "chizuki",
+  "license": "MIT",
   "keywords": [
     "vite",
     "mock",
     "hmr"
   ],
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "files": [
     "dist/"
   ],
@@ -17,18 +19,16 @@
     "build": "unbuild",
     "stub": "unbuild --stub"
   },
-  "author": "chizuki",
-  "license": "MIT",
+  "peerDependencies": {
+    "vite": "^4.4.9"
+  },
   "dependencies": {
     "@fourze/core": "workspace:*",
     "@fourze/mock": "workspace:*",
     "@fourze/server": "workspace:*",
     "@fourze/swagger-middleware": "workspace:*",
     "fs-extra": "^11.1.1",
-    "swagger-ui-dist": "^5.3.2"
-  },
-  "peerDependencies": {
-    "vite": "^4.4.9"
+    "swagger-ui-dist": "^5.4.2"
   },
   "devDependencies": {
     "@types/swagger-ui-dist": "^3.30.1"
