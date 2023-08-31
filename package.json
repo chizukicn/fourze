@@ -1,6 +1,6 @@
 {
   "name": "@fourze/monorepo",
-  "version": "0.28.4",
+  "version": "0.28.5",
   "private": true,
   "description": "a mock framework",
   "author": "chizuki",
