@@ -46,7 +46,7 @@ export async function createElement(
 
 export const h = createElement;
 
-export const FourzeComponentSymbol = Symbol("FourzeComponent");
+export const FourzeComponentFlag = "__isFourzeComponent";
 
 export interface FourzeComponentOption {
   name?: string
@@ -55,7 +55,7 @@ export interface FourzeComponentOption {
 }
 
 export interface FourzeComponent extends FourzeComponentOption {
-  [FourzeComponentSymbol]: true
+  [FourzeComponentFlag]: true
 }
 
 export function defineFourzeComponent(
@@ -66,13 +66,13 @@ export function defineFourzeComponent(
   }
   return {
     ...setup,
-    [FourzeComponentSymbol]: true
+    [FourzeComponentFlag]: true
   };
 }
 
 export function isFourzeComponent(
   component: any
 ): component is FourzeComponent {
-  return component && component[FourzeComponentSymbol];
+  return component && component[FourzeComponentFlag];
 }
 

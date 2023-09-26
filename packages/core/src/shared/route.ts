@@ -5,7 +5,7 @@ import { FOURZE_METHODS } from "./request";
 import type { FourzeRouteMeta } from "./meta";
 import type { FourzeHandle } from "./interface";
 
-const FOURZE_ROUTE_SYMBOL = Symbol("FourzeRoute");
+const FourzeRouteFlag = "__isFourzeRoute";
 
 export interface FourzeRouteOptions<Props extends ObjectProps = ObjectProps, Meta = FourzeRouteMeta> {
   method?: RequestMethod
@@ -26,7 +26,7 @@ export interface FourzeBaseRoute<
 export interface FourzeRoute<
   Result = unknown, Props extends ObjectProps = DefaultData, Meta = FourzeRouteMeta
 > extends FourzeBaseRoute<Result, Props, Meta> {
-  readonly [FOURZE_ROUTE_SYMBOL]: true
+  readonly [FourzeRouteFlag]: true
   readonly props: Props
   readonly meta: Meta
 }
@@ -45,7 +45,7 @@ export type FourzeRouteGenerator<This> = {
 };
 
 export function isRoute(route: any): route is FourzeRoute<unknown> {
-  return !!route && !!route[FOURZE_ROUTE_SYMBOL];
+  return !!route && !!route[FourzeRouteFlag];
 }
 
 const REQUEST_PATH_REGEX = new RegExp(
@@ -86,7 +86,7 @@ export function defineRoute<
     get props() {
       return props;
     },
-    get [FOURZE_ROUTE_SYMBOL](): true {
+    get [FourzeRouteFlag](): true {
       return true;
     }
   };

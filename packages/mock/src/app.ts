@@ -17,7 +17,7 @@ import type {
   FourzeMockAppOptions,
   FourzeMockRequestMode
 } from "./shared";
-import { FOURZE_MOCK_APP_SYMBOL } from "./shared";
+import { FourzeMockAppFlag } from "./shared";
 import { createProxyFetch } from "./fetch";
 import { createProxyXMLHttpRequest } from "./xhr";
 
@@ -125,7 +125,7 @@ export function createMockApp(
       },
       enumerable: true
     },
-    [FOURZE_MOCK_APP_SYMBOL]: {
+    [FourzeMockAppFlag]: {
       get() {
         return true;
       },
@@ -213,6 +213,6 @@ export function getGlobalMockApp() {
 }
 
 export function isMockApp(app: any): app is FourzeMockApp {
-  return !!app && app[FOURZE_MOCK_APP_SYMBOL];
+  return !!app && app[FourzeMockAppFlag];
 }
 

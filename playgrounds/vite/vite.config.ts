@@ -11,7 +11,6 @@ import windicss from "vite-plugin-windicss";
 import tsconfig from "./tsconfig.json";
 
 export default defineConfig({
-  base: "./test",
   server: {
     port: 7609,
     host: "0.0.0.0",
@@ -59,7 +58,6 @@ export default defineConfig({
         host: ["http://localhost:8080"]
       },
       delay: "200-500",
-      swagger: true,
       logLevel: "debug"
     }),
     visualizer({

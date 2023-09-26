@@ -12,7 +12,7 @@ export interface FourzeResponseOptions {
   response?: OutgoingMessage
 }
 
-const FOURZE_RESPONSE_SYMBOL = Symbol("FourzeResponse");
+const FourzeResponseFlag = "__isFourzeResponse";
 
 export interface FourzeBaseResponse extends ServerResponse {
 }
@@ -85,7 +85,7 @@ export interface FourzeResponse extends FourzeBaseResponse {
 
   readonly error: FourzeError | undefined
 
-  readonly [FOURZE_RESPONSE_SYMBOL]: true
+  readonly [FourzeResponseFlag]: true
 }
 
 export function createResponse(options: FourzeResponseOptions) {
@@ -227,7 +227,7 @@ export function createResponse(options: FourzeResponseOptions) {
   let _sent = false;
 
   Object.defineProperties(response, {
-    [FOURZE_RESPONSE_SYMBOL]: {
+    [FourzeResponseFlag]: {
       get() {
         return true;
       },
@@ -284,5 +284,5 @@ export function createResponse(options: FourzeResponseOptions) {
 }
 
 export function isFourzeResponse(obj: any): obj is FourzeResponse {
-  return !!obj && !!obj[FOURZE_RESPONSE_SYMBOL];
+  return !!obj && !!obj[FourzeResponseFlag];
 }

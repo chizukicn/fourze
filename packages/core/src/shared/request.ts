@@ -11,7 +11,7 @@ import type { FourzeRoute } from "./route";
 import type { FourzeRouteMeta } from "./meta";
 import type { FourzeApp } from "./interface";
 
-const FOURZE_REQUEST_SYMBOL = Symbol("FourzeRequest");
+const FourzeRequestFlag = "__isFourzeRequest";
 
 export const FOURZE_METHODS = [
   "get",
@@ -78,7 +78,7 @@ export interface FourzeRequest<
 
   readonly path: string
 
-  readonly [FOURZE_REQUEST_SYMBOL]: true
+  readonly [FourzeRequestFlag]: true
 }
 
 export function createRequest(options: FourzeRequestOptions) {
@@ -171,7 +171,7 @@ export function createRequest(options: FourzeRequestOptions) {
   };
 
   Object.defineProperties(request, {
-    [FOURZE_REQUEST_SYMBOL]: {
+    [FourzeRequestFlag]: {
       get() {
         return true;
       },
@@ -246,5 +246,5 @@ export function createRequest(options: FourzeRequestOptions) {
 }
 
 export function isFourzeRequest(obj: any): obj is FourzeRequest {
-  return !!obj && !!obj[FOURZE_REQUEST_SYMBOL];
+  return !!obj && !!obj[FourzeRequestFlag];
 }

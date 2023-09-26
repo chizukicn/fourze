@@ -24,7 +24,7 @@ export interface FourzeMockAppOptions extends Exclude<FourzeAppOptions, "setup">
   timeout?: number
 }
 
-export const FOURZE_MOCK_APP_SYMBOL = Symbol("FOURZE_MOCK_APP_SYMBOL");
+export const FourzeMockAppFlag = "__isFourzeMockApp";
 
 export interface FourzeMockApp extends FourzeApp {
   originalFetch: typeof fetch
@@ -48,6 +48,6 @@ export interface FourzeMockApp extends FourzeApp {
 
   activeModes: FourzeMockRequestMode[]
 
-  [FOURZE_MOCK_APP_SYMBOL]: true
+  [FourzeMockAppFlag]: true
 }
 

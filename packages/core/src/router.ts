@@ -34,7 +34,7 @@ import {
 } from "./utils";
 import { createRouteMatcher } from "./shared/matcher";
 
-const FourzeRouterSymbol = Symbol("FourzeRouter");
+const FourzeRouterFlag = "__isFourzeRouter";
 
 type FourzeRouteChain<Methods extends string = RequestMethod> = {
 
@@ -88,7 +88,7 @@ export interface FourzeRouter
 
   readonly routes: FourzeRoute[]
 
-  [FourzeRouterSymbol]: true
+  [FourzeRouterFlag]: true
 }
 
 export type FourzeRouterSetup = (
@@ -294,7 +294,7 @@ export function defineRouter(
       },
       enumerable: true
     },
-    [FourzeRouterSymbol]: {
+    [FourzeRouterFlag]: {
       value: true,
       enumerable: true,
       writable: false
@@ -303,6 +303,6 @@ export function defineRouter(
 }
 
 export function isRouter(value: any): value is FourzeRouter {
-  return !!value && !!value[FourzeRouterSymbol];
+  return !!value && !!value[FourzeRouterFlag];
 }
 

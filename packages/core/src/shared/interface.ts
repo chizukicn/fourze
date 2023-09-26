@@ -7,7 +7,7 @@ import type { DefaultData, ObjectProps, PropType } from "./props";
 import type { FourzeRequest } from "./request";
 import type { FourzeResponse } from "./response";
 
-const FOURZE_MIDDLEWARE_SYMBOL = Symbol("FOURZE_MIDDLEWARE_SYMBOL");
+const FourzeMiddlewareFlag = "__isFourzeMiddleware";
 
 export type FourzeNext<T = any> = () => MaybePromise<T>;
 
@@ -67,7 +67,7 @@ export function defineMiddleware(...args: [string, number, FourzeMiddlewareHandl
       configurable: true,
       enumerable: true
     },
-    [FOURZE_MIDDLEWARE_SYMBOL]: {
+    [FourzeMiddlewareFlag]: {
       get() {
         return true;
       },
@@ -79,7 +79,7 @@ export function defineMiddleware(...args: [string, number, FourzeMiddlewareHandl
 }
 
 export function isFourzeMiddleware(obj: any): obj is FourzeMiddleware {
-  return obj && obj[FOURZE_MIDDLEWARE_SYMBOL];
+  return obj && obj[FourzeMiddlewareFlag];
 }
 
 export interface FourzeApp extends FourzeMiddleware, MetaInstance<FourzeApp, FourzeAppMeta> {
@@ -123,7 +123,7 @@ export interface FourzeApp extends FourzeMiddleware, MetaInstance<FourzeApp, Fou
 
 export type FourzeModule = FourzePlugin | FourzeMiddleware;
 
-const FOURZE_PLUGIN_SYMBOL = Symbol("FOURZE_PLUGIN_SYMBOL");
+const FourzePluginFlag = "__isFourzePlugin";
 export interface FourzePluginInstall {
   (app: FourzeApp): MaybePromise<void>
 }
@@ -131,7 +131,7 @@ export interface FourzePluginInstall {
 export interface FourzePlugin {
   name?: string
   install: FourzePluginInstall
-  readonly [FOURZE_PLUGIN_SYMBOL]: true
+  readonly [FourzePluginFlag]: true
 }
 
 export function definePlugin(install: FourzePluginInstall): FourzePlugin;
@@ -151,14 +151,14 @@ export function definePlugin(...args: [FourzePluginInstall] | [string, FourzePlu
   return {
     name,
     install,
-    get [FOURZE_PLUGIN_SYMBOL]() {
+    get [FourzePluginFlag]() {
       return true as const;
     }
   };
 }
 
 export function isFourzePlugin(obj: any): obj is FourzePlugin {
-  return !!obj && !!obj[FOURZE_PLUGIN_SYMBOL];
+  return !!obj && !!obj[FourzePluginFlag];
 }
 
 export function isFourzeModule(obj: any): obj is FourzeModule {
