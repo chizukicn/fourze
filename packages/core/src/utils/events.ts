@@ -1,4 +1,5 @@
-import EventEmitter from "node:events";
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import { EventEmitter } from "events";
 
 export function injectEventEmitter<T extends EventEmitter>(app: T) {
   const _emitter = new EventEmitter();

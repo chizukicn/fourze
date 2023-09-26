@@ -1,4 +1,4 @@
-import type { Server } from "http";
+import type { Server } from "node:http";
 import { connect, normalizeAddress } from "@fourze/server";
 import express from "express";
 import { createApp, defineRouter, randomInt, withBase } from "@fourze/core";

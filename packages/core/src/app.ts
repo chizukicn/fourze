@@ -1,6 +1,14 @@
 import type { MaybePromise, MaybeRegex } from "maybe-types";
 import { withBase, withTrailingSlash, withoutBase, withoutTrailingSlash } from "ufo";
-import { isArray, isFunction, isUndef } from "./utils/is";
+import {
+  createSingletonPromise, deleteBy, isArray,
+  isFunction,
+  isMatch,
+  isObject,
+  isString,
+  isUndef,
+  restoreArray
+} from "./utils";
 import { createLogger } from "./logger";
 import type {
   FourzeApp,
@@ -13,14 +21,6 @@ import type {
   FourzePlugin
 } from "./shared";
 import { FOURZE_VERSION, createServiceContext } from "./shared";
-import {
-  createSingletonPromise,
-  deleteBy,
-  isMatch,
-  isObject,
-  isString,
-  restoreArray
-} from "./utils";
 import { injectMeta } from "./shared/meta";
 
 export type FourzeAppSetup = (
@@ -129,7 +129,7 @@ export function createApp(
     if (url) {
       return middlewareStore
         .sort((a, b) => a.order - b.order)
-        .filter((r) => isMatch(url, r.path))
+        .filter((r) => url.match(r.path))
         .map((r) => [r.path, r.middleware] as [string, FourzeMiddleware]);
     }
     return [];
@@ -192,17 +192,10 @@ export function createApp(
     return { request, response };
   };
 
+
+
   app.isAllow = function (this: FourzeApp, url: string) {
-    let rs = url.startsWith(this.base);
-    if (allows.length) {
-      // 有允许规则
-      rs &&= isMatch(url, ...allows);
-    }
-    if (denys.length) {
-      // 有拒绝规则,优先级最高
-      rs &&= !isMatch(url, ...denys);
-    }
-    return rs;
+    return isMatch(url, allows, denys);
   };
 
   app.allow = function (...rules: MaybeRegex[]) {

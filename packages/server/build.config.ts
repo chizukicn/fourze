@@ -10,6 +10,5 @@ export default defineBuildConfig({
     dts: {
       respectExternal: false
     }
-
   }
 });

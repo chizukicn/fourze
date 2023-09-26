@@ -26,8 +26,8 @@ export interface FourzeHmrOptions extends Exclude<FourzeAppOptions, "setup"> {
   dir?: string
 
   files?: {
-    pattern?: string[]
-    ignore?: string[]
+    include?: string[]
+    exclude?: string[]
   } | string[]
 
 }
@@ -59,8 +59,8 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
   const fsOptions = options.files ?? {};
   const isFsPattern = Array.isArray(fsOptions);
 
-  const fsPattern = isFsPattern ? fsOptions : fsOptions.pattern ?? ["**/*.ts", "**/*.js"];
-  const fsIgnore = isFsPattern ? [] : fsOptions.ignore ?? [];
+  const fsInclude = isFsPattern ? fsOptions : fsOptions.include ?? ["**/*.ts", "**/*.js"];
+  const fsExclude = isFsPattern ? [] : fsOptions.exclude ?? [];
 
   const moduleMap = new Map<string, FourzeModule>();
 
@@ -101,16 +101,16 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
     if (fs.existsSync(moduleName)) {
       const stat = await fs.promises.stat(moduleName);
       if (stat.isDirectory()) {
-        const files = await glob(fsPattern, { cwd: moduleName });
+        const files = await glob(fsInclude, { cwd: moduleName });
         const tasks = files.map((name) => load(join(moduleName, name)));
         return await Promise.all(tasks).then((r) => r.some((f) => f));
       } else if (stat.isFile()) {
-        if (!micromatch.some(moduleName, fsPattern, {
+        if (!micromatch.some(moduleName, fsInclude, {
           dot: true,
           matchBase: true,
-          ignore: fsIgnore
+          ignore: fsExclude
         })) {
-          logger.debug("[hmr]", `load file ${moduleName} not match pattern ${fsPattern.join(",")}`);
+          logger.debug("[hmr]", `load file ${moduleName} not match pattern ${fsInclude.join(",")}`);
           return false;
         }
         try {
@@ -170,7 +170,7 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
       args
     );
 
-    logger.debug("[hmr]", `watch ${dir} with pattern ${fsPattern.join(",")}`);
+    logger.debug("[hmr]", `watch ${dir} with pattern ${fsInclude.join(",")}`);
 
     watcher.add(dir);
 

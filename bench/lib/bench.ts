@@ -1,7 +1,7 @@
-import { fork } from "child_process";
-import { join } from "path";
-import { fileURLToPath } from "url";
-import assert from "assert";
+import { fork } from "node:child_process";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+import assert from "node:assert";
 import ora from "ora";
 import { fire } from "./autocannon";
 

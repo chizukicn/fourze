@@ -17,7 +17,6 @@ import {
 import { createUnplugin } from "unplugin";
 
 import type { FourzeMockAppOptions } from "@fourze/mock";
-import type { FourzeProxyOption } from "@fourze/server";
 import {
   connect,
   createHmrApp,
@@ -100,12 +99,10 @@ export interface UnpluginFourzeOptions {
     /**
          * @default ["*.ts","*.js"]
          */
-    pattern?: string[]
-    ignore?: string[]
+    include?: string[]
+    exclude?: string[]
   }
   | string[]
-
-  proxy?: (FourzeProxyOption | string)[] | Record<string, string>
 
   delay?: DelayMsType
 
@@ -167,17 +164,6 @@ const createFourzePlugin = createUnplugin<UnpluginFourzeOptions | undefined>(
     const logger = createLogger("@fourze/unplugin");
 
     setLoggerLevel(options.logLevel ?? "info");
-
-    // const proxy = Array.isArray(options.proxy)
-    //   ? options.proxy
-    //   : Object.entries(options.proxy ?? {}).map<FourzeProxyOption>(
-    //     ([path, target]) => {
-    //       return {
-    //         path,
-    //         target
-    //       };
-    //     }
-    //   );
 
     const hmrApp = createHmrApp({
       allow,

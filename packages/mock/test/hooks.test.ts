@@ -4,7 +4,7 @@ import { expect, test } from "vitest";
 import nodeFetch from "node-fetch";
 
 test("test-hooks", async () => {
-  globalThis.fetch = nodeFetch as typeof globalThis.fetch;
+  globalThis.fetch = nodeFetch as unknown as typeof globalThis.fetch;
 
   const data = {
     token: "test-token"

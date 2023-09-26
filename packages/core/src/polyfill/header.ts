@@ -62,6 +62,11 @@ export class PolyfillHeaders {
   values(): IterableIterator<string> {
     return Object.values(this.#headers)[Symbol.iterator]();
   }
+
+  getSetCookie(): string[] {
+    const cookies = this.get("set-cookie");
+    return cookies?.split(", ") ?? [];
+  }
 }
 
 export interface TransformHeaderOptions {

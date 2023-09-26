@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import type { FourzeHandle, ObjectProps } from "@fourze/core";
 import {
   PolyfillFile,
@@ -94,17 +94,17 @@ export default defineRouter((router) => {
   const data = isNode() ? createData("server") : createData("mock");
 
   const handleSearch: FourzeHandle<
-    PagingData<UserInfo>,
-    ObjectProps<Pagination>,
-    any> = async (req) => {
-      const {
-        page = 1,
-        pageSize = 10,
-        keyword = ""
-      } = req.query as unknown as Pagination & { keyword?: string };
-      const items = data.filter((item) => item.username.includes(keyword));
-      return slicePage(items, { page, pageSize });
-    };
+  PagingData<UserInfo>,
+  ObjectProps<Pagination>,
+  any> = async (req) => {
+    const {
+      page = 1,
+      pageSize = 10,
+      keyword = ""
+    } = req.query as unknown as Pagination & { keyword?: string };
+    const items = data.filter((item) => item.username.includes(keyword));
+    return slicePage(items, { page, pageSize });
+  };
 
   router.get("/item/list", handleSearch);
 

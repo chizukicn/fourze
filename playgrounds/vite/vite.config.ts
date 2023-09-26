@@ -1,4 +1,4 @@
-import { resolve } from "path";
+import { resolve } from "node:path";
 import fourze from "@fourze/vite";
 import vue from "@vitejs/plugin-vue";
 import jsx from "@vitejs/plugin-vue-jsx";
@@ -51,7 +51,7 @@ export default defineConfig({
     fourze({
       base: "/api",
       files: {
-        pattern: ["*.ts", "*.js"]
+        include: ["*.ts", "*.js"]
       },
       hmr: true,
       mock: {

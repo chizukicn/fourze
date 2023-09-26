@@ -9,6 +9,7 @@ import type {
   FourzeResponse
 } from "@fourze/core";
 import {
+  createFilter,
   createLogger,
   defineFourzeComponent,
   isFourzeComponent,
@@ -17,7 +18,6 @@ import {
   isString
 } from "@fourze/core";
 import mime from "mime";
-import micromatch from "micromatch";
 import { createImporter } from "./importer";
 
 export interface FourzeRendererOptions {
@@ -94,21 +94,10 @@ export function staticFile(dir: string, options: FourzeStaticFileOptions = {}): 
   const maybes = options.maybes ?? ["index.html", "index.htm"];
   const includes = options.includes ?? [];
   const excludes = options.excludes ?? [];
-  const isMatch = (file: string | null): file is string => {
-    if (!file) {
-      return false;
-    }
-    if (includes.length) {
-      return micromatch.isMatch(file, includes);
-    }
-    if (excludes.length) {
-      return !micromatch.isMatch(file, excludes);
-    }
-    return true;
-  };
+  const isMatch = createFilter(includes, excludes);
   return function (req: FourzeRequest, res: FourzeResponse, next?: FourzeNext) {
     const file = findMaybeFile(path.join(dir, req.path), maybes);
-    if (isMatch(file)) {
+    if (file && isMatch(file)) {
       res.send(fs.readFileSync(file), mime.getType(file));
     } else if (next) {
       next();

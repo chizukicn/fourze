@@ -8,7 +8,6 @@ import {
   createLogger,
   createServiceContext,
   injectEventEmitter,
-  isMatch,
   overload
 } from "@fourze/core";
 import type {
@@ -266,7 +265,7 @@ export function connect(...args: [string, FourzeMiddleware] | [FourzeMiddlewareH
     }
   }, args);
   return async (request, response, next) => {
-    if (isMatch(request.url!, path)) {
+    if (request.url?.match(path)) {
       const context = await createServerContext(request, response);
       return handler(context.request, context.response, next!);
     }

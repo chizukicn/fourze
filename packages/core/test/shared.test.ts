@@ -1,11 +1,6 @@
-import { createApp, isMatch } from "@fourze/core";
+import { createApp } from "@fourze/core";
 import { expect, test } from "vitest";
 
-test("test-isMatch", () => {
-  expect(isMatch("/api/hello/test", "/api/*", "/api/hello")).toBe(true);
-  expect(isMatch("/api/hello/test", "*/hello/test", "/api/hello/*")).toBe(true);
-  expect(isMatch("http://www.test.com", "http://**.test.com")).toBe(true);
-});
 
 test("test-isAllow", async () => {
   const app = createApp({

@@ -1,13 +1,9 @@
 import { expect, test } from "vitest";
 import {
-  isMatch,
   withBase,
   withoutBase
 } from "../../src/utils/path";
 
-test("test-isMatch", () => {
-  expect(isMatch("/api/hello/test", "/api/*", "/api/hello")).toBe(true);
-});
 
 test("test-relativePath", () => {
   const path = "/abc/def/ghi";

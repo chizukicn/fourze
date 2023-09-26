@@ -1,5 +1,5 @@
-import { access, mkdir, writeFile } from "fs/promises";
-import { join } from "path";
+import { access, mkdir, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import autocannon from "autocannon";
 
 const resultsDirectory = join(process.cwd(), "results");

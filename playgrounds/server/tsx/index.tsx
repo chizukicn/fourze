@@ -1,5 +1,5 @@
 export default () => {
-  const list = Array.from({ length: 26 }).map((_, i) => String.fromCharCode(65 + i));
+  const list = Array.from({ length: 26 }).map((_, i) => String.fromCodePoint(65 + i));
   return () => (
     <html>
       <head>

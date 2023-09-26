@@ -54,7 +54,7 @@ async function getBenchmarkOptions() {
       message: "How many connections do you need?",
       default: 100,
       validate(value) {
-        return !Number.isNaN(parseFloat(value)) || "Please enter a number";
+        return !Number.isNaN(Number.parseFloat(value)) || "Please enter a number";
       },
       filter: Number
     },
@@ -64,7 +64,7 @@ async function getBenchmarkOptions() {
       message: "How many pipelines do you need?",
       default: 10,
       validate(value) {
-        return !Number.isNaN(parseFloat(value)) || "Please enter a number";
+        return !Number.isNaN(Number.parseFloat(value)) || "Please enter a number";
       },
       filter: Number
     },
@@ -74,7 +74,7 @@ async function getBenchmarkOptions() {
       message: "How long should it take?",
       default: 40,
       validate(value) {
-        return !Number.isNaN(parseFloat(value)) || "Please enter a number";
+        return !Number.isNaN(Number.parseFloat(value)) || "Please enter a number";
       },
       filter: Number
     }

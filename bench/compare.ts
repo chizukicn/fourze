@@ -1,6 +1,6 @@
-import { arch, cpus, platform, totalmem } from "os";
-import { join } from "path";
-import { readFileSync, readdirSync, writeFileSync } from "fs";
+import { arch, cpus, platform, totalmem } from "node:os";
+import { join } from "node:path";
+import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { program } from "commander";
 import Table from "cli-table";
 import chalk from "chalk";
@@ -104,7 +104,7 @@ function compareResults(markdown: boolean) {
       const content = readFileSync(`${resultsPath}/${file}.json`);
       return JSON.parse(content.toString());
     })
-    .sort((a, b) => parseFloat(b.requests.mean) - parseFloat(a.requests.mean));
+    .sort((a, b) => Number.parseFloat(b.requests.mean) - Number.parseFloat(a.requests.mean));
 
   const outputResults: any[] = [];
   const formatThroughput = (throughput: number) =>

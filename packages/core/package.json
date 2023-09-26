@@ -19,15 +19,9 @@
     "consola": "^3.2.3",
     "destr": "^2.0.1",
     "events": "^3.3.0",
-    "fast-content-type-parse": "^1.0.0",
+    "fast-content-type-parse": "^1.1.0",
     "maybe-types": "^0.0.3",
-    "micromatch": "^4.0.5",
-    "minimatch": "^9.0.3",
-    "tiny-lru": "^11.0.1",
+    "tiny-lru": "^11.1.2",
     "ufo": "^1.3.0"
-  },
-  "devDependencies": {
-    "@types/micromatch": "^4.0.2",
-    "@types/minimatch": "^5.1.2"
   }
 }

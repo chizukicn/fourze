@@ -9,6 +9,7 @@ node_modules
 .temp
 .tmp
 .cache
+.vscode
 
 # Yarn
 **/.yarn/cache

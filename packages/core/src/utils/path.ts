@@ -1,16 +1,20 @@
 import type { MaybeRegex } from "maybe-types";
 import { hasProtocol, isEmptyURL, isRelative, joinURL, normalizeURL, withLeadingSlash, withTrailingSlash, withoutBase, withoutLeadingSlash, withoutTrailingSlash } from "ufo";
-import { minimatch } from "minimatch";
-import { isRegExp } from "./is";
 
-export function isMatch(path: string, ...pattern: MaybeRegex[]) {
-  return pattern.some((r) => {
-    if (isRegExp(r)) {
-      return r.test(path);
-    }
+export function createFilter(
+  include: MaybeRegex[],
+  exclude: MaybeRegex[]
+): (id: string) => boolean {
+  return (id: string) => {
+    if (exclude.some(p => id.match(p))) {
+      return false;
+    };
+    return include.length === 0 || include.some(p => id.match(p));
+  };
+}
 
-    return path.startsWith(r) || minimatch(path, r, { matchBase: true });
-  });
+export function isMatch(id: string, include: MaybeRegex[], exclude: MaybeRegex[]) {
+  return createFilter(include, exclude)(id);
 }
 
 export function withBase(input: string, base: string, trailingSlash = true) {
