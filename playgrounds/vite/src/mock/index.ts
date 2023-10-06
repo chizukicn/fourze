@@ -166,9 +166,9 @@ export default defineRouter((router) => {
   });
 
   router.route("/img/avatar.jpg", async (req, res) => {
-    let avatarPath = path.resolve(__dirname, ".tmp/avatar.jpg");
+    let avatarPath = path._resolve(__dirname, ".tmp/avatar.jpg");
     if (!fs.existsSync(avatarPath)) {
-      avatarPath = path.resolve(__dirname, "./test.webp");
+      avatarPath = path._resolve(__dirname, "./test.webp");
     }
     res.setHeader(DELAY_HEADER, 0);
     const f = await fs.promises.readFile(avatarPath);
@@ -187,12 +187,12 @@ export default defineRouter((router) => {
     },
     async (req) => {
       const file = req.data.file;
-      if (!fs.existsSync(path.resolve(__dirname, ".tmp"))) {
-        fs.mkdirSync(path.resolve(__dirname, ".tmp"));
+      if (!fs.existsSync(path._resolve(__dirname, ".tmp"))) {
+        fs.mkdirSync(path._resolve(__dirname, ".tmp"));
       }
 
       await fs.promises.writeFile(
-        path.resolve(__dirname, ".tmp/avatar.jpg"),
+        path._resolve(__dirname, ".tmp/avatar.jpg"),
         file.body
       );
       return {
