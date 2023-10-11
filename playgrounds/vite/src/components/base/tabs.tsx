@@ -30,9 +30,9 @@ export default defineComponent({
       }
     });
     return () => (
-            <HiSelection {...props} v-model={modelValue.value}>
-                {renderSlot(slots, "default")}
-            </HiSelection>
+      <HiSelection {...props} v-model={modelValue.value}>
+        {renderSlot(slots, "default")}
+      </HiSelection>
     );
   }
 });

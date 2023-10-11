@@ -27,7 +27,7 @@
   "devDependencies": {
     "@types/autocannon": "^7.12.1",
     "@types/cli-table": "^0.3.2",
-    "@types/inquirer": "^9.0.3",
+    "@types/inquirer": "^9.0.4",
     "@types/koa": "^2.13.9",
     "tsx": "^3.13.0"
   }

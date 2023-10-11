@@ -1,108 +1,110 @@
 <script setup lang="ts">
-  import { useNow } from "@vueuse/core";
-  import axios from "axios";
-  import $ from "jquery";
-  import type { MaybeAsyncFunction } from "maybe-types";
-  import { computed, ref } from "vue";
+import { useNow } from "@vueuse/core";
+import axios from "axios";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import $ from "jquery";
+import type { MaybeAsyncFunction } from "maybe-types";
+import { computed, ref } from "vue";
 
-  export interface ResponseData {
-    code: number
-    data: any
-    msg: string
-  }
+export interface ResponseData {
+  code: number
+  data: any
+  msg: string
+}
 
-  const t = ref(0);
+const t = ref(0);
 
-  const avatarUrl = computed(() => {
-    return `/api/img/avatar.jpg?t=${t.value}`;
-  });
+const avatarUrl = computed(() => {
+  return `/api/img/avatar.jpg?t=${t.value}`;
+});
 
-  function upload() {
-    const file = document.createElement("input");
-    file.type = "file";
-    file.onchange = async () => {
-      if (file.files) {
-        const formData = new FormData();
-        formData.append("file", file.files[0]);
-        formData.append("name", "avatar");
-        await axios.post("/api/upload/avatar", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        });
-        t.value = new Date().getTime();
-      }
-    };
-    file.click();
-  }
-
-  const result = ref<any>();
-
-  const startTime = ref(0);
-  const endTime = ref(0);
-
-  const now = useNow();
-
-  const serverDelay = ref(0);
-
-  const time = computed(() => {
-    if (endTime.value === 0) {
-      if (startTime.value === 0) {
-        return 0;
-      }
-      return now.value.getTime() - startTime.value;
+function upload() {
+  const file = document.createElement("input");
+  file.type = "file";
+  file.onchange = async () => {
+    if (file.files) {
+      const formData = new FormData();
+      formData.append("file", file.files[0]);
+      formData.append("name", "avatar");
+      await axios.post("/api/upload/avatar", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
+      t.value = new Date().getTime();
     }
-    return endTime.value - startTime.value;
-  });
-
-  function start() {
-    startTime.value = Date.now();
-    endTime.value = 0;
-  }
-
-  function end() {
-    endTime.value = Date.now();
-  }
-
-  const recoding = (fn: MaybeAsyncFunction<void>) => {
-    return async () => {
-      start();
-      try {
-        await fn();
-      } catch (error) {
-        result.value = error;
-      }
-      end();
-    };
   };
+  file.click();
+}
 
-  const handleFetch = recoding(async () => {
-    result.value = await fetch(`/api/search/${Math.floor(Math.random() * 9)}`, { method: "post", body: JSON.stringify({ phone: 2 }) })
-      .then(r => {
-        serverDelay.value = Number(r.headers.get("Fourze-Delay"));
-        return r.json();
-      })
-      .then(r => r.data);
-  });
+const result = ref<any>();
 
-  const handleAxios = recoding(async () => {
-    const rs = await axios.post(`/api/search/${Math.floor(Math.random() * 9)}`, { phone: 2 });
-    serverDelay.value = Number(rs.headers["fourze-delay"]);
-    result.value = rs.data.data;
-  });
+const startTime = ref(0);
+const endTime = ref(0);
 
-  const handleJQuery = recoding(async () => {
-    await $.ajax({
-      url: `/api/search/${Math.floor(Math.random() * 9)}`,
-      type: "post",
-      data: JSON.stringify({ phone: 2 }),
-      contentType: "application/json",
-      success: (data, status, jqXHR) => {
-        serverDelay.value = Number(jqXHR.getResponseHeader("Fourze-Delay"));
-        result.value = data.data;
-      }
-    });
+const now = useNow();
+
+const serverDelay = ref(0);
+
+const time = computed(() => {
+  if (endTime.value === 0) {
+    if (startTime.value === 0) {
+      return 0;
+    }
+    return now.value.getTime() - startTime.value;
+  }
+  return endTime.value - startTime.value;
+});
+
+function start() {
+  startTime.value = Date.now();
+  endTime.value = 0;
+}
+
+function end() {
+  endTime.value = Date.now();
+}
+
+const recoding = (fn: MaybeAsyncFunction<void, [], false>) => {
+  return async () => {
+    start();
+    try {
+      await fn();
+    } catch (error) {
+      result.value = error;
+    }
+    end();
+  };
+};
+
+const handleFetch = recoding(async () => {
+  result.value = await fetch(`/api/search/${Math.floor(Math.random() * 9)}`, { method: "post", body: JSON.stringify({ phone: 2 }) })
+    .then(r => {
+      serverDelay.value = Number(r.headers.get("Fourze-Delay"));
+      return r.json();
+    })
+    .then(r => r.data);
+});
+
+const handleAxios = recoding(async () => {
+  const rs = await axios.post(`/api/search/${Math.floor(Math.random() * 9)}`, { phone: 2 });
+  serverDelay.value = Number(rs.headers["fourze-delay"]);
+  result.value = rs.data.data;
+});
+
+const handleJQuery = recoding(async () => {
+  await $.ajax({
+    url: `/api/search/${Math.floor(Math.random() * 9)}`,
+    type: "post",
+    data: JSON.stringify({ phone: 2 }),
+    contentType: "application/json",
+    success: (data, status, jqXHR) => {
+      serverDelay.value = Number(jqXHR.getResponseHeader("Fourze-Delay"));
+      result.value = data.data;
+    }
   });
+});
 </script>
 
 <template>

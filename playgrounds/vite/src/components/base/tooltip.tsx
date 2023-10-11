@@ -115,16 +115,16 @@ export default defineComponent({
 
     return () => {
       return (
-                <div {...{ onMouseout, onMouseover, onClick }} ref={triggerRef}>
-                    {renderSlot(slots, "default")}
-                    <Teleport to="body">
-                        <Transition name="dropdown" mode="out-in">
-                            <div class={[" z-999", props.popClass]} style={dropdownStyle.value} ref={popupRef}>
-                                {renderSlot(slots, "popper")}
-                            </div>
-                        </Transition>
-                    </Teleport>
-                </div>
+        <div {...{ onMouseout, onMouseover, onClick }} ref={triggerRef}>
+          {renderSlot(slots, "default")}
+          <Teleport to="body">
+            <Transition name="dropdown" mode="out-in">
+              <div class={[" z-999", props.popClass]} style={dropdownStyle.value} ref={popupRef}>
+                {renderSlot(slots, "popper")}
+              </div>
+            </Transition>
+          </Teleport>
+        </div>
       );
     };
   }

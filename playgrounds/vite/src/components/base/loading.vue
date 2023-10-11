@@ -1,19 +1,19 @@
 <script lang="tsx">
-  import { defineComponent, renderSlot } from "vue";
-  export default defineComponent({
-    props: {
-      loading: {
-        type: Boolean,
-        default: () => false
-      },
-      spinClass: {
-        type: String,
-        default: () => "n-loading-default-spin text-light-blue-300"
-      }
+import { defineComponent, renderSlot } from "vue";
+export default defineComponent({
+  props: {
+    loading: {
+      type: Boolean,
+      default: () => false
     },
-    setup(props, { slots }) {
-      return () => {
-        return (
+    spinClass: {
+      type: String,
+      default: () => "n-loading-default-spin text-light-blue-300"
+    }
+  },
+  setup(props, { slots }) {
+    return () => {
+      return (
         <div class={"h-full w-full relative items-center justify-center".concat(" ")}>
           <div v-show={props.loading} class="bg-white flex h-full bg-opacity-80 w-full z-99 duration-300 absolute items-center justify-center">
             <div class={props.spinClass}></div>
@@ -22,10 +22,10 @@
             {renderSlot(slots, "default")}
           </div>
         </div>
-        );
-      };
-    }
-  });
+      );
+    };
+  }
+});
 </script>
 
 <style lang="scss">

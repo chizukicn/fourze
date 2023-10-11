@@ -30,12 +30,12 @@ export interface SingletonPromiseReturn<T> {
  * @category Promise
  * @see https://github.com/antfu/utils/blob/main/src/promise.ts
  */
-export function createSingletonPromise<T>(
-  fn: MaybeAsyncFunction<T>
+export function createSingletonPromise<T, Args extends any[] = any[]>(
+  fn: MaybeAsyncFunction<T, Args, false>
 ): SingletonPromiseReturn<T> {
   let _promise: Promise<T> | undefined;
 
-  function wrapper(this: any, ...args: any[]) {
+  function wrapper(this: any, ...args: Args) {
     if (!_promise) {
       _promise = Promise.resolve(fn.call(this, ...args));
     }

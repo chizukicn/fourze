@@ -14,7 +14,7 @@
   "dependencies": {
     "@fourze/core": "workspace:*",
     "@fourze/middlewares": "workspace:*",
-    "@vueuse/core": "^10.4.1",
+    "@vueuse/core": "^10.5.0",
     "axios": "^1.5.1",
     "dayjs": "^1.11.10",
     "element-plus": "^2.3.14",
@@ -27,12 +27,12 @@
   "devDependencies": {
     "@fourze/mock": "workspace:*",
     "@fourze/vite": "workspace:*",
-    "@types/jquery": "^3.5.21",
+    "@types/jquery": "^3.5.22",
     "@vitejs/plugin-vue": "^4.4.0",
     "@vitejs/plugin-vue-jsx": "^3.0.2",
     "compression": "^1.7.4",
     "rollup-plugin-visualizer": "^5.9.2",
-    "sass": "^1.69.0",
+    "sass": "^1.69.2",
     "typescript": "^5.2.2",
     "unplugin-vue-components": "^0.25.2",
     "vite": "^4.4.11",

@@ -1,4 +1,4 @@
-import { createServer } from "http";
+import { createServer } from "node:http";
 import { createApp, eventHandler, toNodeListener } from "h3";
 
 const app = createApp();
