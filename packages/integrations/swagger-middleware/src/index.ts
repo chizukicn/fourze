@@ -39,7 +39,8 @@ export function createSwaggerMiddleware(
   app: FourzeApp,
   options: SwaggerOptions = {}
 ): FourzeMiddleware {
-  return (req, res) => {
+  return async (req, res) => {
+    await app.ready();
     const routers = createQuery(app.middlewares)
       .where((r) => isRouter(r) && r.meta.swagger !== false)
       .select((r) => r as FourzeRouter);

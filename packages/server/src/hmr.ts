@@ -101,7 +101,7 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
     if (fs.existsSync(moduleName)) {
       const stat = await fs.promises.stat(moduleName);
       if (stat.isDirectory()) {
-        const files = await glob(fsInclude, { cwd: moduleName });
+        const files = await glob(fsInclude, { cwd: moduleName, onlyFiles: false, markDirectories: true });
         const tasks = files.map((name) => load(join(moduleName, name)));
         return await Promise.all(tasks).then((r) => r.some((f) => f));
       } else if (stat.isFile()) {
