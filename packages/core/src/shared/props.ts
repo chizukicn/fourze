@@ -325,3 +325,17 @@ export function validateProps(
     }
   }
 }
+
+
+export function defineExtends<P extends object>(props: P): ({
+  (): P
+  <E>(extraProps: E): P & E
+}) {
+  return <E extends object>(extraProps?: E) => {
+    return {
+      ...props,
+      ...extraProps
+    };
+  };
+}
+
