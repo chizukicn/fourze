@@ -91,7 +91,7 @@ export function renderIndexHtml(root: string, options: RenderSwaggerUIOptions = 
 
   return renderHtml({
     language: options.language ?? "en",
-    favicon: options.favicon ?? `${root}/favicon-32x32.png`,
+    favicon: options.favicon ?? withBase("/favicon-32x32.png", root),
     script: [
       withBase("/swagger-ui-bundle.js", root),
       withBase("/swagger-ui-standalone-preset.js", root),
@@ -103,7 +103,7 @@ export function renderIndexHtml(root: string, options: RenderSwaggerUIOptions = 
       withBase("/swagger-ui.css", root),
       ...(options.style ?? [])
     ],
-    title: "Swagger UI",
+    title: options.title ?? "Swagger UI",
     tags: [...options.tags ?? []],
     meta: [
       { name: "description", content: "Swagger UI" },
