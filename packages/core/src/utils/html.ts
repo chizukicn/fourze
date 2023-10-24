@@ -54,7 +54,7 @@ export interface RenderHtmlOptions {
 
 const notCloseTags = ["img", "br", "hr", "input", "meta", "link", "area"];
 
-export function renderElement(tag: string, props: any = {}, ...children: (string | JSX.Element)[]) {
+export function renderElement(tag: string, props: any = {}, ...children: any[]) {
   if (!props || !isObject(props) || Array.isArray(props)) {
     props = {};
   }
@@ -63,7 +63,7 @@ export function renderElement(tag: string, props: any = {}, ...children: (string
     props.class = props.class.join(" ");
   }
 
-  function renderChildren(children: (string | JSX.Element)[]): string {
+  function renderChildren(children: any[]): string {
     if (Array.isArray(children)) {
       return children.map((c) => (Array.isArray(c) ? renderChildren(c) : c)).join("");
     }
