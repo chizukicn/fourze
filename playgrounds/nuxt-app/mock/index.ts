@@ -1,5 +1,4 @@
-import fs from "fs";
-import path from "path";
+import path from "pathe";
 import type { FourzeHandle, ObjectProps } from "@fourze/core";
 import {
   PolyfillFile,
@@ -11,6 +10,7 @@ import {
   randomInt,
   randomItem
 } from "@fourze/core";
+import { existsSync, mkdirSync, readFile, writeFile } from "fs-extra";
 import {
   slicePage
 } from "../utils/setup-mock";
@@ -92,46 +92,27 @@ export default defineRouter((router) => {
   const data = isNode() ? createData("server") : createData("mock");
 
   const handleSearch: FourzeHandle<
-    PagingData<UserInfo>,
-    ObjectProps<Pagination>,
-    any> = async (req) => {
-      const {
-        page = 1,
-        pageSize = 10,
-        keyword = ""
-      } = req.query as unknown as Pagination & { keyword?: string };
-      const items = data.filter((item) => item.username.includes(keyword));
-      return slicePage(items, { page, pageSize });
-    };
+  PagingData<UserInfo>,
+  ObjectProps<Pagination>,
+  any> = async (req) => {
+    const {
+      page = 1,
+      pageSize = 10,
+      keyword = ""
+    } = req.query as unknown as Pagination & { keyword?: string };
+    const items = data.filter((item) => item.username.includes(keyword));
+    return slicePage(items, { page, pageSize });
+  };
 
-  router.get("/item/list", handleSearch);
-
-  router.delete("/item/{id}",
-    {
-      props: {
-        id: {
-          type: String,
-          required: true,
-          in: "path"
-        }
-      }
-    },
-    async (req) => {
-      const { id } = req.params;
-      const index = data.findIndex((item) => item.id === id);
-      data.splice(index, 1);
-      storage.setItem("fz_cache_data", data);
-      return { result: true };
-    }
-  );
+  router.post("/search/{id}", handleSearch);
 
   router.route("/img/avatar.jpg", async (req, res) => {
     let avatarPath = path.resolve(__dirname, ".tmp/avatar.jpg");
-    if (!fs.existsSync(avatarPath)) {
+    if (!existsSync(avatarPath)) {
       avatarPath = path.resolve(__dirname, "./test.webp");
     }
     res.setHeader("Fourze-Delay", 0);
-    const f = await fs.promises.readFile(avatarPath);
+    const f = await readFile(avatarPath);
     res.image(f);
   });
 
@@ -148,11 +129,11 @@ export default defineRouter((router) => {
     },
     async (req) => {
       const file = req.body.file;
-      if (!fs.existsSync(path.resolve(__dirname, ".tmp"))) {
-        fs.mkdirSync(path.resolve(__dirname, ".tmp"));
+      if (!existsSync(path.resolve(__dirname, ".tmp"))) {
+        mkdirSync(path.resolve(__dirname, ".tmp"));
       }
 
-      await fs.promises.writeFile(
+      await writeFile(
         path.resolve(__dirname, ".tmp/avatar.jpg"),
         file.body
       );

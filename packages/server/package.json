@@ -18,7 +18,7 @@
     "@fourze/core": "workspace:*",
     "chokidar": "^3.5.3",
     "create-require": "^1.1.1",
-    "esbuild": "^0.19.4",
+    "esbuild": "^0.19.5",
     "fast-glob": "^3.3.1",
     "fs-extra": "^11.1.1",
     "micromatch": "^4.0.5",
@@ -28,8 +28,8 @@
     "vm": "^0.1.0"
   },
   "devDependencies": {
-    "@types/micromatch": "^4.0.3",
-    "@types/mime": "^3.0.2",
+    "@types/micromatch": "^4.0.4",
+    "@types/mime": "^3.0.3",
     "pkg-types": "^1.0.3"
   }
 }

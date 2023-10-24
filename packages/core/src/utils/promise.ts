@@ -2,12 +2,12 @@ import type {
   MaybeArray,
   MaybeAsyncFunction,
   MaybeFunction,
-  MaybeNumber
+  MaybeNumeric
 } from "maybe-types";
 import { parseFakerNumber } from "./faker";
 import { isFunction } from "./is";
 
-export type DelayMsType = MaybeFunction<MaybeArray<MaybeNumber>>;
+export type DelayMsType = MaybeFunction<MaybeArray<MaybeNumeric>>;
 
 export function delay(ms: DelayMsType) {
   ms = isFunction(ms) ? ms() : ms;

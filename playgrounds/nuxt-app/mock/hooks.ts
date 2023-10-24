@@ -1,6 +1,7 @@
-import { definePlugin, resolveHook } from "@fourze/core";
+import { setup } from "@fourze/core";
+import { createResolveMiddleware } from "@fourze/middlewares";
 import { failResponseWrap, successResponseWrap } from "../utils/setup-mock";
 
-export default definePlugin((app) => {
-  app.use(resolveHook(successResponseWrap, failResponseWrap));
+export default setup((app) => {
+  app.use(createResolveMiddleware(successResponseWrap, failResponseWrap));
 });

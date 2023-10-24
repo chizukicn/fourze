@@ -17,27 +17,26 @@
     "@vueuse/core": "^10.5.0",
     "axios": "^1.5.1",
     "dayjs": "^1.11.10",
-    "element-plus": "^2.3.14",
-    "hoci": "^0.3.0",
+    "element-plus": "^2.4.1",
+    "hoci": "^0.4.3",
     "jquery": "^3.7.1",
     "query-string": "^8.1.0",
-    "vue": "^3.3.4",
+    "vue": "^3.3.6",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
     "@fourze/mock": "workspace:*",
     "@fourze/vite": "workspace:*",
-    "@types/jquery": "^3.5.22",
+    "@types/jquery": "^3.5.25",
     "@vitejs/plugin-vue": "^4.4.0",
     "@vitejs/plugin-vue-jsx": "^3.0.2",
     "compression": "^1.7.4",
     "rollup-plugin-visualizer": "^5.9.2",
-    "sass": "^1.69.2",
+    "sass": "^1.69.4",
     "typescript": "^5.2.2",
+    "unocss": "^0.57.1",
     "unplugin-vue-components": "^0.25.2",
-    "vite": "^4.4.11",
-    "vite-plugin-inspect": "^0.7.40",
-    "vite-plugin-windicss": "^1.9.1",
-    "windicss": "^3.5.6"
+    "vite": "^4.5.0",
+    "vite-plugin-inspect": "^0.7.40"
   }
 }

@@ -213,7 +213,9 @@ export function createRouteMatcher<T>(options: RouteMatcherOptions = {}): RouteM
         node.payload.delete(method);
         if (Object.keys(node.children).length === 0) {
           const parentNode = node.parent!;
-          parentNode.children.delete(lastSection);
+          if (lastSection) {
+            parentNode.children.delete(lastSection);
+          }
           parentNode.wildcardChildNode = null;
           parentNode.placeholderChildNode = null;
         }

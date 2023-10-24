@@ -2,7 +2,7 @@
 import jsx from "@vitejs/plugin-vue-jsx";
 
 export default defineNuxtConfig({
-  modules: ["@fourze/nuxt", "nuxt-windicss"],
+  modules: ["@fourze/nuxt", "@unocss/nuxt"],
   vite: {
     plugins: [jsx()]
   }

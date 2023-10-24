@@ -38,18 +38,16 @@ export function slicePage<T>(content: T[], pagination: Pagination): PageData<T> 
   };
 }
 
-export const successResponseWrap = (data?: unknown, msg?: string) => {
-  return {
-    data,
-    code: "Success",
-    succ: true,
-    msg
-  };
+export const successResponseWrap = (data?: unknown, contentType: string | null = "application/json") => {
+  if (contentType?.startsWith("application/json")) {
+    return {
+      data,
+      code: "Success",
+      success: true
+    };
+  }
+  return data;
 };
-
-export function successPageWrap<T>(data: T[], pagination: Pagination, msg?: string) {
-  return successResponseWrap(slicePage(data, pagination), msg);
-}
 
 export const failResponseWrap = (msg: string) => {
   return {

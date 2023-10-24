@@ -7,7 +7,7 @@ import uncomponents from "unplugin-vue-components/vite";
 
 import type { Plugin } from "vite";
 import { defineConfig } from "vite";
-import windicss from "vite-plugin-windicss";
+import unocss from "unocss/vite";
 import tsconfig from "./tsconfig.json";
 
 export default defineConfig({
@@ -46,7 +46,7 @@ export default defineConfig({
   plugins: [
     vue(),
     jsx(),
-    windicss(),
+    unocss(),
     fourze({
       base: "/api",
       files: {

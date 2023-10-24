@@ -1,4 +1,4 @@
-import type { MaybeArray, MaybeNumber } from "maybe-types";
+import type { MaybeArray, MaybeNumeric } from "maybe-types";
 import { isPrimitive, isString } from "./is";
 import { randomInt, randomItem } from "./random";
 
@@ -12,7 +12,7 @@ export type BaseValueType = number | string | boolean | null | undefined;
  * @example  [100, 500,"600-900"] => randomItem([100,500,randomInt(600,900)])
  * @returns
  */
-export function parseFakerNumber(num: MaybeArray<MaybeNumber>): number {
+export function parseFakerNumber(num: MaybeArray<MaybeNumeric>): number {
   if (Array.isArray(num)) {
     return parseFakerNumber(randomItem(num));
   }
@@ -22,7 +22,7 @@ export function parseFakerNumber(num: MaybeArray<MaybeNumber>): number {
     }
     return Number.parseInt(num);
   }
-  return num;
+  return Number(num);
 }
 
 export interface MockObjectOption {
@@ -129,7 +129,7 @@ export function parseFakerValue(
  * @param options
  */
 export function parseFakerObject(
-  obj: MaybeArray<MaybeNumber | Record<string, any>>,
+  obj: MaybeArray<MaybeNumeric | Record<string, any>>,
   options: MockObjectOption = {}
 ): any {
   options.context = options.context ?? {};

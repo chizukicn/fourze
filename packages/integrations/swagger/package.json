@@ -20,7 +20,12 @@
     "stub": "unbuild --stub"
   },
   "peerDependencies": {
-    "vite": "^4.4.11"
+    "vite": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vite": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@fourze/core": "workspace:*",
@@ -31,6 +36,6 @@
     "swagger-ui-dist": "^5.9.0"
   },
   "devDependencies": {
-    "@types/swagger-ui-dist": "^3.30.2"
+    "@types/swagger-ui-dist": "^3.30.3"
   }
 }

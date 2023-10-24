@@ -16,8 +16,11 @@
     "query-string": "^8.1.0"
   },
   "devDependencies": {
+    "@fourze/middlewares": "workspace:*",
     "@fourze/nuxt": "workspace:*",
-    "nuxt": "3.7.4",
-    "nuxt-windicss": "^2.6.1"
+    "@unocss/nuxt": "^0.57.1",
+    "fs-extra": "^11.1.1",
+    "nuxt": "3.8.0",
+    "pathe": "^1.1.1"
   }
 }

@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { useNow } from "@vueuse/core";
 import axios from "axios";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
+
 import $ from "jquery";
 import type { MaybeAsyncFunction } from "maybe-types";
 import { computed, ref } from "vue";

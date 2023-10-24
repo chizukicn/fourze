@@ -19,10 +19,18 @@
     "build": "unbuild",
     "stub": "unbuild --stub"
   },
+  "peerDependencies": {
+    "vite": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vite": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "@fourze/unplugin": "workspace:*"
   },
   "devDependencies": {
-    "vite": "^4.4.11"
+    "vite": "^4.5.0"
   }
 }

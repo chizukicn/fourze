@@ -1,11 +1,11 @@
 import { computed, defineComponent, renderSlot } from "vue";
 import { useRouter } from "vue-router";
-import { HiSelection, selectionListProps } from "hoci";
+import { HiSelection, selectionProps } from "hoci";
 import type { BaseType } from "../hooks/types";
 
 export default defineComponent({
   props: {
-    ...selectionListProps,
+    ...selectionProps,
     route: {
       type: Boolean
     }

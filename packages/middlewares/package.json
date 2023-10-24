@@ -21,6 +21,6 @@
   },
   "dependencies": {
     "@fourze/core": "workspace:*",
-    "maybe-types": "^0.1.0"
+    "maybe-types": "^0.2.0"
   }
 }

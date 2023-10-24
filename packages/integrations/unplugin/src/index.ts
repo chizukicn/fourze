@@ -25,7 +25,7 @@ import {
 } from "@fourze/server";
 
 import { build, getModuleAlias, service } from "@fourze/swagger";
-import { type InlineConfig } from "vite";
+import type { InlineConfig } from "vite";
 import { createMockClient } from "@fourze/mock";
 
 const PLUGIN_NAME = "unplugin-fourze";
@@ -199,9 +199,7 @@ const createFourzePlugin = createUnplugin<UnpluginFourzeOptions | undefined>(
           if (generateDocument) {
             await build(hmrApp, {
               distPath: viteConfig.build?.outDir,
-              vite: {
-                ...viteConfig
-              },
+              vite: viteConfig,
               swagger: {
                 basePath: base,
                 ...swaggerOptions
