@@ -1,53 +1,19 @@
 import type { RequestMethod } from "@fourze/core";
+import type { OpenAPIV2 } from "openapi-types";
+
 
 export interface SwaggerPathSchema {
-  summary?: string
-  description?: string
+  swagger?: boolean
   tags?: string[]
+  responses?: OpenAPIV2.ResponsesObject
+  description?: string
+  summary?: string
   operationId?: string
+  produces?: string[]
+  consumes?: string[]
   deprecated?: boolean
-  consumes?: string[]
-  produces?: string[]
-  responses?: Record<
-  string,
-  {
-    description: string
-    schema?: Record<string, any>
-  }
-  >
 }
 
-export interface SwaggerParameter {
-  in?: "body" | "path" | "query"
-  name: string
-  type: string | string[]
-  description?: string
-  required?: boolean
-}
-
-export interface SwaggerInfo extends Record<string, any> {
-  version?: string
-  title?: string
-  description?: string
-  termsOfService?: string
-  contact?: {
-    name: string
-  } & Record<string, any>
-  license?: {
-    name?: string
-  } & Record<string, any>
-}
-
-export interface SwaggerDocument extends Record<string, any> {
-  swagger?: string
-  openapi?: string
-  info?: SwaggerInfo
-  host?: string
-  basePath?: string
-  schemes?: string[]
-  consumes?: string[]
-  produces?: string[]
-}
 
 export interface SwaggerUIInitOptions {
   url?: string
@@ -56,10 +22,25 @@ export interface SwaggerUIInitOptions {
 
 export interface SwaggerOptions {
   defaultMethod?: RequestMethod
-  info?: SwaggerInfo
+  info?: OpenAPIV2.InfoObject
   schemas?: string[]
   consumes?: string[]
   produces?: string[]
   host?: string
   basePath?: string
+}
+
+declare module "@fourze/core" {
+  interface FourzeRouteMeta extends SwaggerPathSchema {
+  }
+
+  interface FourzeAppMeta {
+    definitions?: OpenAPIV2.DefinitionsObject
+    info?: OpenAPIV2.InfoObject
+    host?: string
+    basePath?: string
+    schemas?: string[]
+    consumes?: string[]
+    produces?: string[]
+  }
 }
