@@ -8,7 +8,15 @@ import uncomponents from "unplugin-vue-components/vite";
 import type { Plugin } from "vite";
 import { defineConfig } from "vite";
 import unocss from "unocss/vite";
-import tsconfig from "./tsconfig.json";
+import { alias } from "../../alias";
+
+const aliasArray = [...Object.entries(alias).map(([key, value]) => {
+  return {
+    find: key,
+    replacement: value
+  };
+})];
+
 
 export default defineConfig({
   server: {
@@ -35,6 +43,7 @@ export default defineConfig({
         find: "vue",
         replacement: "vue/dist/vue.esm-bundler.js" // compile template
       },
+      ...aliasArray,
       {
         find: "@",
         replacement: resolve(__dirname, "./src")
@@ -67,24 +76,6 @@ export default defineConfig({
     }) as Plugin,
     uncomponents({
       resolvers: []
-    }),
-    {
-      name: "vite:tsconfig-paths",
-      apply: "serve",
-      config() {
-        return {
-          resolve: {
-            alias: [
-              ...Object.entries(tsconfig.compilerOptions.paths).map(([key, value]) => {
-                return {
-                  find: key.replace("/*", ""),
-                  replacement: resolve(__dirname, value[0].replace("/*", ""))
-                };
-              }) ?? []
-            ]
-          }
-        };
-      }
-    }
+    })
   ]
 });
