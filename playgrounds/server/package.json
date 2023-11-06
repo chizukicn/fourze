@@ -12,7 +12,7 @@
     "@fourze/core": "workspace:*",
     "@fourze/server": "workspace:*",
     "@types/compression": "^1.7.4",
-    "axios": "^1.5.1",
+    "axios": "^1.6.0",
     "compression": "^1.7.4",
     "express": "^4.18.2",
     "query-string": "^8.1.0"
