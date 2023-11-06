@@ -262,9 +262,9 @@ const createFourzePlugin = createUnplugin<UnpluginFourzeOptions | undefined>(
           },
           async config(_, env) {
             if (mockOptions.enable === "auto") {
-              mockOptions.enable
-                = env.command === "build" || env.mode === "mock";
+              mockOptions.enable = env.command === "build";
             }
+
             return {
               define: {
                 VITE_PLUGIN_FOURZE_MOCK: mockOptions.enable
