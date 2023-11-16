@@ -75,7 +75,14 @@
       "has": "npm:@nolyfill/has@latest",
       "is-generator-function": "npm:@nolyfill/is-generator-function@latest",
       "object.values": "npm:@nolyfill/object.values@latest",
-      "side-channel": "npm:@nolyfill/side-channel@latest"
+      "side-channel": "npm:@nolyfill/side-channel@latest",
+      "function-bind": "npm:@nolyfill/function-bind@latest",
+      "gopd": "npm:@nolyfill/gopd@latest",
+      "has-property-descriptors": "npm:@nolyfill/has-property-descriptors@latest",
+      "has-proto": "npm:@nolyfill/has-proto@latest",
+      "has-symbols": "npm:@nolyfill/has-symbols@latest",
+      "hasown": "npm:@nolyfill/hasown@latest",
+      "isarray": "npm:@nolyfill/isarray@latest"
     }
   },
   "simple-git-hooks": {
