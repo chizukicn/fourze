@@ -19,7 +19,7 @@
     "chokidar": "^3.5.3",
     "create-require": "^1.1.1",
     "esbuild": "^0.19.5",
-    "fast-glob": "^3.3.1",
+    "fast-glob": "^3.3.2",
     "fs-extra": "^11.1.1",
     "micromatch": "^4.0.5",
     "mime": "^3.0.0",
@@ -28,8 +28,8 @@
     "vm": "^0.1.0"
   },
   "devDependencies": {
-    "@types/micromatch": "^4.0.4",
-    "@types/mime": "^3.0.3",
+    "@types/micromatch": "^4.0.5",
+    "@types/mime": "^3.0.4",
     "pkg-types": "^1.0.3"
   }
 }
