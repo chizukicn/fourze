@@ -20,7 +20,7 @@
     "@fourze/nuxt": "workspace:*",
     "@unocss/nuxt": "^0.57.4",
     "fs-extra": "^11.1.1",
-    "nuxt": "3.8.0",
+    "nuxt": "3.8.1",
     "pathe": "^1.1.1"
   }
 }
