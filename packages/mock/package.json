@@ -20,6 +20,6 @@
     "dedent": "^1.5.1"
   },
   "devDependencies": {
-    "@types/dedent": "^0.7.1"
+    "@types/dedent": "^0.7.2"
   }
 }
