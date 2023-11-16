@@ -35,6 +35,8 @@ export default defineConfig({
 then you can fetch `/api/hello` to get response.
 
 # Features
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fchizukicn%2Ffourze.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fchizukicn%2Ffourze?ref=badge_shield)
+
 
 -   Simple api route register
 
@@ -151,3 +153,7 @@ This project is heavily inspired by the following awesome projects.
 
 
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fchizukicn%2Ffourze.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fchizukicn%2Ffourze?ref=badge_large)
