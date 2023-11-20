@@ -241,8 +241,8 @@ const createFourzePlugin = createUnplugin<UnpluginFourzeOptions | undefined>(
 
         vite: {
           transformIndexHtml: {
-            enforce: "pre",
-            transform(html) {
+            order: "pre",
+            handler(html) {
               if (mockOptions.enable && injectScript) {
                 return {
                   html,
