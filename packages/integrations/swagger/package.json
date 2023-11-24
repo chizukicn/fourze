@@ -2,8 +2,17 @@
   "name": "@fourze/swagger",
   "version": "0.30.1",
   "description": "",
-  "author": "chizuki",
+  "author": "Chizuki <chizukicn@outlook.com>",
   "license": "MIT",
+  "homepage": "https://github.com/chizukicn/fourze/tree/main/packages/swagger#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chizukicn/fourze",
+    "directory": "packages/swagger"
+  },
+  "bugs": {
+    "url": "https://github.com/chizukicn/fourze/issues"
+  },
   "keywords": [
     "vite",
     "mock",

@@ -2,8 +2,14 @@
   "name": "@fourze/webpack",
   "version": "0.30.1",
   "description": "",
-  "author": "chizuki",
+  "author": "Chizuki <chizukicn@outlook.com>",
   "license": "MIT",
+  "homepage": "https://github.com/chizukicn/fourze/tree/main/packages/webpack#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chizukicn/fourze",
+    "directory": "packages/webpack"
+  },
   "keywords": [
     "vite",
     "mock",

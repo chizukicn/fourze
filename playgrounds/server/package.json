@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": "true",
   "description": "",
-  "author": "chizuki",
+  "author": "Chizuki <chizukicn@outlook.com>",
   "license": "MIT",
   "scripts": {
     "dev": "tsx ./main.ts"
