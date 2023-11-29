@@ -64,9 +64,6 @@ export function createRouteMatcher<T>(options: RouteMatcherOptions = {}): RouteM
     if (!options.strictTrailingSlash) {
       path = path.replace(/\/$/, "") || "/";
     }
-    if (!options.caseSensitive) {
-      path = path.toLowerCase();
-    }
     return path;
   };
 
@@ -89,7 +86,11 @@ export function createRouteMatcher<T>(options: RouteMatcherOptions = {}): RouteM
             type,
             parent: currentNode
           });
-          currentNode.children.set(segment, childNode);
+          if (type === NODE_TYPES.NORMAL && !options.caseSensitive) {
+            currentNode.children.set(segment.toLowerCase(), childNode);
+          } else {
+            currentNode.children.set(segment, childNode);
+          }
           if (type === NODE_TYPES.PLACEHOLDER) {
             const firstChar = segment[0];
             if (firstChar === "*") {
@@ -156,13 +157,14 @@ export function createRouteMatcher<T>(options: RouteMatcherOptions = {}): RouteM
           wildcardNode = currentNode;
           wildcardParam = segments.slice(i).join("/");
         }
-        const nextNode = currentNode.children.get(segments[i]);
+        const seg = segments[i];
+        const nextNode = currentNode.children.get(options.caseSensitive ? seg : seg.toLowerCase());
         if (nextNode) {
           currentNode = nextNode;
         } else {
           currentNode = currentNode.placeholderChildNode;
           if (currentNode) {
-            params[currentNode.paramName!] = segments[i];
+            params[currentNode.paramName!] = seg;
             paramsFound = true;
           } else {
             break;
