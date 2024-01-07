@@ -54,7 +54,7 @@
     "chokidar": "^3.5.3",
     "eslint": "^8.54.0",
     "eslint-formatter-mo": "^1.2.0",
-    "jsdom": "^22.1.0",
+    "jsdom": "^23.2.0",
     "lint-staged": "^15.1.0",
     "node-fetch": "^3.3.2",
     "nolyfill": "^1.0.25",
