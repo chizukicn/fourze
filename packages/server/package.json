@@ -1,5 +1,6 @@
 {
   "name": "@fourze/server",
+  "type": "module",
   "version": "0.30.2",
   "description": "",
   "author": "Chizuki <chizukicn@outlook.com>",
@@ -9,6 +10,13 @@
     "type": "git",
     "url": "https://github.com/chizukicn/fourze",
     "directory": "packages/server"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
+    }
   },
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
