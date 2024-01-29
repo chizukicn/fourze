@@ -14,29 +14,29 @@
   "dependencies": {
     "@fourze/core": "workspace:*",
     "@fourze/middlewares": "workspace:*",
-    "@vueuse/core": "^10.6.1",
-    "axios": "^1.6.2",
+    "@vueuse/core": "^10.7.2",
+    "axios": "^1.6.7",
     "dayjs": "^1.11.10",
-    "element-plus": "^2.4.2",
-    "hoci": "^0.5.0",
+    "element-plus": "^2.5.3",
+    "hoci": "^0.5.8",
     "jquery": "^3.7.1",
     "query-string": "^8.1.0",
-    "vue": "^3.3.8",
+    "vue": "^3.4.15",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
     "@fourze/mock": "workspace:*",
     "@fourze/vite": "workspace:*",
-    "@types/jquery": "^3.5.27",
-    "@vitejs/plugin-vue": "^4.5.0",
+    "@types/jquery": "^3.5.29",
+    "@vitejs/plugin-vue": "^5.0.3",
     "@vitejs/plugin-vue-jsx": "^3.1.0",
     "compression": "^1.7.4",
-    "rollup-plugin-visualizer": "^5.9.2",
-    "sass": "^1.69.5",
-    "typescript": "^5.2.2",
-    "unocss": "^0.57.6",
-    "unplugin-vue-components": "^0.25.2",
-    "vite": "^5.0.0",
-    "vite-plugin-inspect": "^0.7.42"
+    "rollup-plugin-visualizer": "^5.12.0",
+    "sass": "^1.70.0",
+    "typescript": "^5.3.3",
+    "unocss": "^0.58.4",
+    "unplugin-vue-components": "^0.26.0",
+    "vite": "^5.0.12",
+    "vite-plugin-inspect": "^0.8.3"
   }
 }
