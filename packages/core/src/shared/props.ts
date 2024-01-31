@@ -14,7 +14,8 @@ export declare type ExtractPropTypes<O> = {
 } & GlobalProps;
 
 export type ExtractPropTypesWithIn<
-  O, In extends PropIn
+  O,
+In extends PropIn
 > = ExtractPropTypes<Pick<O, InKeys<O, In>>>;
 
 export type ExtractDefaultPropTypes<P extends Record<string, any>> = {
@@ -27,29 +28,29 @@ export type LooseRequired<T> = {
 
 export type DefaultKeys<T> = {
   [K in keyof T]: T[K] extends {
-    default: any
+    default: any;
   } | BooleanConstructor | {
-    type: BooleanConstructor
+    type: BooleanConstructor;
   } ? T[K] extends {
-      type: BooleanConstructor
-      required: true
+      type: BooleanConstructor;
+      required: true;
     } ? never : K : never;
 }[keyof T];
 
 export type RequiredKeys<T> = {
   [K in keyof T]: T[K] extends
   | {
-    required: true
+    required: true;
   }
   | {
-    default: any
+    default: any;
   }
   | BooleanConstructor
   | {
-    type: BooleanConstructor
+    type: BooleanConstructor;
   }
     ? T[K] extends {
-      default: undefined | (() => undefined)
+      default: undefined | (() => undefined);
     }
       ? never
       : K
@@ -60,7 +61,7 @@ export type OptionalKeys<T> = Exclude<keyof T, RequiredKeys<T>>;
 
 export type InKeys<T, In extends PropIn> = {
   [K in keyof T]: T[K] extends {
-    in: In
+    in: In;
   }
     ? K
     : never;
@@ -72,36 +73,36 @@ export type InferPropType<T> = [T] extends [null]
   ? any
   : [T] extends [
       {
-        type: null | true
+        type: null | true;
       }
     ]
       ? any
       : [T] extends [
-          | ObjectConstructor
-          | {
-            type: ObjectConstructor
-          }
+        | ObjectConstructor
+        | {
+          type: ObjectConstructor;
+        }
         ]
           ? Record<string, any>
           : [T] extends [
-              | BooleanConstructor
-              | {
-                type: BooleanConstructor
-              }
+            | BooleanConstructor
+            | {
+              type: BooleanConstructor;
+            }
             ]
               ? boolean
               : [T] extends [
-                  | DateConstructor
-                  | {
-                    type: DateConstructor
-                  }
+                | DateConstructor
+                | {
+                  type: DateConstructor;
+                }
                 ]
                   ? Date
                   : [T] extends [
-                      | (infer U)[]
-                      | {
-                        type: (infer U)[]
-                      }
+                    | (infer U)[]
+                    | {
+                      type: (infer U)[];
+                    }
                     ]
                       ? U extends DateConstructor
                         ? Date | InferPropType<U>
@@ -124,10 +125,10 @@ type Prop<T, D = T> = PropOptions<T, D> | PropType<T>;
 
 type PropConstructor<T = any> =
   | {
-    new(...args: any[]): T & {}
+    new(...args: any[]): NonNullable<T>;
   }
   | {
-    (): T
+    (): T;
   }
   | PropMethod<T>;
 
@@ -135,29 +136,29 @@ type PropMethod<T, TConstructor = any> = [T] extends [
   ((...args: any) => any) | undefined
 ]
   ? {
-      new(): TConstructor
-      (): T
-      readonly prototype: TConstructor
+      new(): TConstructor;
+      (): T;
+      readonly prototype: TConstructor;
     }
   : never;
 
 export interface PropOptions<Type = any, Default = Type> {
-  type: PropType<Type>
-  required?: boolean
-  default?: Default | DefaultFactory<Default> | null | undefined | object
-  validator?(value: unknown): boolean
-  transform?(value: unknown): Type
-  meta?: Record<string, any>
-  in?: PropIn
+  type: PropType<Type>;
+  required?: boolean;
+  default?: Default | DefaultFactory<Default> | null | undefined | object;
+  validator?(value: unknown): boolean;
+  transform?(value: unknown): Type;
+  meta?: Record<string, any>;
+  in?: PropIn;
 }
 
 export interface NormalizedProps<Type = any, Default = Type>
   extends PropOptions<Type, Default> {
-  meta: Record<string, any>
-  in?: PropIn
-  required: boolean
-  type: PropType<any>
-  default?: Default | DefaultFactory<Default> | null | undefined | object
+  meta: Record<string, any>;
+  in?: PropIn;
+  required: boolean;
+  type: PropType<any>;
+  default?: Default | DefaultFactory<Default> | null | undefined | object;
 }
 
 declare type DefaultFactory<T> = (props: DefaultData) => T | null | undefined;
@@ -166,7 +167,7 @@ export type PropType<T> = PropConstructor<T> | PropConstructor<T>[];
 
 export function isExtends(types: PropType<any>, value: PropType<any>): boolean {
   if (Array.isArray(types)) {
-    return types.some((e) => isExtends(e, value));
+    return types.some(e => isExtends(e, value));
   }
   return value === types;
 }
@@ -192,7 +193,7 @@ function getType(fn: PropType<any>) {
  */
 export function isInstanceOf<D = any>(type: PropType<D> | PropType<D>[], value: any): value is D {
   if (Array.isArray(type)) {
-    return type.some((e) => isInstanceOf(e, value));
+    return type.some(e => isInstanceOf(e, value));
   }
   const expectedType = getType(type);
   let valid = true;
@@ -239,7 +240,7 @@ export function normalizeProps<T>(
       result[key] = {
         type: prop,
         in: "query",
-        required: prop.some((p) => isExtends(p as PropType<any>, Boolean)),
+        required: prop.some(p => isExtends(p as PropType<any>, Boolean)),
         meta: {}
       };
       continue;
@@ -261,7 +262,10 @@ export function normalizeProps<T>(
 }
 
 export function withDefaults<
-  T = Record<string, any>, P extends ObjectProps<T> = ObjectProps<T>, D = ExtractPropTypes<P>, Defaults = ExtractDefaultPropTypes<P>
+  T = Record<string, any>,
+P extends ObjectProps<T> = ObjectProps<T>,
+D = ExtractPropTypes<P>,
+Defaults = ExtractDefaultPropTypes<P>
 >(props: Partial<Defaults> & Omit<D, keyof Defaults>, propsOptions: P, propIn?: PropIn): D {
   if (Array.isArray(propsOptions)) {
     return props as D;
@@ -287,7 +291,7 @@ export function withDefaults<
       if (propIn) {
         continue;
       }
-      if (opt.some((e) => isExtends(e, Boolean))) {
+      if (opt.some(e => isExtends(e, Boolean))) {
         rs[k] = false as D[typeof k];
       }
       continue;
@@ -326,10 +330,9 @@ export function validateProps(
   }
 }
 
-
 export function defineExtends<P extends object>(props: P): ({
-  (): P
-  <E>(extraProps: E): P & E
+  (): P;
+  <E>(extraProps: E): P & E;
 }) {
   return <E extends object>(extraProps?: E) => {
     return {
@@ -338,4 +341,3 @@ export function defineExtends<P extends object>(props: P): ({
     };
   };
 }
-

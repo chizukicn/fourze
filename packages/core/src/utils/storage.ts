@@ -2,27 +2,27 @@ import { isDef, isNode } from "./is";
 import { parseJson } from "./string";
 
 export interface Storage {
-  readonly length: number
-  clear(): void
-  getItem(key: string): any
-  key(index: number): string | null
-  removeItem(key: string): void
-  setItem(key: string, value: any): void
-  hasItem(key: string): boolean
-  [name: string]: any
+  readonly length: number;
+  clear(): void;
+  getItem(key: string): any;
+  key(index: number): string | null;
+  removeItem(key: string): void;
+  setItem(key: string, value: any): void;
+  hasItem(key: string): boolean;
+  [name: string]: any;
 }
 
 interface StorageOptions {
-  id?: string
-  persistence?: boolean
+  id?: string;
+  persistence?: boolean;
   /**
    * only for browser
    */
-  target?: "local" | "session"
+  target?: "local" | "session";
   /**
    *  only for node
    */
-  dir?: string
+  dir?: string;
 }
 
 export function createStorage(options: StorageOptions = {}): Storage {
@@ -54,7 +54,7 @@ export function createStorage(options: StorageOptions = {}): Storage {
           };
         case "clear":
           return () => {
-            Object.keys(target).forEach((key) =>
+            Object.keys(target).forEach(key =>
               Reflect.deleteProperty(target, key)
             );
             emitChange();

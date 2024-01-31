@@ -1,16 +1,10 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "jsx": "preserve",
-    "esModuleInterop": true,
-    "module": "ESNext",
     "target": "ESNext",
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "module": "ESNext",
     "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
     "paths": {
       "@fourze/core": ["../../packages/core/src/index.ts"],
       "@fourze/mock": ["../../packages/mock/src/index.ts"],
@@ -22,7 +16,13 @@
       "@fourze/swagger": ["../../packages/integrations/swagger/src/index.ts"],
       "@fourze/middlewares": ["../../packages/middlewares/src/index.ts"],
       "@/*": ["src/*"]
-    }
+    },
+    "resolveJsonModule": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "esModuleInterop": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "src/**/*.vue", "vite.config.ts"],
   "exclude": ["node_modules", "dist"]

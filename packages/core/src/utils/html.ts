@@ -16,23 +16,23 @@ const htmlTemplateString = `
 `;
 
 export interface ScriptTagAttributes extends Record<string, any> {
-  src: string
-  lang?: string
-  type?: string
+  src: string;
+  lang?: string;
+  type?: string;
 }
 
 export interface StyleTagAttributes extends Record<string, any> {
-  type?: string
-  media?: string
-  rel?: string
-  href?: string
+  type?: string;
+  media?: string;
+  rel?: string;
+  href?: string;
 }
 
 export interface HtmlTag {
-  tag: string
-  attributes?: Record<string, any>
-  content?: string
-  in?: "body" | "head" | "html"
+  tag: string;
+  attributes?: Record<string, any>;
+  content?: string;
+  in?: "body" | "head" | "html";
 }
 
 export interface HtmlHeadTag extends Omit<HtmlTag, "in"> {
@@ -41,15 +41,15 @@ export interface HtmlHeadTag extends Omit<HtmlTag, "in"> {
 export interface HtmlBodyTag extends Omit<HtmlTag, "in"> {
 }
 export interface RenderHtmlOptions {
-  language?: string
-  favicon?: string | string[]
-  title?: string
-  meta?: Record<string, any>[]
-  tags?: HtmlTag[]
-  head?: HtmlHeadTag[]
-  body?: HtmlBodyTag[]
-  script?: (string | ScriptTagAttributes)[]
-  style?: (string | StyleTagAttributes)[]
+  language?: string;
+  favicon?: string | string[];
+  title?: string;
+  meta?: Record<string, any>[];
+  tags?: HtmlTag[];
+  head?: HtmlHeadTag[];
+  body?: HtmlBodyTag[];
+  script?: (string | ScriptTagAttributes)[];
+  style?: (string | StyleTagAttributes)[];
 }
 
 const notCloseTags = ["img", "br", "hr", "input", "meta", "link", "area"];
@@ -65,7 +65,7 @@ export function renderElement(tag: string, props: any = {}, ...children: any[]) 
 
   function renderChildren(children: any[]): string {
     if (Array.isArray(children)) {
-      return children.map((c) => (Array.isArray(c) ? renderChildren(c) : c)).join("");
+      return children.map(c => (Array.isArray(c) ? renderChildren(c) : c)).join("");
     }
     return children;
   }
@@ -96,20 +96,20 @@ export function renderHtml(options: RenderHtmlOptions = {}) {
   }
 
   if (options.meta?.length) {
-    headTags.push(...options.meta.map(r => {
+    headTags.push(...options.meta.map((r) => {
       return { tag: "meta", attributes: r };
     }));
   }
 
   if (options.favicon) {
     const favicon = Array.isArray(options.favicon) ? options.favicon : [options.favicon];
-    headTags.push(...favicon.map(r => {
+    headTags.push(...favicon.map((r) => {
       return { tag: "link", attributes: { rel: "icon", href: r } };
     }));
   }
 
   if (options.style?.length) {
-    headTags.push(...options.style.map(r => {
+    headTags.push(...options.style.map((r) => {
       if (isString(r)) {
         return { tag: "link", attributes: { href: r, rel: "stylesheet" } };
       }
@@ -120,7 +120,7 @@ export function renderHtml(options: RenderHtmlOptions = {}) {
   const bodyTags: HtmlTag[] = [...tags.filter(r => r.in === "body"), ...options.body ?? []];
 
   if (options.script?.length) {
-    bodyTags.push(...options.script.map(r => {
+    bodyTags.push(...options.script.map((r) => {
       if (isString(r)) {
         return { tag: "script", attributes: { src: r } };
       }

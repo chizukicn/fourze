@@ -1,15 +1,34 @@
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 import {
-  isArray, isBoolean, isBuffer, isConstructor, isDef,
-  isError, isFalse, isFalsy, isFunction, isNode, isNull,
-  isNumber, isObject, isPlainObject, isPrimitive,
-  isPromise, isRegExp, isString, isSymbol, isTrue,
-  isTruthy, isURL, isUint8Array, isUndef,
+  isArray,
+  isBoolean,
+  isBuffer,
+  isConstructor,
+  isDef,
+  isError,
+  isFalse,
+  isFalsy,
+  isFunction,
+  isNode,
+  isNull,
+  isNumber,
+  isObject,
+  isPlainObject,
+  isPrimitive,
+  isPromise,
+  isRegExp,
+  isString,
+  isSymbol,
+  isTrue,
+  isTruthy,
+  isURL,
+  isUint8Array,
+  isUndef,
   isUndefined,
   toRawType
 } from "../../src/utils/is";
 
-test("is-type", () => {
+it("is-type", () => {
   expect(isNumber(1)).toBe(true);
   expect(isNumber("1")).toBe(false);
   expect(isString("1")).toBe(true);
@@ -90,7 +109,7 @@ test("is-type", () => {
   expect(isNode()).toBe(true);
 });
 
-test("toRawType", () => {
+it("toRawType", () => {
   expect(toRawType(1)).toBe("Number");
   expect(toRawType("1")).toBe("String");
   expect(toRawType(true)).toBe("Boolean");

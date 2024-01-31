@@ -41,4 +41,3 @@ export const HTTP_STATUS_CODES = {
   504: "Gateway Timeout",
   505: "HTTP Version Not Supported"
 };
-

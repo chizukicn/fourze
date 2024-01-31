@@ -7,7 +7,7 @@ import { fire } from "./autocannon";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
-const doBench = async (opts: any, handler: string) => {
+async function doBench(opts: any, handler: string) {
   const spinner = ora(`Started ${handler}`).start();
   const forked = fork(join(__dirname, "../modules", `${handler}.js`));
   try {
@@ -30,10 +30,10 @@ const doBench = async (opts: any, handler: string) => {
   } catch (error) {
     return console.error(error);
   }
-};
+}
 
 let index = 0;
-const start = async (opts: any, module: string[] | string): Promise<any> => {
+async function start(opts: any, module: string[] | string): Promise<any> {
   if (typeof module === "string") {
     module = [module];
   }
@@ -49,6 +49,6 @@ const start = async (opts: any, module: string[] | string): Promise<any> => {
   } catch (error) {
     console.error(error);
   }
-};
+}
 
 export default start;

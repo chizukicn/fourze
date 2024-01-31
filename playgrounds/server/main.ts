@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import process from "node:process";
 import comporession from "compression";
 import ejs from "ejs";
 import express from "express";
@@ -10,7 +11,7 @@ import { defineRouter } from "@fourze/core";
 import type { FourzeRendererContext } from "@fourze/server";
 import { createRenderer, createServer } from "@fourze/server";
 
-const router = defineRouter(router => {
+const router = defineRouter((router) => {
   router.route("/hello").get(() => {
     return "Hello World";
   });
@@ -35,7 +36,7 @@ app.use(renderer);
 app.use(comporession({ threshold: 0 }) as CommonMiddleware);
 
 const app2 = createServer();
-app2.use(defineRouter(router => {
+app2.use(defineRouter((router) => {
   router.route("/hello").get(() => {
     return "Hello World";
   });

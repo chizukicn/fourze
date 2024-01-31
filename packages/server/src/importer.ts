@@ -14,12 +14,12 @@ import type { Loader, TransformOptions } from "esbuild";
 import { transformSync } from "esbuild";
 
 export interface ModuleImporterOptions {
-  esbuild?: TransformOptions
-  define?: Record<string, string>
-  interopDefault?: boolean
-  requireCache?: boolean
-  extensions?: string[]
-  alias?: Record<string, string> | null
+  esbuild?: TransformOptions;
+  define?: Record<string, string>;
+  interopDefault?: boolean;
+  requireCache?: boolean;
+  extensions?: string[];
+  alias?: Record<string, string> | null;
 }
 
 type Require = typeof require;
@@ -40,10 +40,10 @@ const defaults: ModuleImporterOptions = {
 };
 
 export interface ModuleImporter extends Require {
-  (id: string): any
-  remove(id: string): void
-  clear(): void
-  configure(options: ModuleImporterOptions): void
+  (id: string): any;
+  remove(id: string): void;
+  clear(): void;
+  configure(options: ModuleImporterOptions): void;
 }
 
 export function readNearestPackageJSON(path: string): PackageJson | undefined {
@@ -101,7 +101,7 @@ export function createImporter(_filename: string, opts: ModuleImporterOptions = 
 
   const isNativeRe = new RegExp(
     `node_modules/(${nativeModules
-      .map((m) => escapeStringRegexp(m))
+      .map(m => escapeStringRegexp(m))
       .join("|")})/`
   );
 
@@ -111,7 +111,7 @@ export function createImporter(_filename: string, opts: ModuleImporterOptions = 
     }
 
     const _additionalExts = [...(opts.extensions as string[])].filter(
-      (ext) => ext !== ".js"
+      ext => ext !== ".js"
     );
 
     let resolved, err;
@@ -270,7 +270,7 @@ export function createImporter(_filename: string, opts: ModuleImporterOptions = 
 
     mod.path = dirname(filename);
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // eslint-disable-next-line ts/ban-ts-comment
     // @ts-expect-error
     mod.paths = Module._nodeModulePaths(mod.path);
 

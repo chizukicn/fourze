@@ -1,6 +1,5 @@
 # Fourze Server
 
-
 ## Usage
 
 ```

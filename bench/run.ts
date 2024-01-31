@@ -1,3 +1,4 @@
+import process from "node:process";
 import inquirer from "inquirer";
 import { program } from "commander";
 import { choices, list } from "./lib/packages";
@@ -5,11 +6,11 @@ import bench from "./lib/bench";
 
 let argv: string[] = [];
 
-const run = async () => {
+async function run() {
   const options = await getBenchmarkOptions();
   const modules = options.all ? choices : await select();
   return bench(options, modules);
-};
+}
 
 argv = program
   .option("-t --target <module>", "module to benchmark")
@@ -27,7 +28,7 @@ argv = program
     }
   }).parse(process.argv).args;
 
-const parseArgv = async () => {
+async function parseArgv() {
   const [all, connections, pipelining, duration] = argv;
   return {
     all: all === "y",
@@ -35,7 +36,7 @@ const parseArgv = async () => {
     pipelining: +pipelining,
     duration: +duration
   };
-};
+}
 
 async function getBenchmarkOptions() {
   if (argv.length) {

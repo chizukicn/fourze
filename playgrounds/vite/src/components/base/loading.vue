@@ -1,5 +1,6 @@
 <script lang="tsx">
 import { defineComponent, renderSlot } from "vue";
+
 export default defineComponent({
   props: {
     loading: {

@@ -1,7 +1,7 @@
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 import { aliasObjectMap, isKeyOf, objectMap } from "../../src/utils/object";
 
-test("test-utils-object-aliasObjectMap", async () => {
+it("test-utils-object-aliasObjectMap", async () => {
   const obj = {
     name: "test",
     age: 12,
@@ -34,11 +34,11 @@ test("test-utils-object-aliasObjectMap", async () => {
   expect(alias.inherit).toBe(obj.inherit);
 });
 
-test("test-utils-object-isKeyOf", () => {
+it("test-utils-object-isKeyOf", () => {
   expect(isKeyOf({ name: "test" }, "name")).toBe(true);
 });
 
-test("test-utils-object-objectMap", () => {
+it("test-utils-object-objectMap", () => {
   expect(objectMap({ name: "test", age: 12 }, (key, value) => {
     if (key === "name") {
       return ["name2", value];

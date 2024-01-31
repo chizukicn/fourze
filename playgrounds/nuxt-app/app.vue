@@ -7,9 +7,9 @@ import type { MaybeAsyncFunction } from "maybe-types";
 import { computed, ref } from "vue";
 
 export interface ResponseData {
-  code: number
-  data: any
-  msg: string
+  code: number;
+  data: any;
+  msg: string;
 }
 
 const t = ref(0);
@@ -65,7 +65,7 @@ function end() {
   endTime.value = Date.now();
 }
 
-const recoding = (fn: MaybeAsyncFunction<void, [], false>) => {
+function recoding(fn: MaybeAsyncFunction<void, [], false>) {
   return async () => {
     start();
     try {
@@ -75,11 +75,11 @@ const recoding = (fn: MaybeAsyncFunction<void, [], false>) => {
     }
     end();
   };
-};
+}
 
 const handleFetch = recoding(async () => {
   result.value = await fetch(`/api/search/${Math.floor(Math.random() * 9)}`, { method: "post", body: JSON.stringify({ phone: 2 }) })
-    .then(r => {
+    .then((r) => {
       serverDelay.value = Number(r.headers.get("Fourze-Delay"));
       return r.json();
     })

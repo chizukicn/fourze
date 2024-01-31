@@ -79,7 +79,7 @@ function stringifyOptions(obj: Record<string, any>): string {
 }
 
 export interface RenderSwaggerUIOptions extends RenderHtmlOptions {
-  url?: string
+  url?: string;
 }
 
 export function renderIndexHtml(root: string, options: RenderSwaggerUIOptions = {}) {

@@ -1,4 +1,5 @@
 import path from "node:path";
+import process from "node:process";
 import type { FourzeHmrApp } from "@fourze/server";
 
 import type { InlineConfig } from "vite";
@@ -23,18 +24,18 @@ export interface SwaggerUIBuildOptions {
   /**
    * @default "dist"
    */
-  distPath?: string
+  distPath?: string;
 
-  assetsFilter?: (src: string) => boolean
+  assetsFilter?: (src: string) => boolean;
 
-  vite?: InlineConfig
+  vite?: InlineConfig;
 
-  swagger?: SwaggerOptions
+  swagger?: SwaggerOptions;
 
   /**
    * @default ".fourze-swagger"
    */
-  tmpDir?: string
+  tmpDir?: string;
 
 }
 
@@ -50,7 +51,7 @@ function createMockDocsCode(options: SwaggerOptions = {}) {
 }
 
 export function getModuleAlias() {
-  return ["@fourze/core", "@fourze/mock", "@fourze/swagger", "@fourze/swagger-middleware"].map(r => {
+  return ["@fourze/core", "@fourze/mock", "@fourze/swagger", "@fourze/swagger-middleware"].map((r) => {
     return {
       find: r,
       replacement: require.resolve(r)

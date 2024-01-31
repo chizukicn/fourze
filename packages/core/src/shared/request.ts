@@ -28,57 +28,62 @@ export const FOURZE_METHODS = [
 export type RequestMethod = typeof FOURZE_METHODS[number];
 
 export interface FourzeRequestOptions {
-  url: string
-  method?: string
-  headers?: PolyfillHeaderInit
-  body?: any
-  params?: Record<string, any>
-  query?: Record<string, any>
-  meta?: Record<string, any>
-  request?: IncomingMessage
-  contentTypeParsers?: Map<MaybeRegex, (body: any) => any>
+  url: string;
+  method?: string;
+  headers?: PolyfillHeaderInit;
+  body?: any;
+  params?: Record<string, any>;
+  query?: Record<string, any>;
+  meta?: Record<string, any>;
+  request?: IncomingMessage;
+  contentTypeParsers?: Map<MaybeRegex, (body: any) => any>;
 }
 
 export interface FourzeRequest<
-  Props extends ObjectProps = DefaultData, Meta = FourzeRouteMeta, Data = ExtractPropTypes<Props>, Query = ExtractPropTypesWithIn<Props, "query">, Body = ExtractPropTypesWithIn<Props, "body">, Params = ExtractPropTypesWithIn<Props, "path">
+  Props extends ObjectProps = DefaultData,
+Meta = FourzeRouteMeta,
+Data = ExtractPropTypes<Props>,
+Query = ExtractPropTypesWithIn<Props, "query">,
+Body = ExtractPropTypesWithIn<Props, "body">,
+Params = ExtractPropTypesWithIn<Props, "path">
 > extends IncomingMessage {
-  url: string
-  method: string
-  headers: Record<string, string | string[] | undefined>
+  url: string;
+  method: string;
+  headers: Record<string, string | string[] | undefined>;
 
-  route: FourzeRoute
+  route: FourzeRoute;
 
-  app?: FourzeApp
+  app?: FourzeApp;
 
-  meta: Meta & FourzeRouteMeta
+  meta: Meta & FourzeRouteMeta;
 
-  contextPath: string
+  contextPath: string;
 
-  setRoute(route: FourzeRoute, matchParams?: Record<string, any> | null): void
+  setRoute(route: FourzeRoute, matchParams?: Record<string, any> | null): void;
 
-  withScope(scope: string): FourzeRequest<Props, Meta, Data, Query, Body, Params>
+  withScope(scope: string): FourzeRequest<Props, Meta, Data, Query, Body, Params>;
 
-  readonly contentType: string
+  readonly contentType: string;
 
-  readonly req?: IncomingMessage
+  readonly req?: IncomingMessage;
 
-  readonly originalPath: string
+  readonly originalPath: string;
 
-  readonly params: Params
+  readonly params: Params;
 
-  readonly query: Query
+  readonly query: Query;
 
-  readonly body: Body
+  readonly body: Body;
   /**
    *  {...query, ...params, ...body}
    */
-  readonly data: Data
+  readonly data: Data;
 
-  readonly raw: string
+  readonly raw: string;
 
-  readonly path: string
+  readonly path: string;
 
-  readonly [FourzeRequestFlag]: true
+  readonly [FourzeRequestFlag]: true;
 }
 
 export function createRequest(options: FourzeRequestOptions) {

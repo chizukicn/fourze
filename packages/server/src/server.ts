@@ -2,6 +2,7 @@ import type EventEmitter from "node:events";
 import type { IncomingMessage, OutgoingMessage, Server } from "node:http";
 import http from "node:http";
 import https from "node:https";
+import process from "node:process";
 import {
   FOURZE_VERSION,
   createApp,
@@ -23,31 +24,31 @@ import type {
 import { isAddressInfo, normalizeAddress } from "./utils";
 
 export interface FourzeServerOptions {
-  host?: string
-  port?: number
-  server?: Server
-  protocol?: "http" | "https"
-  logger?: FourzeLogger
+  host?: string;
+  port?: number;
+  server?: Server;
+  protocol?: "http" | "https";
+  logger?: FourzeLogger;
 }
 
 export interface FourzeServer extends EventEmitter, CommonMiddleware {
 
-  host: string
-  port: number
+  host: string;
+  port: number;
 
-  readonly origin: string
+  readonly origin: string;
 
-  readonly server?: Server
+  readonly server?: Server;
 
-  readonly protocol: "http" | "https"
+  readonly protocol: "http" | "https";
 
-  listen(port?: number, host?: string): Promise<Server>
+  listen(port?: number, host?: string): Promise<Server>;
 
-  use(path: string, ...modules: FourzeModule[]): this
+  use(path: string, ...modules: FourzeModule[]): this;
 
-  use(...modules: FourzeModule[]): this
+  use(...modules: FourzeModule[]): this;
 
-  close(): Promise<void>
+  close(): Promise<void>;
 }
 
 export function createServer(): FourzeServer;

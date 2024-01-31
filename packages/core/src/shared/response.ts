@@ -6,10 +6,10 @@ import { FourzeError } from "./error";
 import type { FourzeRequest } from "./request";
 
 export interface FourzeResponseOptions {
-  url: string
-  method: string
-  request: FourzeRequest
-  response?: OutgoingMessage
+  url: string;
+  method: string;
+  request: FourzeRequest;
+  response?: OutgoingMessage;
 }
 
 const FourzeResponseFlag = "__isFourzeResponse";
@@ -17,75 +17,75 @@ const FourzeResponseFlag = "__isFourzeResponse";
 export interface FourzeBaseResponse extends ServerResponse {
 }
 export interface FourzeResponse extends FourzeBaseResponse {
-  json(payload: any): this
+  json(payload: any): this;
 
-  image(payload: Buffer): this
+  image(payload: Buffer): this;
 
-  text(payload: string): this
+  text(payload: string): this;
 
-  binary(payload: Buffer): this
+  binary(payload: Buffer): this;
 
-  redirect(url: string): this
+  redirect(url: string): this;
 
-  appendHeader(key: string, value: string | string[]): this
+  appendHeader(key: string, value: string | string[]): this;
 
-  removeHeader(key: string): this
+  removeHeader(key: string): this;
 
   /**
    * 发送数据
    * @param payload
    * @param contentType
    */
-  send(payload: any, contentType?: string | null): this
+  send(payload: any, contentType?: string | null): this;
 
-  send(payload: any, statusCode?: number): this
+  send(payload: any, statusCode?: number): this;
 
-  send(payload: any, statusCode?: number, contentType?: string | null): this
+  send(payload: any, statusCode?: number, contentType?: string | null): this;
   /**
    * 获取Content-Type
    * @param payload 如果没有指定contentType，则会根据payload的类型自动推断
    */
-  getContentType(payload?: any): string | undefined
+  getContentType(payload?: any): string | undefined;
 
   /**
    * 设置Content-Type
    * @param contentType
    */
-  setContentType(contentType: string): this
+  setContentType(contentType: string): this;
 
-  status(code: number): this
+  status(code: number): this;
 
   /**
    * 发送错误
    * @param code
    * @param error
    */
-  sendError(code: number, error?: string | Error): this
+  sendError(code: number, error?: string | Error): this;
 
   /**
    * 发送错误
    * @param error
    */
-  sendError(error?: string | Error): this
+  sendError(error?: string | Error): this;
 
   /**
    *  等待所有的异步操作完成
    */
-  done(): Promise<void>
+  done(): Promise<void>;
 
-  sent: boolean
+  sent: boolean;
 
-  readonly res?: OutgoingMessage
+  readonly res?: OutgoingMessage;
 
-  readonly request: FourzeRequest
+  readonly request: FourzeRequest;
 
-  readonly url: string
+  readonly url: string;
 
-  readonly payload: any
+  readonly payload: any;
 
-  readonly error: FourzeError | undefined
+  readonly error: FourzeError | undefined;
 
-  readonly [FourzeResponseFlag]: true
+  readonly [FourzeResponseFlag]: true;
 }
 
 export function createResponse(options: FourzeResponseOptions) {
@@ -181,7 +181,7 @@ export function createResponse(options: FourzeResponseOptions) {
         name,
         [oldValue, value]
           .flat()
-          .filter((r) => !!r)
+          .filter(r => !!r)
           .join(",")
       );
     } else {

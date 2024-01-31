@@ -12,7 +12,9 @@ const FourzeMiddlewareFlag = "__isFourzeMiddleware";
 export type FourzeNext<T = any> = () => MaybePromise<T>;
 
 export type FourzeHandle<
-  R = unknown, Props extends ObjectProps = DefaultData, Meta = FourzeRouteMeta
+  R = unknown,
+Props extends ObjectProps = DefaultData,
+Meta = FourzeRouteMeta
 > = (
   request: FourzeRequest<Props, Meta>,
   response: FourzeResponse
@@ -23,7 +25,7 @@ export interface CommonMiddleware {
     req: IncomingMessage,
     res: OutgoingMessage,
     next?: FourzeNext
-  ): MaybePromise<void>
+  ): MaybePromise<void>;
 }
 
 export interface FourzeMiddlewareHandler<T = any> {
@@ -31,13 +33,13 @@ export interface FourzeMiddlewareHandler<T = any> {
     req: FourzeRequest,
     res: FourzeResponse,
     next: FourzeNext<T>
-  ): MaybePromise<T>
+  ): MaybePromise<T>;
 }
 
 export interface FourzeMiddleware<T = any> extends FourzeMiddlewareHandler<T> {
-  name?: string
-  setup?: (app?: FourzeApp) => MaybePromise<void>
-  readonly order?: number
+  name?: string;
+  setup?: (app?: FourzeApp) => MaybePromise<void>;
+  readonly order?: number;
 }
 
 export function defineMiddleware(name: string, order: number, handler: FourzeMiddlewareHandler): FourzeMiddleware;
@@ -83,41 +85,41 @@ export function isFourzeMiddleware(obj: any): obj is FourzeMiddleware {
 }
 
 export interface FourzeApp extends FourzeMiddleware, MetaInstance<FourzeApp, FourzeAppMeta> {
-  use(path: string, ...middlewares: FourzeMiddleware[]): this
+  use(path: string, ...middlewares: FourzeMiddleware[]): this;
 
-  use(...modules: FourzeModule[]): this
+  use(...modules: FourzeModule[]): this;
 
-  remove(name: string): this
+  remove(name: string): this;
 
   /**
    *  是否允许
    * @param url
    */
-  isAllow(url: string): boolean
+  isAllow(url: string): boolean;
 
-  allow(...rules: MaybeRegex[]): this
+  allow(...rules: MaybeRegex[]): this;
 
-  deny(...rules: MaybeRegex[]): this
+  deny(...rules: MaybeRegex[]): this;
 
-  relative(url: string): string | null
+  relative(url: string): string | null;
 
-  match(url: string): [string, FourzeMiddleware][]
+  match(url: string): [string, FourzeMiddleware][];
 
-  service(context: FourzeContextOptions, fallback?: FourzeHandle): Promise<FourzeServiceContext>
+  service(context: FourzeContextOptions, fallback?: FourzeHandle): Promise<FourzeServiceContext>;
 
-  ready(): Promise<void>
+  ready(): Promise<void>;
 
-  reset(): Promise<void>
+  reset(): Promise<void>;
 
-  readonly meta: FourzeAppMeta
+  readonly meta: FourzeAppMeta;
 
-  readonly base: string
+  readonly base: string;
 
-  readonly middlewares: FourzeMiddleware[]
+  readonly middlewares: FourzeMiddleware[];
 
-  readonly isReady: boolean
+  readonly isReady: boolean;
 
-  readonly isReadying: boolean
+  readonly isReadying: boolean;
 
 }
 
@@ -125,13 +127,13 @@ export type FourzeModule = FourzePlugin | FourzeMiddleware;
 
 const FourzePluginFlag = "__isFourzePlugin";
 export interface FourzePluginInstall {
-  (app: FourzeApp): MaybePromise<void>
+  (app: FourzeApp): MaybePromise<void>;
 }
 
 export interface FourzePlugin {
-  name?: string
-  install: FourzePluginInstall
-  readonly [FourzePluginFlag]: true
+  name?: string;
+  install: FourzePluginInstall;
+  readonly [FourzePluginFlag]: true;
 }
 
 export function definePlugin(install: FourzePluginInstall): FourzePlugin;

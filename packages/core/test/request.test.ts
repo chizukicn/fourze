@@ -1,7 +1,7 @@
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 import { createRequest } from "../src/shared/request";
 
-test("query", () => {
+it("query", () => {
   const request = createRequest({
     url: "/api/test?name=hello&age=18&male=true",
     method: "POST",

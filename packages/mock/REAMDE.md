@@ -20,7 +20,6 @@ app.use(
     });
   })
 );
-
 ```
 
 ` GET http://localhost:7609/api/hello `

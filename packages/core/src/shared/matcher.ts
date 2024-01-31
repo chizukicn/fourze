@@ -5,13 +5,13 @@ import type { RequestMethod } from "./request";
 
 interface RouteMatcher<T = any> {
 
-  add(path: string, method: RequestMethod | "all", payload: T): this
+  add(path: string, method: RequestMethod | "all", payload: T): this;
 
-  match(path: string, method: RequestMethod | "all"): [T | null, Record<string, string> | null]
+  match(path: string, method: RequestMethod | "all"): [T | null, Record<string, string> | null];
 
-  remove(path: string, method?: RequestMethod): boolean
+  remove(path: string, method?: RequestMethod): boolean;
 
-  traverse(callback: (payload: T, path: string, method: RequestMethod | "all") => void): void
+  traverse(callback: (payload: T, path: string, method: RequestMethod | "all") => void): void;
 }
 
 const NODE_TYPES = {
@@ -23,13 +23,13 @@ const NODE_TYPES = {
 type NodeType = typeof NODE_TYPES[keyof typeof NODE_TYPES];
 
 export interface RouteNode<T = any> {
-  type: NodeType
-  children: Map<string, RouteNode<T>>
-  parent: RouteNode<T> | null
-  wildcardChildNode: RouteNode<T> | null
-  placeholderChildNode: RouteNode<T> | null
-  paramName: string | null
-  payload: Map<RequestMethod | "all", T>
+  type: NodeType;
+  children: Map<string, RouteNode<T>>;
+  parent: RouteNode<T> | null;
+  wildcardChildNode: RouteNode<T> | null;
+  placeholderChildNode: RouteNode<T> | null;
+  paramName: string | null;
+  payload: Map<RequestMethod | "all", T>;
 }
 
 function createRouteNode<T>(options: Partial<RouteNode<T>> = {}): RouteNode<T> {
@@ -45,10 +45,10 @@ function createRouteNode<T>(options: Partial<RouteNode<T>> = {}): RouteNode<T> {
 }
 
 export interface RouteMatcherOptions {
-  caseSensitive?: boolean
-  strictTrailingSlash?: boolean
-  notAllowedRaiseError?: boolean
-  cache?: boolean
+  caseSensitive?: boolean;
+  strictTrailingSlash?: boolean;
+  notAllowedRaiseError?: boolean;
+  cache?: boolean;
 }
 
 /**

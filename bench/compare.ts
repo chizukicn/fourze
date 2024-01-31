@@ -1,6 +1,7 @@
 import { arch, cpus, platform, totalmem } from "node:os";
 import { join } from "node:path";
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
+import process from "node:process";
 import { program } from "commander";
 import Table from "cli-table";
 import chalk from "chalk";
@@ -31,9 +32,9 @@ if (!getAvailableResults().length) {
 
 function getAvailableResults() {
   return readdirSync(resultsPath)
-    .filter((file) => file.match(/(.+)\.json$/))
+    .filter(file => file.match(/(.+)\.json$/))
     .sort()
-    .map((choice) => choice.replace(".json", ""));
+    .map(choice => choice.replace(".json", ""));
 }
 
 function formatHasRouter(hasRouter: boolean | string) {

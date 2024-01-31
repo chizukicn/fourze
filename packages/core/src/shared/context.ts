@@ -5,19 +5,19 @@ import type { FourzeResponse } from "./response";
 import { createResponse } from "./response";
 
 export interface FourzeContextOptions {
-  url: string
-  method?: string
-  headers?: Record<string, string | string[] | number | undefined>
-  body?: any
-  request?: IncomingMessage
-  response?: OutgoingMessage
-  contextPath?: string
-  contentTypeParsers?: Record<string, (body: any) => any>
+  url: string;
+  method?: string;
+  headers?: Record<string, string | string[] | number | undefined>;
+  body?: any;
+  request?: IncomingMessage;
+  response?: OutgoingMessage;
+  contextPath?: string;
+  contentTypeParsers?: Record<string, (body: any) => any>;
 }
 
 export interface FourzeServiceContext {
-  request: FourzeRequest
-  response: FourzeResponse
+  request: FourzeRequest;
+  response: FourzeResponse;
 }
 
 export function createServiceContext(options: FourzeContextOptions): FourzeServiceContext {

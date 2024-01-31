@@ -135,7 +135,7 @@ export function createMockApp(
 
   app.enable = (_mode?: FourzeMockRequestMode[]) => {
     _mode = _mode ?? Array.from(mode);
-    _mode.forEach((m) => activeMode.add(m));
+    _mode.forEach(m => activeMode.add(m));
 
     if (injectGlobal) {
       if (_mode.includes("xhr")) {
@@ -157,7 +157,7 @@ export function createMockApp(
 
   app.disable = function (_mode?: FourzeMockRequestMode[]) {
     _mode = _mode ?? Array.from(mode);
-    _mode.forEach((m) => activeMode.delete(m));
+    _mode.forEach(m => activeMode.delete(m));
     if (injectGlobal) {
       if (_mode.includes("xhr")) {
         globalThis.XMLHttpRequest = app.originalXMLHttpRequest;
@@ -215,4 +215,3 @@ export function getGlobalMockApp() {
 export function isMockApp(app: any): app is FourzeMockApp {
   return !!app && app[FourzeMockAppFlag];
 }
-

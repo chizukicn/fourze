@@ -26,11 +26,11 @@ export class PolyfillFile {
 }
 
 interface FormDataPart {
-  name: string
-  fileName?: string
-  value: string
-  contentType: string
-  encoding?: BufferEncoding
+  name: string;
+  fileName?: string;
+  value: string;
+  contentType: string;
+  encoding?: BufferEncoding;
 }
 
 const CONTENT_DISPOSITION_REGEX

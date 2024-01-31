@@ -16,4 +16,3 @@ export const alias: Record<string, string> = Object.keys(paths).reduce(
   },
   {}
 );
-

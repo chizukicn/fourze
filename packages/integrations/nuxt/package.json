@@ -15,8 +15,8 @@
   "exports": {
     ".": {
       "types": "./dist/module.d.ts",
-      "require": "./dist/module.cjs",
-      "import": "./dist/module.mjs"
+      "import": "./dist/module.mjs",
+      "require": "./dist/module.cjs"
     }
   },
   "main": "./dist/module.cjs",
@@ -32,14 +32,14 @@
   "dependencies": {
     "@fourze/server": "workspace:*",
     "@fourze/vite": "workspace:*",
-    "@nuxt/kit": "^3.9.3",
+    "@nuxt/kit": "^3.10.0",
     "dedent": "^1.5.1",
     "pathe": "^1.1.2"
   },
   "devDependencies": {
     "@nuxt/module-builder": "^0.5.5",
-    "@nuxt/schema": "^3.9.3",
+    "@nuxt/schema": "^3.10.0",
     "@types/dedent": "^0.7.2",
-    "nuxt": "^3.9.3"
+    "nuxt": "^3.10.0"
   }
 }

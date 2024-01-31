@@ -3,9 +3,9 @@ import { createApp, defineRouter, randomInt, withBase } from "@fourze/core";
 import { connect, createServer, normalizeAddress } from "@fourze/server";
 import express from "connect";
 import axios from "axios";
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 
-test("run-server", async () => {
+it("run-server", async () => {
   const host = "localhost";
   const port = 0;
 
@@ -34,12 +34,12 @@ test("run-server", async () => {
 
   const returnData = await axios
     .get<typeof testData>(withBase("/api/test", server.origin))
-    .then((r) => r.data);
+    .then(r => r.data);
 
   expect(returnData).toEqual(testData);
 });
 
-test("run-connect", async () => {
+it("run-connect", async () => {
   const host = "localhost";
   const port = 0;
 
@@ -58,7 +58,7 @@ test("run-connect", async () => {
 
   app.use("/api/", connect(router));
 
-  const server: Server = await new Promise(resolve => {
+  const server: Server = await new Promise((resolve) => {
     const server = app.listen(port, host, () => {
       resolve(server);
     });
@@ -73,7 +73,7 @@ test("run-connect", async () => {
 
   const returnData = await axios
     .get<typeof testData>(url)
-    .then((r) => r.data);
+    .then(r => r.data);
 
   expect(returnData).toEqual(testData);
 });

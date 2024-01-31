@@ -15,7 +15,6 @@ export default defineConfig({
     })
   ],
 });
-
 ```
 
 then you can fetch `/api/hello` to get response.

@@ -3,10 +3,10 @@ import { connect, normalizeAddress } from "@fourze/server";
 import express from "express";
 import { createApp, defineRouter, randomInt, withBase } from "@fourze/core";
 import { service } from "@fourze/swagger";
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 import axios from "axios";
 
-test("test-swagger", async () => {
+it("test-swagger", async () => {
   const app = createApp({
     base: "/api",
     allow: ["/api/test", "/api/hello", "/api/add"],
@@ -36,7 +36,7 @@ test("test-swagger", async () => {
 
   expressApp.use(connect(swaggerRouter));
 
-  const server: Server = await new Promise(resolve => {
+  const server: Server = await new Promise((resolve) => {
     const _server = expressApp.listen(0, "localhost", () => {
       resolve(_server);
     });

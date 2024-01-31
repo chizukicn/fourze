@@ -1,7 +1,9 @@
+import process from "node:process";
 import Koa from "koa";
+
 const app = new Koa();
 
-app.use(ctx => {
+app.use((ctx) => {
   ctx.body = { hello: "world" };
 });
 

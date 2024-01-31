@@ -1,19 +1,19 @@
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 import { escapeStringRegexp, normalizeRoute, parseJson, stringifyJson, transformTemplate } from "../../src/utils/string";
 
-test("test-utils-normalizeRoute", () => {
+it("test-utils-normalizeRoute", () => {
   expect(normalizeRoute("/api/hello", "get")).toBe("[GET] /api/hello");
 });
 
-test("test-utils-string-template", () => {
+it("test-utils-string-template", () => {
   expect(transformTemplate("hello, <% name %><%empty%>, age is <% age %>", { name: "world", age: 13 })).toBe("hello, world, age is 13");
 });
 
-test("test-utils-string-escapeStringRegexp", () => {
+it("test-utils-string-escapeStringRegexp", () => {
   expect(escapeStringRegexp("How much $ for a 🦄?")).toBe("How much \\$ for a 🦄\\?");
 });
 
-test("test-utils-string-json", () => {
+it("test-utils-string-json", () => {
   const original = {
     name: "test",
     age: 12,

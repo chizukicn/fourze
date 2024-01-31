@@ -8,39 +8,45 @@ import type { FourzeHandle } from "./interface";
 const FourzeRouteFlag = "__isFourzeRoute";
 
 export interface FourzeRouteOptions<Props extends ObjectProps = ObjectProps, Meta = FourzeRouteMeta> {
-  method?: RequestMethod
-  props?: Props
-  meta?: Meta & FourzeRouteMeta
+  method?: RequestMethod;
+  props?: Props;
+  meta?: Meta & FourzeRouteMeta;
 }
 
 export interface FourzeBaseRoute<
-  Result = unknown, Props extends ObjectProps = DefaultData, Meta = FourzeRouteMeta
+  Result = unknown,
+Props extends ObjectProps = DefaultData,
+Meta = FourzeRouteMeta
 > {
-  path: string
-  method?: RequestMethod
-  handle: FourzeHandle<Result, Props, Meta>
-  meta?: Meta
-  props?: Props
+  path: string;
+  method?: RequestMethod;
+  handle: FourzeHandle<Result, Props, Meta>;
+  meta?: Meta;
+  props?: Props;
 }
 
 export interface FourzeRoute<
-  Result = unknown, Props extends ObjectProps = DefaultData, Meta = FourzeRouteMeta
+  Result = unknown,
+Props extends ObjectProps = DefaultData,
+Meta = FourzeRouteMeta
 > extends FourzeBaseRoute<Result, Props, Meta> {
-  readonly [FourzeRouteFlag]: true
-  readonly props: Props
-  readonly meta: Meta
+  readonly [FourzeRouteFlag]: true;
+  readonly props: Props;
+  readonly meta: Meta;
 }
 
 export type FourzeRouteGenerator<This> = {
   [K in RequestMethod]: {
     <
-      Result = any, Props extends ObjectProps = DefaultData, Meta = FourzeRouteMeta
+      Result = any,
+Props extends ObjectProps = DefaultData,
+Meta = FourzeRouteMeta
     >(
       path: string,
       options: FourzeRouteOptions<Props, Meta>,
       handle: FourzeHandle<Result, Props, Meta>
-    ): This
-    <Result>(path: string, handle: FourzeHandle<Result>): This
+    ): This;
+    <Result>(path: string, handle: FourzeHandle<Result>): This;
   };
 };
 
@@ -60,7 +66,9 @@ export function defineRouteProps<Props extends ObjectProps = DefaultData>(
 }
 
 export function defineRoute<
-  Result = unknown, Props extends ObjectProps = DefaultData, Meta = FourzeRouteMeta
+  Result = unknown,
+Props extends ObjectProps = DefaultData,
+Meta = FourzeRouteMeta
 >(
   route: FourzeBaseRoute<Result, Props, Meta> & { base?: string }
 ): FourzeRoute<Result, Props, Meta> {
@@ -91,4 +99,3 @@ export function defineRoute<
     }
   };
 }
-

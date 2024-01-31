@@ -1,10 +1,10 @@
 import { isObject } from "../utils";
 
 export interface MetaInstance<This, Meta = Record<string, any>> {
-  readonly meta: Meta
-  setMeta(key: string, value: any): This
-  setMeta(meta: Meta): This
-  getMeta<T = any>(key: string): T | undefined
+  readonly meta: Meta;
+  setMeta(key: string, value: any): This;
+  setMeta(meta: Meta): This;
+  getMeta<T = any>(key: string): T | undefined;
 }
 
 export function injectMeta<This extends MetaInstance<This>>(instance: This, meta: This["meta"] = {}): MetaInstance<This> {

@@ -1,7 +1,7 @@
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 import { createPredicate, createQuery, deleteBy, restoreArray } from "../../src/utils/array";
 
-test("mock-query", async () => {
+it("mock-query", async () => {
   const query = createQuery<string>();
   query.set(0, "test");
   query.set(1, "test2");
@@ -46,7 +46,7 @@ test("mock-query", async () => {
   expect(query[2]).toEqual(undefined);
 });
 
-test("mock-query-2", async () => {
+it("mock-query-2", async () => {
   const magnus = { name: "Hedlund, Magnus" };
   const terry = { name: "Adams, Terry" };
   const charlotte = { name: "Weiss, Charlotte" };
@@ -62,7 +62,7 @@ test("mock-query-2", async () => {
   const query = createQuery(people).groupJoin(pets, "name", p => p.owner.name, (person, petCollection) => {
     return {
       name: person.name,
-      pets: petCollection.map((pet) => pet.name)
+      pets: petCollection.map(pet => pet.name)
     };
   });
 
@@ -72,7 +72,7 @@ test("mock-query-2", async () => {
   expect(query[2]).toEqual({ name: "Weiss, Charlotte", pets: ["Whiskers"] });
 });
 
-test("mock-query-math", async () => {
+it("mock-query-math", async () => {
   const query = createQuery([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
   expect(query.sum()).toEqual(55);
   expect(query.average()).toEqual(5.5);
@@ -81,17 +81,17 @@ test("mock-query-math", async () => {
   expect(query.length).toEqual(10);
 });
 
-test("mock-query-distinct", async () => {
+it("mock-query-distinct", async () => {
   const query = createQuery([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
   expect(query.distinct().length).toEqual(10);
   const query2 = createQuery([{ name: "test" }, { name: "test2" }, { name: "test" }, { name: "test2" }]);
   expect(query2.distinct("name").toArray()).toEqual([{ name: "test" }, { name: "test2" }]);
 });
 
-test("mock-query-where", async () => {
+it("mock-query-where", async () => {
   const query = createQuery([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
-  expect(query.where((x) => x > 5).select().length).toEqual(5);
+  expect(query.where(x => x > 5).select().length).toEqual(5);
 
   query.sort().select();
 
@@ -100,19 +100,19 @@ test("mock-query-where", async () => {
   expect(query2.where("order", 1).select("name").toArray()).toEqual(["test", "test2", "test", "test2"]);
 });
 
-test("mock-array-deleteBy", async () => {
+it("mock-array-deleteBy", async () => {
   expect(deleteBy([1, 2, 3, 4, 5, 6], r => r % 2 === 0)).toSatisfy((r: number[]) => {
-    return r.every((r) => r % 2 === 1);
+    return r.every(r => r % 2 === 1);
   });
 });
 
-test("mock-array-restore", async () => {
+it("mock-array-restore", async () => {
   const a = [1, 3, 5];
   restoreArray(a, [2, 4, 6]);
   expect(a).toEqual([2, 4, 6]);
 });
 
-test("mock-predicate", async () => {
+it("mock-predicate", async () => {
   let predicate = createPredicate((r: number) => r % 2 === 0);
   expect([2, 4, 6].every(predicate)).toBeTruthy();
   expect([2, 4, 6, 7, 14, 21].every(predicate)).toBeFalsy();

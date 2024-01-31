@@ -66,20 +66,22 @@ const columns: TableColumns<UserInfo> = [
     title: "Operation",
     width: 160,
     render({ record }) {
-      return <div class="space-x-2">
-        <HiButton size="small">Edit</HiButton>
-        <HiButton size="small" class="!bg-red-400" onClick={() => deleteById(record.id)}>Delete</HiButton>
-      </div>;
+      return (
+        <div class="space-x-2">
+          <HiButton size="small">Edit</HiButton>
+          <HiButton size="small" class="!bg-red-400" onClick={() => deleteById(record.id)}>Delete</HiButton>
+        </div>
+      );
     }
   }
 ];
 
 interface RequestOptions {
-  url: string
-  method?: string
-  params?: Record<string, any>
-  type?: "jquery" | "fetch" | "axios"
-  data?: Record<string, any>
+  url: string;
+  method?: string;
+  params?: Record<string, any>;
+  type?: "jquery" | "fetch" | "axios";
+  data?: Record<string, any>;
 }
 
 async function request(options: RequestOptions) {

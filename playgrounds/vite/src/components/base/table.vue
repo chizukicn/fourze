@@ -48,35 +48,36 @@ export default defineComponent({
       return renderList(data, (record, rowIndex) => {
         const rowClass = (typeof props.rowClass === "function" ? props.rowClass(record, rowIndex) : props.rowClass ?? "").concat(getRowClass());
 
-        return (<>
-          <tr class={["outline-none relative hover:bg-hex-f2f3f5 cr-table-tr"].concat(rowClass)}>
+        return (
+          <>
+            <tr class={["outline-none relative hover:bg-hex-f2f3f5 cr-table-tr"].concat(rowClass)}>
 
-            <td class="border-solid outline-none p-4"></td>
+              <td class="border-solid outline-none p-4"></td>
 
-            {renderList(
-              props.columns.filter(r => !!r),
-              column => {
-                const content = column.render
-                  ? column.render({
-                    record,
-                    rowIndex
-                  })
-                  : record[column.dataIndex];
+              {renderList(
+                props.columns.filter(r => !!r),
+                (column) => {
+                  const content = column.render
+                    ? column.render({
+                      record,
+                      rowIndex
+                    })
+                    : record[column.dataIndex];
 
-                return (
-                  <td
-                    class={getTdClass(column, record)}
-                  >
-                    <div class={["flex items-center"].concat(getJustify(column.align))}>
-                      {content}
-                    </div>
-                  </td>
-                );
-              }
-            )}
-          </tr>
-          {showExpand && renderRow(record.children, showExpand, deep + 1)}
-        </>
+                  return (
+                    <td
+                      class={getTdClass(column, record)}
+                    >
+                      <div class={["flex items-center"].concat(getJustify(column.align))}>
+                        {content}
+                      </div>
+                    </td>
+                  );
+                }
+              )}
+            </tr>
+            {showExpand && renderRow(record.children, showExpand, deep + 1)}
+          </>
         );
       });
     }
@@ -92,7 +93,7 @@ export default defineComponent({
       <table class={tableClass}>
         <colgroup>
           <col class="w-12"></col>
-          {renderList(props.columns, column => {
+          {renderList(props.columns, (column) => {
             return <col style={column.headerStyle ?? `width:${column.width}px;min-width:${column.width}px;max-width:${column.width}px`} />;
           })}
         </colgroup>
@@ -111,9 +112,9 @@ export default defineComponent({
                 renderRow(props.data)
               )
             : (
-                <tr>
-                  <td colspan={24}></td>
-                </tr>
+              <tr>
+                <td colspan={24}></td>
+              </tr>
               )}
         </tbody>
       </table>

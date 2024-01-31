@@ -25,10 +25,10 @@ type RequestCallback = (res: IncomingMessage) => void;
 type WriteCallback = (error?: Error | null) => void;
 
 interface ProxyRequestOptions extends ClientRequestArgs {
-  nativeProtocols?: Record<string, typeof http | typeof https>
-  nativeRequest?: typeof http.request | typeof https.request
-  agents?: Record<string, http.Agent | https.Agent>
-  logger?: FourzeLogger
+  nativeProtocols?: Record<string, typeof http | typeof https>;
+  nativeRequest?: typeof http.request | typeof https.request;
+  agents?: Record<string, http.Agent | https.Agent>;
+  logger?: FourzeLogger;
 }
 
 function optionsToURL(options: RequestOptions): URL {

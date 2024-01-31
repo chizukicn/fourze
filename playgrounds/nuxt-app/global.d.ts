@@ -1,4 +1,4 @@
-import { MaybeDate } from "maybe-types";
+import type { MaybeDate } from "maybe-types";
 
 declare global {
   export interface ResponseData {

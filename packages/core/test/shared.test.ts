@@ -1,8 +1,7 @@
 import { createApp } from "@fourze/core";
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 
-
-test("test-isAllow", async () => {
+it("test-isAllow", async () => {
   const app = createApp({
     base: "/api",
     allow: ["/api/test", "/api/hello", "/api/add"],

@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import process from "node:process";
 import type {
   FourzeComponent,
   FourzeLogger,
@@ -24,27 +25,27 @@ export interface FourzeRendererOptions {
   /**
    * 根路径
    */
-  base?: string
+  base?: string;
 
   /**
    *  目录
    */
-  dir?: string
+  dir?: string;
 
   /**
    *  模板
    */
-  templates?: FourzeRenderTemplate[]
+  templates?: FourzeRenderTemplate[];
 
   /**
    *  文件不存在时跳转到该目录的根路径
    */
-  fallbacks?: string[] | Record<string, string>
+  fallbacks?: string[] | Record<string, string>;
 }
 
 export interface FourzeRenderer extends FourzeMiddleware {
-  templates: FourzeRenderTemplate[]
-  use: (...middlewares: FourzeRenderTemplate[]) => this
+  templates: FourzeRenderTemplate[];
+  use: (...middlewares: FourzeRenderTemplate[]) => this;
 }
 
 export type FourzeRenderTemplate = (
@@ -54,20 +55,20 @@ export type FourzeRenderTemplate = (
 ) => any;
 
 export interface FourzeRendererContext {
-  file: string
+  file: string;
 
   /**
    *  @see FourzeRendererOptions["dir"]
    */
-  dir: string
+  dir: string;
 
-  logger: FourzeLogger
+  logger: FourzeLogger;
 }
 
 export interface FourzeStaticFileOptions {
-  maybes?: string[]
-  includes?: string[]
-  excludes?: string[]
+  maybes?: string[];
+  includes?: string[];
+  excludes?: string[];
 }
 
 function hasFile(file: string) {
@@ -115,7 +116,7 @@ export function renderFile(
   let p: string | undefined = context.file;
   const extensions = ["html", "htm"];
   const maybes = [p].concat(
-    extensions.map((ext) => path.normalize(`${p}/index.${ext}`))
+    extensions.map(ext => path.normalize(`${p}/index.${ext}`))
   );
   do {
     p = maybes.shift();
@@ -143,7 +144,7 @@ export async function renderTsx(
 
   const maybes = file.match(/\.[jt|]sx$/) ? [file] : [];
   maybes.push(
-    ...["index.tsx", "index.jsx"].map((ext) => path.normalize(`${file}/${ext}`))
+    ...["index.tsx", "index.jsx"].map(ext => path.normalize(`${file}/${ext}`))
   );
 
   for (const maybe of maybes) {
@@ -190,7 +191,7 @@ export function createRenderer(
   const _fallbacks
     = (isOptions ? options.fallbacks : []) ?? [];
   const fallbacks = Array.isArray(_fallbacks)
-    ? _fallbacks.map((f) => [f, f])
+    ? _fallbacks.map(f => [f, f])
     : Object.entries(_fallbacks);
 
   const logger = createLogger("@fourze/renderer");

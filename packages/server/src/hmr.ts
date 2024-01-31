@@ -1,3 +1,4 @@
+import process from "node:process";
 import { basename, extname, join, normalize, resolve } from "pathe";
 import fs from "fs-extra";
 import glob from "fast-glob";
@@ -23,34 +24,34 @@ import { createImporter } from "./importer";
 
 export interface FourzeHmrOptions extends Exclude<FourzeAppOptions, "setup"> {
 
-  dir?: string
+  dir?: string;
 
   files?: {
-    include?: string[]
-    exclude?: string[]
-  } | string[]
+    include?: string[];
+    exclude?: string[];
+  } | string[];
 
 }
 
 export interface FourzeHmrBuildConfig {
-  define?: Record<string, any>
-  alias?: Record<string, string>
+  define?: Record<string, any>;
+  alias?: Record<string, string>;
 }
 
 export interface FourzeHmrApp extends FourzeApp {
-  watch(): this
-  watch(dir: string): this
-  watch(watcher: FSWatcher): this
-  watch(dir: string, watcher: FSWatcher): this
-  proxy(p: string | FourzeProxyOption): this
-  configure(config: FourzeHmrBuildConfig): this
-  delay?: DelayMsType
-  readonly base: string
-  readonly moduleNames: string[]
+  watch(): this;
+  watch(dir: string): this;
+  watch(watcher: FSWatcher): this;
+  watch(dir: string, watcher: FSWatcher): this;
+  proxy(p: string | FourzeProxyOption): this;
+  configure(config: FourzeHmrBuildConfig): this;
+  delay?: DelayMsType;
+  readonly base: string;
+  readonly moduleNames: string[];
 }
 
 export interface FourzeProxyOption extends Omit<FourzeBaseRoute, "handle"> {
-  target?: string
+  target?: string;
 }
 
 export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
@@ -102,8 +103,8 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
       const stat = await fs.promises.stat(moduleName);
       if (stat.isDirectory()) {
         const files = await glob(fsInclude, { cwd: moduleName, onlyFiles: false, markDirectories: true });
-        const tasks = files.map((name) => load(join(moduleName, name)));
-        return await Promise.all(tasks).then((r) => r.some((f) => f));
+        const tasks = files.map(name => load(join(moduleName, name)));
+        return await Promise.all(tasks).then(r => r.some(f => f));
       } else if (stat.isFile()) {
         if (!micromatch.some(moduleName, fsInclude, {
           dot: true,

@@ -40,84 +40,84 @@ export interface SwaggerPluginOption {
   /**
    *  @default vite.base + "/swagger-ui/"
    */
-  base?: string
+  base?: string;
 
-  generateDocument?: boolean
+  generateDocument?: boolean;
 
-  defaultMethod?: RequestMethod
+  defaultMethod?: RequestMethod;
 }
 
 export type MockEnable = boolean | "auto";
 
 export interface MockOptions {
-  enable?: MockEnable
-  mode?: FourzeMockAppOptions["mode"]
-  injectScript?: boolean
-  host?: string | string[]
+  enable?: MockEnable;
+  mode?: FourzeMockAppOptions["mode"];
+  injectScript?: boolean;
+  host?: string | string[];
 }
 
 export interface UnpluginFourzeOptions {
   /**
    * @default 'src/mock'
    */
-  dir?: string
+  dir?: string;
 
   /**
    * @default '/api'
    */
-  base?: string
+  base?: string;
   /**
    * @default env.command == 'build' || env.mode === 'mock'
    */
-  mock?: MockOptions | boolean
+  mock?: MockOptions | boolean;
 
   /**
    *  @default true
    *
    */
-  hmr?: boolean
+  hmr?: boolean;
 
   /**
    * @default "info"
    */
-  logLevel?: FourzeLogLevelKey | number
+  logLevel?: FourzeLogLevelKey | number;
 
   server?: {
     /**
      *
      */
-    host?: string
+    host?: string;
 
     /**
      *
      */
-    port?: number
-  }
+    port?: number;
+  };
 
   files?:
-  | {
+    | {
     /**
-         * @default ["*.ts","*.js"]
-         */
-    include?: string[]
-    exclude?: string[]
-  }
-  | string[]
+     * @default ["*.ts","*.js"]
+     */
+      include?: string[];
+      exclude?: string[];
+    }
+    | string[];
 
-  delay?: DelayMsType
+  delay?: DelayMsType;
 
   /**
    * @default 5000
    */
-  timeout?: number
+  timeout?: number;
 
-  allow?: string[]
+  allow?: string[];
 
-  deny?: string[]
+  deny?: string[];
 
-  swagger?: SwaggerPluginOption | boolean
+  swagger?: SwaggerPluginOption | boolean;
 
-  transformCode?: typeof createMockClient
+  transformCode?: typeof createMockClient;
 }
 
 const createFourzePlugin = createUnplugin<UnpluginFourzeOptions | undefined>(

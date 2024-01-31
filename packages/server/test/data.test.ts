@@ -1,9 +1,9 @@
 import { defineRouter, randomInt, setLoggerLevel } from "@fourze/core";
 import { createServer } from "@fourze/server";
 import axios from "axios";
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 
-test("mock-data", async () => {
+it("mock-data", async () => {
   const testData = {
     name: "test",
     count: randomInt(200)
@@ -65,7 +65,7 @@ test("mock-data", async () => {
 
   const { name } = await axiosInstance
     .post<typeof testData>("/hello", testData)
-    .then((r) => r.data);
+    .then(r => r.data);
 
   expect(name).toEqual(testData.name);
 

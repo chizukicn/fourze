@@ -16,12 +16,12 @@ import {
 } from "../utils/setup-mock";
 
 interface Pagination {
-  page: number
-  pageSize: number
+  page: number;
+  pageSize: number;
 }
 
 export interface SwaggerMeta extends Record<string, any> {
-  summary: string
+  summary: string;
 }
 
 export default defineRouter((router) => {
@@ -94,15 +94,16 @@ export default defineRouter((router) => {
   const handleSearch: FourzeHandle<
   PagingData<UserInfo>,
   ObjectProps<Pagination>,
-  any> = async (req) => {
-    const {
-      page = 1,
-      pageSize = 10,
-      keyword = ""
-    } = req.query as unknown as Pagination & { keyword?: string };
-    const items = data.filter((item) => item.username.includes(keyword));
-    return slicePage(items, { page, pageSize });
-  };
+  any
+> = async (req) => {
+  const {
+    page = 1,
+    pageSize = 10,
+    keyword = ""
+  } = req.query as unknown as Pagination & { keyword?: string };
+  const items = data.filter(item => item.username.includes(keyword));
+  return slicePage(items, { page, pageSize });
+};
 
   router.post("/search/{id}", handleSearch);
 

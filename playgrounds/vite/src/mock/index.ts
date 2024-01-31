@@ -17,12 +17,12 @@ import {
 } from "@/utils/setup-mock";
 
 interface Pagination {
-  page: number
-  pageSize: number
+  page: number;
+  pageSize: number;
 }
 
 export interface SwaggerMeta extends Record<string, any> {
-  summary: string
+  summary: string;
 }
 
 export default defineRouter((router) => {
@@ -96,15 +96,16 @@ export default defineRouter((router) => {
   const handleSearch: FourzeHandle<
   PagingData<UserInfo>,
   ObjectProps<Pagination>,
-  any> = async (req) => {
-    const {
-      page = 1,
-      pageSize = 10,
-      keyword = ""
-    } = req.query as unknown as Pagination & { keyword?: string };
-    const items = data.filter((item) => item.username.includes(keyword));
-    return slicePage(items, { page, pageSize });
-  };
+  any
+> = async (req) => {
+  const {
+    page = 1,
+    pageSize = 10,
+    keyword = ""
+  } = req.query as unknown as Pagination & { keyword?: string };
+  const items = data.filter(item => item.username.includes(keyword));
+  return slicePage(items, { page, pageSize });
+};
 
   router.get("/item/list", handleSearch);
 
@@ -133,24 +134,21 @@ export default defineRouter((router) => {
     return { status: "ok" };
   });
 
-  router.delete("/item/{id}",
-    {
-      props: {
-        id: {
-          type: String,
-          required: true,
-          in: "path"
-        }
+  router.delete("/item/{id}", {
+    props: {
+      id: {
+        type: String,
+        required: true,
+        in: "path"
       }
-    },
-    async (req) => {
-      const { id } = req.params;
-      const index = data.findIndex((item) => item.id === id);
-      data.splice(index, 1);
-      storage.setItem("fz_cache_data", data);
-      return { result: true };
     }
-  );
+  }, async (req) => {
+    const { id } = req.params;
+    const index = data.findIndex(item => item.id === id);
+    data.splice(index, 1);
+    storage.setItem("fz_cache_data", data);
+    return { result: true };
+  });
 
   router.get("/item/{id}", {
     props: {
@@ -162,7 +160,7 @@ export default defineRouter((router) => {
     }
   }, (req) => {
     const id = req.params.id;
-    return data.find((item) => item.id === id);
+    return data.find(item => item.id === id);
   });
 
   router.route("/img/avatar.jpg", async (req, res) => {

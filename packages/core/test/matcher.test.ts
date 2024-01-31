@@ -1,7 +1,7 @@
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 import { createRouteMatcher } from "../src/shared/matcher";
 
-test("mock-matcher", async () => {
+it("mock-matcher", async () => {
   const matcher = createRouteMatcher<string>();
 
   matcher.add("/hello/1", "get", "hello-1");

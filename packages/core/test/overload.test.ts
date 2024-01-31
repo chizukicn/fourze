@@ -1,5 +1,5 @@
 import { defineOverload } from "@fourze/core";
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 
 const overload = defineOverload({
   path: {
@@ -22,7 +22,7 @@ const overload = defineOverload({
   }
 });
 
-test("should overload", () => {
+it("should overload", () => {
   const data = overload([
     "/test",
     {

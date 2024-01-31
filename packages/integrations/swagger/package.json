@@ -22,8 +22,8 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     }
   },
   "main": "dist/index.cjs",
@@ -50,7 +50,7 @@
     "@fourze/server": "workspace:*",
     "@fourze/swagger-middleware": "workspace:*",
     "fs-extra": "^11.2.0",
-    "swagger-ui-dist": "^5.11.1"
+    "swagger-ui-dist": "^5.11.2"
   },
   "devDependencies": {
     "@types/swagger-ui-dist": "^3.30.4"

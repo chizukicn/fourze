@@ -7,8 +7,8 @@ import { staticFile } from "@fourze/server";
 import { renderIndexHtml } from "./ui";
 
 export interface SwaggerUIServiceOptions extends SwaggerOptions {
-  uiBase?: string
-  documentPath?: string
+  uiBase?: string;
+  documentPath?: string;
 }
 
 // 包括swagger-ui的服务

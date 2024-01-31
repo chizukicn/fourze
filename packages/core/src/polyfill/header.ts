@@ -73,12 +73,12 @@ export interface TransformHeaderOptions {
   /**
    *  @default ", "
    */
-  separator?: string
+  separator?: string;
 
   /**
    * @default "lower"
    */
-  caseInsensitive?: "lower" | "upper" | "none"
+  caseInsensitive?: "lower" | "upper" | "none";
 }
 
 export function getHeader(headers: Record<string, string>, key: string) {
@@ -110,8 +110,8 @@ export function getHeaderRawValue(
 ): string | undefined {
   if (Array.isArray(value)) {
     return value
-      .map((v) => getHeaderRawValue(v, options))
-      .filter((r) => !!r)
+      .map(v => getHeaderRawValue(v, options))
+      .filter(r => !!r)
       .join(options.separator ?? ", ");
   }
   return value ? String(value) : undefined;
@@ -143,7 +143,7 @@ export interface FlatHeadersOptions {
   /**
    * @default "lower"
    */
-  caseInsensitive?: "lower" | "upper" | "none"
+  caseInsensitive?: "lower" | "upper" | "none";
 }
 
 function transformCase(

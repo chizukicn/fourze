@@ -1,19 +1,10 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "esnext",
-    "lib": ["esnext", "DOM"],
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "resolveJsonModule": true,
-    "skipDefaultLibCheck": true,
-    "skipLibCheck": true,
-    "outDir": "./dist",
-    "declaration": true,
-    "sourceMap": true,
     "jsx": "preserve",
+    "lib": ["esnext", "DOM"],
+    "module": "esnext",
+    "moduleResolution": "node",
     "paths": {
       "@fourze/core": ["./packages/core/src/index.ts"],
       "@fourze/mock": ["./packages/mock/src/index.ts"],
@@ -33,7 +24,16 @@
       "@fourze/middlewares": [
         "./packages/middlewares/src/index.ts"
       ]
-    }
+    },
+    "resolveJsonModule": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "declaration": true,
+    "outDir": "./dist",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true
   },
   "exclude": ["node_modules", "dist", "playgrounds"]
 }

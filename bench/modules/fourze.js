@@ -1,4 +1,5 @@
 import { createServer } from "node:http";
+import process from "node:process";
 import { connect } from "@fourze/server";
 import { createApp } from "@fourze/core";
 

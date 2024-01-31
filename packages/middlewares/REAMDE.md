@@ -11,11 +11,10 @@ const app = createApp({
 });
 
 app.use(createDelayMiddleware("100-300"));
-
 ```
 
 ## Resolve
-  
+
   ```ts
   import { createApp, defineRouter } from "@fourze/core";
   import { createResolveMiddleware } from "@fourze/middlewares";
@@ -35,7 +34,7 @@ app.use(createDelayMiddleware("100-300"));
     }
   }));
 
-  app.use(defineRouter(router => {
+  app.use(defineRouter((router) => {
     router.get("/hello", (_, res) => {
       res.send({
         hello: "world"
@@ -45,8 +44,7 @@ app.use(createDelayMiddleware("100-300"));
 
   const server = createServer(app);
   server.listen(7609);
-
-  ```
+```
 ` GET http://localhost:7609/api/hello `
 ```
 {
@@ -57,7 +55,7 @@ app.use(createDelayMiddleware("100-300"));
   }
 }
 ```
-  
+
 ## HEADER
 
 ```ts

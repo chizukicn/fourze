@@ -1,13 +1,14 @@
 import { createRequire } from "node:module";
 import path from "node:path";
+import process from "node:process";
 import pkgJson from "../package.json";
 
 const packages: Record<string, {
-  checked?: boolean
-  hasRouter?: boolean
-  package?: string
-  version?: string
-  extra?: boolean
+  checked?: boolean;
+  hasRouter?: boolean;
+  package?: string;
+  version?: string;
+  extra?: boolean;
 }> = {
   "fourze": { checked: true, hasRouter: true, package: "@fourze/core" },
   "fourze-router": { checked: true, hasRouter: true, package: "@fourze/core" },
@@ -46,7 +47,7 @@ export function list(extra = false) {
         : null;
       return null;
     })
-    .filter((c) => c);
+    .filter(c => c);
 }
 export function info(module: string) {
   return packages[module];

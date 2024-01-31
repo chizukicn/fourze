@@ -31,7 +31,7 @@ export async function createElement(
     children: any[]
   ): Promise<string> {
     if (Array.isArray(children)) {
-      const tasks = children.map(async (c) =>
+      const tasks = children.map(async c =>
         Array.isArray(c) ? renderChildren(c) : resolveElement(c)
       );
       return await Promise.all(tasks).then(r => r.join(""));
@@ -49,13 +49,13 @@ export const h = createElement;
 export const FourzeComponentFlag = "__isFourzeComponent";
 
 export interface FourzeComponentOption {
-  name?: string
-  setup?: () => MaybePromise<this["render"] | Record<string, any>>
-  render?: () => MaybePromise<any>
+  name?: string;
+  setup?: () => MaybePromise<this["render"] | Record<string, any>>;
+  render?: () => MaybePromise<any>;
 }
 
 export interface FourzeComponent extends FourzeComponentOption {
-  [FourzeComponentFlag]: true
+  [FourzeComponentFlag]: true;
 }
 
 export function defineFourzeComponent(
@@ -75,4 +75,3 @@ export function isFourzeComponent(
 ): component is FourzeComponent {
   return component && component[FourzeComponentFlag];
 }
-

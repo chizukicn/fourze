@@ -9,8 +9,8 @@ type RejectFunction = (error: any) => MaybePromise<any>;
 export const RESOLVE_HEADER = "Fourze-Response-Resolve";
 
 export interface ResolveHookOptions {
-  resolve: ResolveFunction
-  reject?: RejectFunction
+  resolve: ResolveFunction;
+  reject?: RejectFunction;
 }
 
 export function createResolveMiddleware(options: ResolveHookOptions): FourzeMiddleware;
@@ -71,4 +71,3 @@ export function createResolveMiddleware(
     await next();
   });
 }
-

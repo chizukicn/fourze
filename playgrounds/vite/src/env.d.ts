@@ -1,15 +1,14 @@
 /// <reference types="vite/client" />
 
-import { Events, defineComponent} from "vue";
+import type { Events, defineComponent } from "vue";
 
 declare module "*.vue" {
   const component: ReturnType<typeof defineComponent>;
   export default component;
 }
 
-
 interface ImportMetaEnv {
-  readonly APP_TOKEN: string
+  readonly APP_TOKEN: string;
   PROD: boolean;
   DEV: boolean;
 }
@@ -17,8 +16,6 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
-
-
 
 type EventHandlers<E> = {
   [K in keyof E]?: E[K] extends (...args: any) => any
@@ -32,7 +29,6 @@ declare module "vue" {
 
 declare module "vue" {
   interface ComponentCustomProperties {
-
 
   }
 }

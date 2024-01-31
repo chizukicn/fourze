@@ -1,11 +1,10 @@
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 import {
   withBase,
   withoutBase
 } from "../../src/utils/path";
 
-
-test("test-relativePath", () => {
+it("test-relativePath", () => {
   const path = "/abc/def/ghi";
   const path2 = "/abc/def/ghi/";
   const path3 = "/abc/";
@@ -21,11 +20,10 @@ test("test-relativePath", () => {
   expect(withoutBase(path, normalBase)).toBe("/abc/def/ghi");
 });
 
-test("test-resolvePath", () => {
+it("test-resolvePath", () => {
   const base = "https://test.com";
   const path = "/api";
   expect(withBase(path, base)).toBe("https://test.com/api");
 
   expect(withBase("/swagger-ui.css", "/swagger-ui/")).toBe("/swagger-ui/swagger-ui.css");
 });
-

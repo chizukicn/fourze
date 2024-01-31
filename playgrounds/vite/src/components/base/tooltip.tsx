@@ -106,7 +106,7 @@ export default defineComponent({
       }
     }
 
-    watch(isOpen, val => {
+    watch(isOpen, (val) => {
       if (val) {
         nextTick(resize);
       }

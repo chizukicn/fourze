@@ -42,9 +42,9 @@ string | undefined
 
 export interface Hostname {
   /** undefined sets the default behaviour of server.listen */
-  host: string | undefined
+  host: string | undefined;
   /** resolve to localhost when possible */
-  name: string
+  name: string;
 }
 
 export async function resolveHostname(
@@ -80,13 +80,13 @@ export function isAddressInfo(value: any): value is AddressInfo {
 }
 
 interface ResolvedServerUrls {
-  local: string[]
-  network: string[]
+  local: string[];
+  network: string[];
 }
 
 export interface ResolveServerOptions {
-  host?: string
-  https?: boolean
+  host?: string;
+  https?: boolean;
 }
 /**
  * @see https://github.com/vitejs/vite/blob/main/packages/vite/src/node/utils.ts
@@ -119,12 +119,12 @@ export async function resolveServerUrls(server: Server, options: ResolveServerOp
   } else {
     Object.values(os.networkInterfaces())
       .flatMap(nInterface => nInterface ?? [])
-      .filter(detail => {
+      .filter((detail) => {
         return detail
           && detail.address
           && ((isString(detail.family) && detail.family === "IPv4")
-            || (isNumber(detail.family) && detail.family === 4));
-      }).forEach(detail => {
+          || (isNumber(detail.family) && detail.family === 4));
+      }).forEach((detail) => {
         let host = detail.address.replace("127.0.0.1", hostname.name);
         // ipv6 host
         if (net.isIPv6(host)) {
@@ -146,12 +146,12 @@ export async function resolveServerUrls(server: Server, options: ResolveServerOp
 }
 
 export interface NormalizedAddressOptions {
-  protocol?: "http" | "https" | false
-  hostname?: string
+  protocol?: "http" | "https" | false;
+  hostname?: string;
   /**
    * @default ""
    */
-  base?: string
+  base?: string;
 }
 
 /**

@@ -11,4 +11,3 @@ suite("replace", 100000, () => {
   const b = "/api";
   normalizeURL((a.replace(b, "")));
 });
-

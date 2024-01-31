@@ -44,7 +44,7 @@ export function aliasObjectMap<R = any, T extends Record<string, any> = Record<s
   }, {} as Record<string, any>);
 
   const inheritKeys = (isBoolean(inherit) ? (inherit ? Object.keys(obj) : []) : inherit) as string[];
-  inheritKeys.forEach(key => {
+  inheritKeys.forEach((key) => {
     rs[key] = rs[key] ?? obj[key];
   });
 

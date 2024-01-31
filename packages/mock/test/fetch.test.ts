@@ -1,14 +1,14 @@
 import { defineRouter, randomInt, setLoggerLevel } from "@fourze/core";
 import { createMockApp } from "@fourze/mock";
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 
-test("mock-base", async () => {
+it("mock-base", async () => {
   const app = createMockApp({
     delay: "200-500",
     mode: ["fetch"],
     base: "/api"
   });
-  app.use(defineRouter(router => {
+  app.use(defineRouter((router) => {
     router.route("/hello", () => {
       return {
         name: "test"
@@ -22,7 +22,7 @@ test("mock-base", async () => {
   });
 });
 
-test("mock-fetch", async () => {
+it("mock-fetch", async () => {
   const testData = {
     name: "test",
     count: randomInt(200)
@@ -39,7 +39,7 @@ test("mock-fetch", async () => {
     await next?.();
   });
 
-  const router = defineRouter(router => {
+  const router = defineRouter((router) => {
     router.route("/hello", () => {
       return {
         ...testData

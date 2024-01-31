@@ -1,7 +1,7 @@
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 import { randomArray, randomBoolean, randomDate, randomInt, randomItem, randomUnique } from "../../src/utils/random";
 
-test("random-array", () => {
+it("random-array", () => {
   const array = randomArray(
     (index) => {
       return {
@@ -17,7 +17,7 @@ test("random-array", () => {
   expect(array).include(item);
 });
 
-test("random-int", () => {
+it("random-int", () => {
   // by string template
   const num = randomInt("200-500");
   expect(num).toBeGreaterThanOrEqual(200);
@@ -29,12 +29,12 @@ test("random-int", () => {
   expect(num2).toBeLessThanOrEqual(500);
 });
 
-test("random-date", () => {
+it("random-date", () => {
   const date = randomDate("2020-01-01", "2022-01-01");
   expect(date.getTime()).toBeGreaterThanOrEqual(new Date("2020-01-01").getTime());
 });
 
-test("random-unique", () => {
+it("random-unique", () => {
   const random = randomUnique([1, 2, 2, 3, 3, 3]);
   const r1 = random();
   const r2 = random();
@@ -44,7 +44,7 @@ test("random-unique", () => {
   expect(r1).not.toBe(r3);
 });
 
-test("random-boolean", () => {
+it("random-boolean", () => {
   const bool = randomBoolean();
   expect(bool).toBeTypeOf("boolean");
 });

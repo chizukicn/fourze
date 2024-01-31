@@ -17,12 +17,12 @@ type ExtractPropTypes<
 } & Record<string, any>;
 
 export interface OverloadOptions<Type = any, Default = Type> {
-  type: PropType<Type>
-  required?: boolean
-  default?: ((value: Type) => Default) | Default
-  transform?: (value: Type) => any
-  match?: (value: Type) => boolean
-  rest?: boolean
+  type: PropType<Type>;
+  required?: boolean;
+  default?: ((value: Type) => Default) | Default;
+  transform?: (value: Type) => any;
+  match?: (value: Type) => boolean;
+  rest?: boolean;
 }
 
 export function defineOverload<Config extends OverloadConfig>(

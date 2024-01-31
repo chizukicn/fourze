@@ -78,7 +78,9 @@ export default defineComponent({
         <div class="flex space-x-1 h-10 w-full items-center justify-center">
           <div class={props.buttonClass} disabled={page.value <= 1 || props.disabled} onClick={prev}>&lt;</div>
           <span class="text-center w-8 select-none">
-            {page.value}/{totalPage.value}
+            {page.value}
+            /
+            {totalPage.value}
           </span>
           <div class={props.buttonClass} disabled={page.value >= totalPage.value || props.disabled} onClick={next}>&gt;</div>
         </div>

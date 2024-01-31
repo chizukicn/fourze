@@ -11,168 +11,168 @@ export type PredicateParameter<T> = [PredicateFn<T>] | [keyof T, ...T[keyof T][]
 
 export type MapParameter<T, K> = keyof T | MapFn<T, K>;
 export interface Predicate<T> extends PredicateFn<T> {
-  and(...args: PredicateParameter<T>): this
-  or(...args: PredicateParameter<T>): this
+  and(...args: PredicateParameter<T>): this;
+  or(...args: PredicateParameter<T>): this;
 }
 
 export interface ExtraArrayMethods<T> {
-  where(fn: PredicateFn<T>): CollectionQuery<T>
-  select<U>(mapFn: MapFn<T, U>): CollectionQuery<U>
-  select(): CollectionQuery<T>
+  where(fn: PredicateFn<T>): CollectionQuery<T>;
+  select<U>(mapFn: MapFn<T, U>): CollectionQuery<U>;
+  select(): CollectionQuery<T>;
 }
 
 export interface MathQuery<T> {
-  max(fn?: MapFn<T, number>): typeof fn extends undefined ? T extends number ? T : never : number
-  min(fn?: MapFn<T, number>): typeof fn extends undefined ? T extends number ? T : never : number
-  sum(fn?: MapFn<T, number>): typeof fn extends undefined ? T extends number ? T : never : number
-  average(fn?: MapFn<T, number>): typeof fn extends undefined ? T extends number ? T : never : number
+  max(fn?: MapFn<T, number>): typeof fn extends undefined ? T extends number ? T : never : number;
+  min(fn?: MapFn<T, number>): typeof fn extends undefined ? T extends number ? T : never : number;
+  sum(fn?: MapFn<T, number>): typeof fn extends undefined ? T extends number ? T : never : number;
+  average(fn?: MapFn<T, number>): typeof fn extends undefined ? T extends number ? T : never : number;
 }
 
 export interface ArrayQuery<T> extends Iterable<T> {
 
   join(
     separator?: string
-  ): string
+  ): string;
 
-  at(index: number): T | undefined
+  at(index: number): T | undefined;
 
-  fill(value: T, start?: number, end?: number): this
-  sort(compareFn?: CompareFn<T>): this
-  reverse(): this
+  fill(value: T, start?: number, end?: number): this;
+  sort(compareFn?: CompareFn<T>): this;
+  reverse(): this;
 
-  includes(value: T, fromIndex?: number): boolean
+  includes(value: T, fromIndex?: number): boolean;
 
-  some(fn: PredicateFn<T>): boolean
-  every(fn: PredicateFn<T>): boolean
+  some(fn: PredicateFn<T>): boolean;
+  every(fn: PredicateFn<T>): boolean;
 
-  find(fn: PredicateFn<T>): T | undefined
-  findIndex(fn: PredicateFn<T>): number
-  findLast(fn: PredicateFn<T>): T | undefined
-  findLastIndex(fn: PredicateFn<T>): number
+  find(fn: PredicateFn<T>): T | undefined;
+  findIndex(fn: PredicateFn<T>): number;
+  findLast(fn: PredicateFn<T>): T | undefined;
+  findLastIndex(fn: PredicateFn<T>): number;
 
   reduce<U>(
     callbackfn: (previousValue: U, currentValue: T, currentIndex: number) => U,
     initialValue: U
-  ): U
+  ): U;
   reduceRight<U>(
     callbackfn: (previousValue: U, currentValue: T, currentIndex: number) => U,
     initialValue: U
-  ): U
-  forEach(fn: (item: T, index: number) => void): void
+  ): U;
+  forEach(fn: (item: T, index: number) => void): void;
 
-  indexOf(value: T, fromIndex?: number): number
-  lastIndexOf(value: T, fromIndex?: number): number
+  indexOf(value: T, fromIndex?: number): number;
+  lastIndexOf(value: T, fromIndex?: number): number;
 
 }
 
 export interface CollectionBase<T> extends Iterable<T> {
-  append(...items: T[]): this
-  prepend(...items: T[]): this
-  insert(index: number, ...items: T[]): this
-  delete(index: number): this
-  delete(fn: PredicateFn<T>, deleteLimit?: number): this
-  replace(fn: PredicateFn<T>, item: T): this
-  set(index: number, value: T): this
-  get(index: number): T | undefined
-  clear(): this
-  reset(source?: Iterable<T>): this
-  clone(): this
-  first(): T | undefined
-  last(): T | undefined
-  [key: number]: T
-  length: number
+  append(...items: T[]): this;
+  prepend(...items: T[]): this;
+  insert(index: number, ...items: T[]): this;
+  delete(index: number): this;
+  delete(fn: PredicateFn<T>, deleteLimit?: number): this;
+  replace(fn: PredicateFn<T>, item: T): this;
+  set(index: number, value: T): this;
+  get(index: number): T | undefined;
+  clear(): this;
+  reset(source?: Iterable<T>): this;
+  clone(): this;
+  first(): T | undefined;
+  last(): T | undefined;
+  [key: number]: T;
+  length: number;
 }
 
 export interface CollectionQuery<T> extends CollectionBase<T>, ArrayQuery<T>, MathQuery<T> {
-  where(fn: PredicateFn<T>): CollectionQuery<T>
-  where<K extends keyof T, V = T[K]>(key: K, ...values: V[]): CollectionQuery<T>
+  where(fn: PredicateFn<T>): CollectionQuery<T>;
+  where<K extends keyof T, V = T[K]>(key: K, ...values: V[]): CollectionQuery<T>;
 
-  select<U>(mapFn: MapFn<T, U>): CollectionQuery<U>
-  select<K extends keyof T>(key: K): CollectionQuery<T[K]>
-  select(): CollectionQuery<T>
+  select<U>(mapFn: MapFn<T, U>): CollectionQuery<U>;
+  select<K extends keyof T>(key: K): CollectionQuery<T[K]>;
+  select(): CollectionQuery<T>;
 
-  chunk(size: number): CollectionQuery<T[]>
+  chunk(size: number): CollectionQuery<T[]>;
 
-  union(...collections: T[]): this
+  union(...collections: T[]): this;
 
-  distinct(): this
-  distinct<U>(selector: MapFn<T, U>): this
-  distinct(selector: keyof T): this
+  distinct(): this;
+  distinct<U>(selector: MapFn<T, U>): this;
+  distinct(selector: keyof T): this;
 
-  intersect(...collections: Iterable<T>[]): this
-  except(...collections: Iterable<T>[]): this
+  intersect(...collections: Iterable<T>[]): this;
+  except(...collections: Iterable<T>[]): this;
 
-  zip<U>(collection: Iterable<U>): CollectionQuery<[T, U]>
+  zip<U>(collection: Iterable<U>): CollectionQuery<[T, U]>;
   zip<U, R>(
     collection: Iterable<U>,
     mapFn: (a: T, b: U) => R
-  ): CollectionQuery<R>
+  ): CollectionQuery<R>;
 
-  groupBy<K>(mapFn: MapParameter<T, K>): CollectionQuery<[K, T[]]>
+  groupBy<K>(mapFn: MapParameter<T, K>): CollectionQuery<[K, T[]]>;
 
-  orderBy(fn: CompareFn<T>): this
-  orderBy<K extends keyof T>(key: K, desc?: boolean, nullsFirst?: boolean): this
+  orderBy(fn: CompareFn<T>): this;
+  orderBy<K extends keyof T>(key: K, desc?: boolean, nullsFirst?: boolean): this;
 
-  countBy<K>(mapFn: MapParameter<T, K>): CollectionQuery<[K, number]>
+  countBy<K>(mapFn: MapParameter<T, K>): CollectionQuery<[K, number]>;
 
-  crossJoin<U>(collection: Iterable<U>): CollectionQuery<[T, U]>
+  crossJoin<U>(collection: Iterable<U>): CollectionQuery<[T, U]>;
 
   crossJoin<U, R>(
     collection: Iterable<U>,
     fn: (a: T, b: U) => R
-  ): CollectionQuery<R>
+  ): CollectionQuery<R>;
 
   innerJoin<U, K, R>(
     collection: Iterable<U>,
     outerKeySelector: MapFn<T, K>,
     innerKeySelector: MapFn<U, K>,
     resultSelector: (a: T, b: U) => R
-  ): CollectionQuery<R>
+  ): CollectionQuery<R>;
 
   leftJoin<U, K, R>(
     collection: Iterable<U>,
     outerKeySelector: MapFn<T, K>,
     innerKeySelector: MapFn<U, K>,
     resultSelector: (a: T, b: U | undefined) => R
-  ): CollectionQuery<R>
+  ): CollectionQuery<R>;
 
   groupJoin<U, K, R>(
     collection: Iterable<U>,
     outerKeySelector: MapParameter<T, K>,
     innerKeySelector: MapParameter<U, K>,
     resultSelector: (a: T, b: U[]) => R
-  ): CollectionQuery<R>
+  ): CollectionQuery<R>;
 
-  concat(...collections: (ConcatArray<T> | T)[]): CollectionQuery<T>
-  flat<D extends number = 1>(depth?: D): CollectionQuery<FlatArray<T[], D>>
-  flatMap<U>(mapFn: MapFn<T, U[] | U>): CollectionQuery<U>
+  concat(...collections: (ConcatArray<T> | T)[]): CollectionQuery<T>;
+  flat<D extends number = 1>(depth?: D): CollectionQuery<FlatArray<T[], D>>;
+  flatMap<U>(mapFn: MapFn<T, U[] | U>): CollectionQuery<U>;
 
-  map<U>(mapFn: MapFn<T, U>): CollectionQuery<U>
-  filter(fn: PredicateFn<T>): CollectionQuery<T>
-  slice(start?: number, end?: number): CollectionQuery<T>
+  map<U>(mapFn: MapFn<T, U>): CollectionQuery<U>;
+  filter(fn: PredicateFn<T>): CollectionQuery<T>;
+  slice(start?: number, end?: number): CollectionQuery<T>;
 
-  toArray(): T[]
-  toSet(): Set<T>
+  toArray(): T[];
+  toSet(): Set<T>;
   toMap<K extends string | number | symbol>(
     keySelector: MapFn<T, K>
-  ): Map<K, T>
+  ): Map<K, T>;
   toMap<K extends string | number | symbol, V>(
     keySelector: MapFn<T, K>,
     valueSelector: MapFn<T, V>
-  ): Map<K, V>
+  ): Map<K, V>;
 
-  toJSON(): T[]
+  toJSON(): T[];
 
-  toString(): string
+  toString(): string;
 }
-const getPredicateFn = <T>(...args: PredicateParameter<T>) => {
+function getPredicateFn<T>(...args: PredicateParameter<T>) {
   const [fn] = args;
   if (isFunction(fn)) {
     return fn;
   }
   const values = args.slice(1) as T[keyof T][];
   return (item: T) => values.includes(item[fn]);
-};
+}
 
 export function createPredicate<T, Q>(
   ...args: PredicateParameter<T>
@@ -198,7 +198,7 @@ export function createPredicate<T, Q>(
   return predicate;
 }
 
-const normalizeMapFn = <T, K = keyof T>(fn: MapParameter<T, K>) => {
+function normalizeMapFn<T, K = keyof T>(fn: MapParameter<T, K>) {
   if (isDef(fn)) {
     if (isFunction(fn)) {
       return fn as MapFn<T, K>;
@@ -206,7 +206,7 @@ const normalizeMapFn = <T, K = keyof T>(fn: MapParameter<T, K>) => {
     return (item: T) => item[fn as keyof T];
   }
   return (item: T) => item;
-};
+}
 
 function normalizeIndex(index: number, length: number) {
   return index < 0 ? length + index : index;
@@ -345,21 +345,21 @@ export class CollectionQueryClass<T> implements ArrayLike<T> {
 
   max(fn?: MapFn<T, number>) {
     if (!fn) {
-      fn = (item) => isNumber(item) ? item : 0;
+      fn = item => isNumber(item) ? item : 0;
     }
     return Math.max(...this.source.map(fn));
   }
 
   min(fn?: MapFn<T, number>) {
     if (!fn) {
-      fn = (item) => isNumber(item) ? item : 0;
+      fn = item => isNumber(item) ? item : 0;
     }
     return Math.min(...this.source.map(fn));
   }
 
   sum(fn?: MapFn<T, number>) {
     if (!fn) {
-      fn = (item) => isNumber(item) ? item : 0;
+      fn = item => isNumber(item) ? item : 0;
     }
     return this.source.map(fn).reduce((a, b) => a + b, 0);
   }
@@ -388,8 +388,8 @@ export class CollectionQueryClass<T> implements ArrayLike<T> {
   }
 
   intersect(...collections: Iterable<T>[]) {
-    const set = new Set(collections.flatMap((c) => Array.from(c)));
-    const array = this.source.filter((item) => set.has(item));
+    const set = new Set(collections.flatMap(c => Array.from(c)));
+    const array = this.source.filter(item => set.has(item));
     return this.reset(array);
   }
 
@@ -402,13 +402,13 @@ export class CollectionQueryClass<T> implements ArrayLike<T> {
   }
 
   union(...collections: Iterable<T>[]) {
-    this.source.push(...collections.flatMap((c) => Array.from(c)));
+    this.source.push(...collections.flatMap(c => Array.from(c)));
     return this;
   }
 
   except(...collections: Iterable<T>[]) {
-    const set = new Set(collections.flatMap((c) => Array.from(c)));
-    const array = this.source.filter((item) => !set.has(item));
+    const set = new Set(collections.flatMap(c => Array.from(c)));
+    const array = this.source.filter(item => !set.has(item));
     return this.reset(array);
   }
 
@@ -499,7 +499,7 @@ export class CollectionQueryClass<T> implements ArrayLike<T> {
     resultSelector: (a: T, b: U) => R = (a, b) => [a, b] as R
   ) {
     const array = Array.from(collection);
-    const result = this.source.flatMap((item) => array.map((i) => resultSelector(item, i)));
+    const result = this.source.flatMap(item => array.map(i => resultSelector(item, i)));
     return createQuery(result);
   }
 
@@ -514,7 +514,7 @@ export class CollectionQueryClass<T> implements ArrayLike<T> {
     const result = this.source.flatMap((item, index) => {
       const key = outerKeySelector(item, index, this.source);
       const inner = array.filter((i, iIndex) => innerKeySelector(i, iIndex, innerSource) === key);
-      return inner.map((i) => resultSelector(item, i));
+      return inner.map(i => resultSelector(item, i));
     });
     return createQuery(result);
   }

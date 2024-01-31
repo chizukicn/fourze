@@ -1,26 +1,26 @@
 export type RequestPath = `${"get" | "post" | "delete"}:${string}` | string;
 
 export interface Pagination {
-  page?: number
-  pageSize?: number
-  total?: number
+  page?: number;
+  pageSize?: number;
+  total?: number;
 }
 
 export interface ResponseData {
-  code: number
-  data: any
-  msg: string
+  code: number;
+  data: any;
+  msg: string;
 }
 
 export interface PageData<T> {
-  currentPageIndex: number
-  items: T[]
-  nextIndex: number
-  pageSize: number
-  previousIndex: number
-  startIndex: number
-  totalCount: number
-  totalPageCount: number
+  currentPageIndex: number;
+  items: T[];
+  nextIndex: number;
+  pageSize: number;
+  previousIndex: number;
+  startIndex: number;
+  totalCount: number;
+  totalPageCount: number;
 }
 export function slicePage<T>(content: T[], pagination: Pagination): PageData<T> {
   const { page = 1, pageSize = 10 } = pagination;
@@ -38,7 +38,7 @@ export function slicePage<T>(content: T[], pagination: Pagination): PageData<T> 
   };
 }
 
-export const successResponseWrap = (data?: unknown, contentType: string | null = "application/json") => {
+export function successResponseWrap(data?: unknown, contentType: string | null = "application/json") {
   if (contentType?.startsWith("application/json")) {
     return {
       data,
@@ -47,11 +47,11 @@ export const successResponseWrap = (data?: unknown, contentType: string | null =
     };
   }
   return data;
-};
+}
 
-export const failResponseWrap = (msg: string) => {
+export function failResponseWrap(msg: string) {
   return {
     code: "Error",
     msg
   };
-};
+}

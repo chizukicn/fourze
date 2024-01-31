@@ -43,8 +43,8 @@ export function createSwaggerMiddleware(
   return async (req, res) => {
     await app.ready();
     const routers = createQuery(app.middlewares)
-      .where((r) => isRouter(r) && r.meta.swagger !== false)
-      .select((r) => r as FourzeRouter);
+      .where(r => isRouter(r) && r.meta.swagger !== false)
+      .select(r => r as FourzeRouter);
 
     const tags = routers.select((e) => {
       return {
@@ -56,7 +56,7 @@ export function createSwaggerMiddleware(
     const routes = routers
       .select((router) => {
         return router.routes
-          .filter((r) => r.meta.swagger !== false)
+          .filter(r => r.meta.swagger !== false)
           .map((r) => {
             const tags = Array.isArray(r.meta.tags) ? r.meta.tags : [];
             return {
@@ -69,7 +69,6 @@ export function createSwaggerMiddleware(
           });
       })
       .flat();
-
 
     function getDefinitions(baseDefinitions?: Record<string, any>) {
       const definitionsMap = new Map<string, Record<string, any>>(
@@ -99,7 +98,7 @@ export function createSwaggerMiddleware(
       string,
       Record<RequestMethod, SwaggerPathSchema> | SwaggerPathSchema
       >();
-      const groups = routes.groupBy((e) => e.path);
+      const groups = routes.groupBy(e => e.path);
       for (const [path, routes] of groups) {
         const map = new Map<RequestMethod, FourzeRouteMeta>();
         for (const route of routes) {

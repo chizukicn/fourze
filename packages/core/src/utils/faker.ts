@@ -26,8 +26,8 @@ export function parseFakerNumber(num: MaybeArray<MaybeNumeric>): number {
 }
 
 export interface MockObjectOption {
-  deep?: boolean
-  context?: Record<string, any>
+  deep?: boolean;
+  context?: Record<string, any>;
 }
 
 const transformSign = ["|", "-", "{", "}", "$"];
@@ -135,7 +135,7 @@ export function parseFakerObject(
   options.context = options.context ?? {};
 
   if (Array.isArray(obj)) {
-    return obj.map((v) => parseFakerObject(v, options));
+    return obj.map(v => parseFakerObject(v, options));
   }
 
   if (isPrimitive(obj)) {
@@ -145,7 +145,7 @@ export function parseFakerObject(
   return Object.fromEntries(
     Object.entries(obj).map(([k, v]) => {
       if (Array.isArray(v)) {
-        return [k, v.map((f) => parseFakerObject(f, options))];
+        return [k, v.map(f => parseFakerObject(f, options))];
       }
       return [k, parseFakerObject(v, options)];
     })

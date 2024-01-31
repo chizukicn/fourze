@@ -12,5 +12,4 @@ export default defineNuxtConfig({
     base: "/api"
   }
 });
-
 ```

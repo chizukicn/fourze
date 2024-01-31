@@ -1,7 +1,9 @@
 import type { MaybePromise, MaybeRegex } from "maybe-types";
 import { withBase, withTrailingSlash, withoutBase, withoutTrailingSlash } from "ufo";
 import {
-  createSingletonPromise, deleteBy, isArray,
+  createSingletonPromise,
+  deleteBy,
+  isArray,
   isFunction,
   isMatch,
   isObject,
@@ -28,32 +30,32 @@ export type FourzeAppSetup = (
 ) => MaybePromise<void | FourzeModule[] | FourzeAppOptions>;
 
 export interface FourzeAppOptions {
-  base?: string
+  base?: string;
 
-  modules?: FourzeModule[]
+  modules?: FourzeModule[];
 
   /**
    * 允许的路径规则,默认为所有
    * @default []
    */
-  allow?: MaybeRegex[]
+  allow?: MaybeRegex[];
 
   /**
    *  不允许的路径规则
    */
-  deny?: MaybeRegex[]
+  deny?: MaybeRegex[];
 
-  meta?: FourzeAppMeta
+  meta?: FourzeAppMeta;
 
-  setup?: FourzeAppSetup
+  setup?: FourzeAppSetup;
 
-  fallback?: FourzeNext
+  fallback?: FourzeNext;
 }
 
 export interface FourzeMiddlewareNode {
-  middleware: FourzeMiddleware
-  path: string
-  order: number
+  middleware: FourzeMiddleware;
+  path: string;
+  order: number;
 }
 
 export function createApp(): FourzeApp;
@@ -129,8 +131,8 @@ export function createApp(
     if (url) {
       return middlewareStore
         .sort((a, b) => a.order - b.order)
-        .filter((r) => url.match(r.path))
-        .map((r) => [r.path, r.middleware] as [string, FourzeMiddleware]);
+        .filter(r => url.match(r.path))
+        .map(r => [r.path, r.middleware] as [string, FourzeMiddleware]);
     }
     return [];
   };
@@ -173,8 +175,8 @@ export function createApp(
 
   app.remove = function (arg: FourzeMiddleware | string) {
     if (isString(arg)) {
-      deleteBy(middlewareStore, (r) => r.middleware.name === arg);
-      deleteBy(persistenceMiddlewareStore, (r) => r.middleware.name === arg);
+      deleteBy(middlewareStore, r => r.middleware.name === arg);
+      deleteBy(persistenceMiddlewareStore, r => r.middleware.name === arg);
     }
     return this;
   };
@@ -191,8 +193,6 @@ export function createApp(
     logger.debug(`service ${request.url} done`);
     return { request, response };
   };
-
-
 
   app.isAllow = function (this: FourzeApp, url: string) {
     return isMatch(url, allows, denys);
@@ -291,7 +291,7 @@ export function createApp(
   Object.defineProperties(app, {
     middlewares: {
       get() {
-        return middlewareStore.map((r) => r.middleware);
+        return middlewareStore.map(r => r.middleware);
       },
       enumerable: true
     },

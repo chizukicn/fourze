@@ -17,7 +17,6 @@ const aliasArray = [...Object.entries(alias).map(([key, value]) => {
   };
 })];
 
-
 export default defineConfig({
   server: {
     port: 7609,
@@ -29,7 +28,7 @@ export default defineConfig({
       "/v2/api": {
         target: "http://localhost:8080",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/v2\/api/, "")
+        rewrite: path => path.replace(/^\/v2\/api/, "")
       }
     }
   },

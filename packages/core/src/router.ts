@@ -4,7 +4,8 @@ import type { FourzeRouteMeta, MetaInstance } from "./shared/meta";
 import { injectMeta } from "./shared/meta";
 import type {
   DefaultData,
-  FourzeApp, FourzeBaseRoute,
+  FourzeApp,
+  FourzeBaseRoute,
   FourzeHandle,
   FourzeMiddleware,
   FourzeNext,
@@ -47,48 +48,48 @@ type FourzeRouteChain<Methods extends string = RequestMethod> = {
       options: Omit<FourzeRouteOptions<Props, Meta>, "path" | "method">,
       handle: FourzeHandle<Result, Props, Meta>
     ): FourzeRouteChain<Exclude<Methods, method>> & {
-      route: FourzeRouter["route"]
-    }
+      route: FourzeRouter["route"];
+    };
 
     <Result = unknown, Props extends ObjectProps = DefaultData, Meta = FourzeRouteMeta>(
       handle: FourzeHandle<Result, Props, Meta>
     ): FourzeRouteChain<Exclude<Methods, method>> & {
-      route: FourzeRouter["route"]
-    }
+      route: FourzeRouter["route"];
+    };
   }
 } & {
-  route: FourzeRouter["route"]
+  route: FourzeRouter["route"];
 };
 
 export interface FourzeRouter
   extends FourzeMiddleware,
   FourzeRouteGenerator<FourzeRouter>, MetaInstance<FourzeRouter, FourzeRouterMeta> {
 
-  reset(): void
+  reset(): void;
 
-  route(path: string): FourzeRouteChain
+  route(path: string): FourzeRouteChain;
 
-  route<Result = unknown, Props extends ObjectProps = DefaultData, Meta = FourzeRouteMeta>(path: string, method: RequestMethod, options: FourzeRouteOptions<Props, Meta>, handle: FourzeHandle<Result, Props, Meta>): this
+  route<Result = unknown, Props extends ObjectProps = DefaultData, Meta = FourzeRouteMeta>(path: string, method: RequestMethod, options: FourzeRouteOptions<Props, Meta>, handle: FourzeHandle<Result, Props, Meta>): this;
 
-  route(path: string, method: RequestMethod, handle: FourzeHandle): this
+  route(path: string, method: RequestMethod, handle: FourzeHandle): this;
 
-  route<Result = unknown, Props extends ObjectProps = DefaultData, Meta = FourzeRouteMeta>(path: string, options: FourzeRouteOptions<Props, Meta>, handle: FourzeHandle<Result, Props, Meta>): this
+  route<Result = unknown, Props extends ObjectProps = DefaultData, Meta = FourzeRouteMeta>(path: string, options: FourzeRouteOptions<Props, Meta>, handle: FourzeHandle<Result, Props, Meta>): this;
 
-  route(path: string, handle: FourzeHandle): this
+  route(path: string, handle: FourzeHandle): this;
 
-  route<Result = unknown, Props extends ObjectProps = DefaultData, Meta = FourzeRouteMeta>(route: FourzeBaseRoute<Result, Props, Meta>): this
+  route<Result = unknown, Props extends ObjectProps = DefaultData, Meta = FourzeRouteMeta>(route: FourzeBaseRoute<Result, Props, Meta>): this;
 
-  route(route: FourzeBaseRoute[]): this
+  route(route: FourzeBaseRoute[]): this;
 
-  setup(app?: FourzeApp): Promise<void>
+  setup(app?: FourzeApp): Promise<void>;
 
-  readonly meta: Record<string, any>
+  readonly meta: Record<string, any>;
 
-  readonly name: string
+  readonly name: string;
 
-  readonly routes: FourzeRoute[]
+  readonly routes: FourzeRoute[];
 
-  [FourzeRouterFlag]: true
+  [FourzeRouterFlag]: true;
 }
 
 export type FourzeRouterSetup = (
@@ -97,10 +98,10 @@ export type FourzeRouterSetup = (
 ) => MaybePromise<FourzeBaseRoute[] | FourzeRouterOptions | FourzeRouter | void>;
 
 export interface FourzeRouterOptions {
-  name?: string
-  meta?: FourzeRouterMeta
-  routes?: FourzeBaseRoute[]
-  setup?: FourzeRouterSetup
+  name?: string;
+  meta?: FourzeRouterMeta;
+  routes?: FourzeBaseRoute[];
+  setup?: FourzeRouterSetup;
 }
 
 export function defineRouter(): FourzeRouter;
@@ -213,7 +214,7 @@ export function defineRouter(
         }
         return chain;
       } else if (Array.isArray(firstArg)) {
-        firstArg.forEach((r) => addRoute(r));
+        firstArg.forEach(r => addRoute(r));
       } else {
         addRoute(firstArg);
       }
@@ -250,14 +251,14 @@ export function defineRouter(
       const rs = await setup?.(router, app);
       if (rs) {
         if (Array.isArray(rs)) {
-          rs.forEach((r) => addRoute(r));
+          rs.forEach(r => addRoute(r));
         } else if (rs !== router && isObject(rs)) {
           options.name = rs.name ?? options.name;
           if (rs.meta) {
             Object.assign(meta, rs.meta);
           }
           if (rs.routes) {
-            rs.routes.forEach((r) => addRoute(r));
+            rs.routes.forEach(r => addRoute(r));
           }
         }
       }
@@ -289,7 +290,7 @@ export function defineRouter(
     routes: {
       get() {
         const routes: FourzeRoute[] = [];
-        matcher.traverse((payload) => routes.push(payload));
+        matcher.traverse(payload => routes.push(payload));
         return routes;
       },
       enumerable: true
@@ -305,4 +306,3 @@ export function defineRouter(
 export function isRouter(value: any): value is FourzeRouter {
   return !!value && !!value[FourzeRouterFlag];
 }
-

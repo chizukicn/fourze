@@ -1,7 +1,7 @@
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 import { parseFakerNumber, parseFakerObject } from "../../src/utils/faker";
 
-test("test-faker-number", () => {
+it("test-faker-number", () => {
   expect(parseFakerNumber("200")).toBe(200);
   expect(parseFakerNumber(300)).toBe(300);
   expect(parseFakerNumber("abc")).toBeNaN();
@@ -11,7 +11,7 @@ test("test-faker-number", () => {
   expect(tmp).greaterThanOrEqual(200).lessThanOrEqual(1200);
 });
 
-test("test-faker-object", () => {
+it("test-faker-object", () => {
   const [obj] = parseFakerObject([{
     a: "{100}",
     b: "{300-600}",
@@ -28,13 +28,11 @@ test("test-faker-object", () => {
     tof: "{true|false}",
     num: "{100|200|300}",
     mixin: "{'a'|b|c}-{100-200|300-600|700-900}"
-  }],
-  {
+  }], {
     context: {
       a: "123412"
     }
-  }
-  );
+  });
   expect(obj.a).toBe(100);
   expect(obj.b).toBeLessThan(600);
   expect(obj.b).toBeGreaterThan(300);

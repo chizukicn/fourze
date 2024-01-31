@@ -3,29 +3,29 @@ import type { CSSProperties, PropType, VNode } from "vue";
 export interface PaginationProps {}
 
 export interface PagingData<T> {
-  items: T[]
+  items: T[];
 }
 
 export interface UseTableOptions<T extends Record<string, any>> {
-  data: PagingData<T> | T[]
-  columns: TableColumn<T>[]
+  data: PagingData<T> | T[];
+  columns: TableColumn<T>[];
 }
 
 export interface TableRenderOptions<T = any> {
-  rowIndex: number
-  record: T
+  rowIndex: number;
+  record: T;
 }
 
 export type TableColumns<T extends Record<string, any>> = TableColumn<T>[];
 
 export interface TableColumn<R extends Record<string, any> = any> extends Record<string, any> {
-  title: string
-  dataIndex: keyof R | string
-  headerStyle?: CSSProperties | string
-  cellClass?: string | string[] | ((record: R) => string | string[])
-  render?: (options: TableRenderOptions<R>) => VNode | string | JSX.Element
-  width?: string | number
-  align?: "left" | "center" | "right"
+  title: string;
+  dataIndex: keyof R | string;
+  headerStyle?: CSSProperties | string;
+  cellClass?: string | string[] | ((record: R) => string | string[]);
+  render?: (options: TableRenderOptions<R>) => VNode | string | JSX.Element;
+  width?: string | number;
+  align?: "left" | "center" | "right";
 }
 
 export const tableProps = {
@@ -55,4 +55,3 @@ export const tableProps = {
     type: [Object, Boolean] as PropType<PaginationProps | false>
   }
 };
-

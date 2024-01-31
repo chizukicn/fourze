@@ -1,33 +1,31 @@
 import type { RequestMethod } from "@fourze/core";
 import type { OpenAPIV2 } from "openapi-types";
 
-
 export interface SwaggerPathSchema {
-  swagger?: boolean
-  tags?: string[]
-  responses?: OpenAPIV2.ResponsesObject
-  description?: string
-  summary?: string
-  operationId?: string
-  produces?: string[]
-  consumes?: string[]
-  deprecated?: boolean
+  swagger?: boolean;
+  tags?: string[];
+  responses?: OpenAPIV2.ResponsesObject;
+  description?: string;
+  summary?: string;
+  operationId?: string;
+  produces?: string[];
+  consumes?: string[];
+  deprecated?: boolean;
 }
 
-
 export interface SwaggerUIInitOptions {
-  url?: string
-  urls?: string[]
+  url?: string;
+  urls?: string[];
 }
 
 export interface SwaggerOptions {
-  defaultMethod?: RequestMethod
-  info?: OpenAPIV2.InfoObject
-  schemas?: string[]
-  consumes?: string[]
-  produces?: string[]
-  host?: string
-  basePath?: string
+  defaultMethod?: RequestMethod;
+  info?: OpenAPIV2.InfoObject;
+  schemas?: string[];
+  consumes?: string[];
+  produces?: string[];
+  host?: string;
+  basePath?: string;
 }
 
 declare module "@fourze/core" {
@@ -35,12 +33,12 @@ declare module "@fourze/core" {
   }
 
   interface FourzeAppMeta {
-    definitions?: OpenAPIV2.DefinitionsObject
-    info?: OpenAPIV2.InfoObject
-    host?: string
-    basePath?: string
-    schemas?: string[]
-    consumes?: string[]
-    produces?: string[]
+    definitions?: OpenAPIV2.DefinitionsObject;
+    info?: OpenAPIV2.InfoObject;
+    host?: string;
+    basePath?: string;
+    schemas?: string[];
+    consumes?: string[];
+    produces?: string[];
   }
 }

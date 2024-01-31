@@ -5,49 +5,48 @@ import type { DelayMsType, FourzeApp, FourzeAppOptions } from "@fourze/core";
 export type FourzeMockRequestMode = "xhr" | "fetch" | "request";
 
 export interface FourzeMockAppOptions extends Exclude<FourzeAppOptions, "setup"> {
-  base?: string
+  base?: string;
   /**
    * @default ["xhr","fetch"]
    */
-  mode?: FourzeMockRequestMode[]
+  mode?: FourzeMockRequestMode[];
 
-  host?: string | string[]
+  host?: string | string[];
 
-  protocol?: "http" | "https"
+  protocol?: "http" | "https";
 
-  autoEnable?: boolean
+  autoEnable?: boolean;
 
-  global?: boolean
+  global?: boolean;
 
-  delay?: DelayMsType
+  delay?: DelayMsType;
 
-  timeout?: number
+  timeout?: number;
 }
 
 export const FourzeMockAppFlag = "__isFourzeMockApp";
 
 export interface FourzeMockApp extends FourzeApp {
-  originalFetch: typeof fetch
-  originalXMLHttpRequest: typeof XMLHttpRequest
-  originalHttpRequest: typeof http.request
-  originalHttpsRequest: typeof https.request
+  originalFetch: typeof fetch;
+  originalXMLHttpRequest: typeof XMLHttpRequest;
+  originalHttpRequest: typeof http.request;
+  originalHttpsRequest: typeof https.request;
 
-  XMLHttpRequest: typeof XMLHttpRequest
-  fetch: typeof fetch
-  request: typeof http.request
+  XMLHttpRequest: typeof XMLHttpRequest;
+  fetch: typeof fetch;
+  request: typeof http.request;
 
-  enabled: boolean
+  enabled: boolean;
 
-  enable(): this
+  enable(): this;
 
-  enable(modes: FourzeMockRequestMode[]): this
+  enable(modes: FourzeMockRequestMode[]): this;
 
-  disable(): this
+  disable(): this;
 
-  disable(modes: FourzeMockRequestMode[]): this
+  disable(modes: FourzeMockRequestMode[]): this;
 
-  activeModes: FourzeMockRequestMode[]
+  activeModes: FourzeMockRequestMode[];
 
-  [FourzeMockAppFlag]: true
+  [FourzeMockAppFlag]: true;
 }
-

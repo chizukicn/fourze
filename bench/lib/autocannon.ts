@@ -1,10 +1,11 @@
 import { access, mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import process from "node:process";
 import autocannon from "autocannon";
 
 const resultsDirectory = join(process.cwd(), "results");
 
-const run = (opts: autocannon.Options = { url: "http://localhost:3000" }) => {
+function run(opts: autocannon.Options = { url: "http://localhost:3000" }) {
   return new Promise<any>((resolve, reject) => {
     opts.url = "http://localhost:3000";
     autocannon(opts, (err, result) => {
@@ -15,7 +16,7 @@ const run = (opts: autocannon.Options = { url: "http://localhost:3000" }) => {
       }
     });
   });
-};
+}
 
 export async function fire(
   opts: autocannon.Options,

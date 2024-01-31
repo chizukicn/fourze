@@ -1,26 +1,26 @@
 export type RequestPath = `${"get" | "post" | "delete"}:${string}` | string;
 
 export interface Pagination {
-  page?: number
-  pageSize?: number
-  total?: number
+  page?: number;
+  pageSize?: number;
+  total?: number;
 }
 
 export interface ResponseData {
-  code: number
-  data: any
-  msg: string
+  code: number;
+  data: any;
+  msg: string;
 }
 
 export interface PageData<T> {
-  currentPageIndex: number
-  items: T[]
-  nextIndex: number
-  pageSize: number
-  previousIndex: number
-  startIndex: number
-  totalCount: number
-  totalPageCount: number
+  currentPageIndex: number;
+  items: T[];
+  nextIndex: number;
+  pageSize: number;
+  previousIndex: number;
+  startIndex: number;
+  totalCount: number;
+  totalPageCount: number;
 }
 export function slicePage<T>(
   content: T[],
@@ -41,7 +41,7 @@ export function slicePage<T>(
   };
 }
 
-export const successResponseWrap = (data?: unknown, contentType?: string | null) => {
+export function successResponseWrap(data?: unknown, contentType?: string | null) {
   if (!contentType?.startsWith("application/json")) {
     return data;
   }
@@ -51,7 +51,7 @@ export const successResponseWrap = (data?: unknown, contentType?: string | null)
     code: "Success",
     succ: true
   };
-};
+}
 
 export function successPageWrap<T>(
   data: T[],
@@ -61,10 +61,10 @@ export function successPageWrap<T>(
   return successResponseWrap(slicePage(data, pagination), msg);
 }
 
-export const failResponseWrap = (error: Error) => {
+export function failResponseWrap(error: Error) {
   return {
     data: null,
     code: "Error",
     msg: error.message
   };
-};
+}

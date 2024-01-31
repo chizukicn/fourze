@@ -1,9 +1,9 @@
 import { defineRouter } from "@fourze/core";
 import { createMockApp } from "@fourze/mock";
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 import nodeFetch from "node-fetch";
 
-test("test-hooks", async () => {
+it("test-hooks", async () => {
   globalThis.fetch = nodeFetch as unknown as typeof globalThis.fetch;
 
   const data = {
@@ -39,8 +39,8 @@ test("test-hooks", async () => {
       }
       await next?.();
     })
-    .use("/api", defineRouter(router => {
-      router.route("GET /test", req => {
+    .use("/api", defineRouter((router) => {
+      router.route("GET /test", (req) => {
         return {
           token: req.meta.token
         };

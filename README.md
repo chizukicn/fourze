@@ -1,19 +1,17 @@
 <h1 align="center">Fourze</h1>
 <p align="center"> Api route framework for the browser and node.js.</p>
 
-
 `pnpm add @fourze/core`
 
 create a router file `src/mock/example.ts`
 
 ```ts
 import { defineRouter } from "@fourze/core";
-export default defineRouter(router => {
+export default defineRouter((router) => {
   router.get("/hello", () => {
     return "hello,world";
   });
 });
-
 ```
 
 configure vite config
@@ -29,14 +27,12 @@ export default defineConfig({
     })
   ],
 });
-
 ```
 
 then you can fetch `/api/hello` to get response.
 
 # Features
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fchizukicn%2Ffourze.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fchizukicn%2Ffourze?ref=badge_shield)
-
 
 -   Simple api route register
 
@@ -45,7 +41,6 @@ then you can fetch `/api/hello` to get response.
 -   Run in express / nitro or ... as a middleware
 
 -   Node.js and browser support
-
 
 # Development
 ```shell
@@ -67,7 +62,6 @@ export default defineNuxtConfig({
     base: "/api"
   }
 });
-
 ```
 
 # Node.js Server
@@ -81,7 +75,7 @@ import { createServer } from "@fourze/server";
 const server = createServer({
   base: "/api"
 });
-server.use(defineRouter(router => {
+server.use(defineRouter((router) => {
   router.get("/hello", (_, res) => {
     res.send("hello,world");
   });
@@ -100,7 +94,6 @@ const middleware = createServer({
 const app = express();
 app.use(middleware);
 app.listen(7609);
-
 ```
 
 # Register Router
@@ -109,7 +102,7 @@ src/mock/example.ts
 
 ```ts
 import { defineRouter } from "@fourze/core";
-export default defineRouter(router => {
+export default defineRouter((router) => {
   // base = '/api'
   router.post("/user/{id}", (req) => {
     return {
@@ -118,7 +111,6 @@ export default defineRouter(router => {
     };
   });
 });
-
 ```
 
 Set `base` to `/api` in vite/nuxt config, then you can fetch `/api/user/1` to get response.
@@ -130,7 +122,6 @@ Request
 Response
 
 `{"id":"1","name":"test"}`
-
 
 # Thanks
 This project is heavily inspired by the following awesome projects.
@@ -150,10 +141,6 @@ This project is heavily inspired by the following awesome projects.
 - [radix3](https://github.com/unjs/radix3.git)
 
 - [jiti](https://github.com/unjs/jiti.git)
-
-
-
-
 
 ## License
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fchizukicn%2Ffourze.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fchizukicn%2Ffourze?ref=badge_large)

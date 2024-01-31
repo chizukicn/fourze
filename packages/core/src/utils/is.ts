@@ -41,7 +41,7 @@ export function isConstructor<T>(value: unknown): value is Constructor<T> {
 }
 
 export function isBuffer(value: unknown): value is Buffer {
-  return isObject(value) && !!globalThis.Buffer && Buffer.isBuffer(value);
+  return isObject(value) && !!globalThis.Buffer && globalThis.Buffer.isBuffer(value);
 }
 
 export function isUint8Array(value: unknown): value is Uint8Array {
@@ -118,8 +118,8 @@ export const isBrowser = () => !isNode();
 
 export type Constructor<T> =
   | {
-    new (...args: any[]): T & {}
+    new (...args: any[]): NonNullable<T>;
   }
   | {
-    (): T
+    (): T;
   };

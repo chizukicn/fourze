@@ -3,8 +3,8 @@ import type { FourzeMiddleware } from "@fourze/core";
 import { createFilter, defineMiddleware } from "@fourze/core";
 
 interface MatchMiddlewareOptions {
-  includes?: MaybeRegex[]
-  excludes?: MaybeRegex[]
+  includes?: MaybeRegex[];
+  excludes?: MaybeRegex[];
 }
 export function createFilterMiddleware<T>(
   middleware: FourzeMiddleware<T>,
