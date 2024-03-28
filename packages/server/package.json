@@ -30,14 +30,14 @@
   },
   "dependencies": {
     "@fourze/core": "workspace:*",
-    "chokidar": "^3.5.3",
+    "chokidar": "^3.6.0",
     "create-require": "^1.1.1",
-    "esbuild": "^0.20.0",
+    "esbuild": "^0.20.2",
     "fast-glob": "^3.3.2",
     "fs-extra": "^11.2.0",
     "micromatch": "^4.0.5",
     "mime": "^4.0.1",
-    "mlly": "^1.5.0",
+    "mlly": "^1.6.1",
     "pathe": "^1.1.2",
     "vm": "^0.1.0"
   },
