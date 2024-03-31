@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.6",
-    "@types/mime": "^3.0.4",
+    "@types/mime": "^4.0.0",
     "pkg-types": "^1.0.3"
   }
 }
