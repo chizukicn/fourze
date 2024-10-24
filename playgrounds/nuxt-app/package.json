@@ -9,16 +9,16 @@
     "preview": "nuxt generate && nuxt preview"
   },
   "dependencies": {
-    "@vueuse/core": "^10.7.2",
+    "@vueuse/core": "^10.11.1",
     "axios": "^1.6.7",
-    "dayjs": "^1.11.10",
+    "dayjs": "^1.11.13",
     "jquery": "^3.7.1",
-    "query-string": "^8.1.0"
+    "query-string": "^8.2.0"
   },
   "devDependencies": {
     "@fourze/middlewares": "workspace:*",
     "@fourze/nuxt": "workspace:*",
-    "@unocss/nuxt": "^0.58.4",
+    "@unocss/nuxt": "^0.63.6",
     "fs-extra": "^11.2.0",
     "nuxt": "3.8.1",
     "pathe": "^1.1.2"
