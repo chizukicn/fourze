@@ -32,7 +32,7 @@
     "@fourze/core": "workspace:*",
     "chokidar": "^3.5.3",
     "create-require": "^1.1.1",
-    "esbuild": "^0.20.0",
+    "esbuild": "^0.25.0",
     "fast-glob": "^3.3.2",
     "fs-extra": "^11.2.0",
     "micromatch": "^4.0.5",

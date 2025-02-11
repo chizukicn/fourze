@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "@types/webpack": "^5.28.5",
-    "esbuild": "^0.20.0",
+    "esbuild": "^0.25.0",
     "rollup": "^4.9.6",
     "vite": "^5.0.12",
     "webpack": "^5.90.0",
