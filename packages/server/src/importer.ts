@@ -1,17 +1,17 @@
-import { runInThisContext } from "node:vm";
-import { Module, builtinModules } from "node:module";
+import type { Loader, TransformOptions } from "esbuild";
+import type { PackageJson } from "pkg-types";
+import { readFileSync } from "node:fs";
+import { builtinModules, Module } from "node:module";
 import { platform } from "node:os";
 import { pathToFileURL } from "node:url";
+import { runInThisContext } from "node:vm";
+import { createLogger, escapeStringRegexp, parseJson } from "@fourze/core";
+import createRequire from "create-require";
+import { transformSync } from "esbuild";
+import { fileURLToPath, hasESMSyntax, interopDefault, resolvePathSync } from "mlly";
+
 import { dirname, extname, join } from "pathe";
 import { normalizeAliases, resolveAlias } from "pathe/utils";
-import { createLogger, escapeStringRegexp, parseJson } from "@fourze/core";
-import { readFileSync } from "fs-extra";
-import { fileURLToPath, hasESMSyntax, interopDefault, resolvePathSync } from "mlly";
-import createRequire from "create-require";
-import type { PackageJson } from "pkg-types";
-
-import type { Loader, TransformOptions } from "esbuild";
-import { transformSync } from "esbuild";
 
 export interface ModuleImporterOptions {
   esbuild?: TransformOptions;
@@ -41,9 +41,9 @@ const defaults: ModuleImporterOptions = {
 
 export interface ModuleImporter extends Require {
   (id: string): any;
-  remove(id: string): void;
-  clear(): void;
-  configure(options: ModuleImporterOptions): void;
+  remove: (id: string) => void;
+  clear: () => void;
+  configure: (options: ModuleImporterOptions) => void;
 }
 
 export function readNearestPackageJSON(path: string): PackageJson | undefined {
@@ -101,7 +101,7 @@ export function createImporter(_filename: string, opts: ModuleImporterOptions = 
 
   const isNativeRe = new RegExp(
     `node_modules/(${nativeModules
-      .map(m => escapeStringRegexp(m))
+      .map((m) => escapeStringRegexp(m))
       .join("|")})/`
   );
 
@@ -111,7 +111,7 @@ export function createImporter(_filename: string, opts: ModuleImporterOptions = 
     }
 
     const _additionalExts = [...(opts.extensions as string[])].filter(
-      ext => ext !== ".js"
+      (ext) => ext !== ".js"
     );
 
     let resolved, err;
@@ -212,7 +212,7 @@ export function createImporter(_filename: string, opts: ModuleImporterOptions = 
 
     const isNativeModule
       = ext === ".mjs"
-      || (ext === ".js" && readNearestPackageJSON(filename)?.type === "module");
+        || (ext === ".js" && readNearestPackageJSON(filename)?.type === "module");
 
     const needsTranspile = !isCommonJS && (isTypescript || isNativeModule || hasESMSyntax(source));
 
@@ -310,7 +310,7 @@ export function createImporter(_filename: string, opts: ModuleImporterOptions = 
   _require.remove = function (id: string) {
     try {
       id = _resolve(id) ?? id;
-    } catch (e) {
+    } catch {
     }
     delete nativeRequire.cache[id];
     logger.debug("[delete cache]", id);

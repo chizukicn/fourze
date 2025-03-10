@@ -1,5 +1,5 @@
-import type { MaybePromise } from "maybe-types";
 import type { FourzeMiddleware, PropType } from "@fourze/core";
+import type { MaybePromise } from "maybe-types";
 import { assert, defineMiddleware, defineOverload, isError, isUndef, overload } from "@fourze/core";
 
 type ResolveFunction = (data: any, contentType?: string | null) => MaybePromise<any>;

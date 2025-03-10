@@ -1,11 +1,11 @@
-import type { IncomingMessage, OutgoingMessage } from "node:http";
 import type { MaybePromise, MaybeRegex } from "maybe-types";
-import { overload } from "../utils";
+import type { IncomingMessage, OutgoingMessage } from "node:http";
 import type { FourzeContextOptions, FourzeServiceContext } from "./context";
 import type { FourzeAppMeta, FourzeRouteMeta, MetaInstance } from "./meta";
 import type { DefaultData, ObjectProps, PropType } from "./props";
 import type { FourzeRequest } from "./request";
 import type { FourzeResponse } from "./response";
+import { overload } from "../utils";
 
 const FourzeMiddlewareFlag = "__isFourzeMiddleware";
 
@@ -13,8 +13,8 @@ export type FourzeNext<T = any> = () => MaybePromise<T>;
 
 export type FourzeHandle<
   R = unknown,
-Props extends ObjectProps = DefaultData,
-Meta = FourzeRouteMeta
+  Props extends ObjectProps = DefaultData,
+  Meta = FourzeRouteMeta
 > = (
   request: FourzeRequest<Props, Meta>,
   response: FourzeResponse
@@ -85,31 +85,29 @@ export function isFourzeMiddleware(obj: any): obj is FourzeMiddleware {
 }
 
 export interface FourzeApp extends FourzeMiddleware, MetaInstance<FourzeApp, FourzeAppMeta> {
-  use(path: string, ...middlewares: FourzeMiddleware[]): this;
+  use: ((path: string, ...middlewares: FourzeMiddleware[]) => this) & ((...modules: FourzeModule[]) => this);
 
-  use(...modules: FourzeModule[]): this;
-
-  remove(name: string): this;
+  remove: (name: string) => this;
 
   /**
    *  是否允许
    * @param url
    */
-  isAllow(url: string): boolean;
+  isAllow: (url: string) => boolean;
 
-  allow(...rules: MaybeRegex[]): this;
+  allow: (...rules: MaybeRegex[]) => this;
 
-  deny(...rules: MaybeRegex[]): this;
+  deny: (...rules: MaybeRegex[]) => this;
 
-  relative(url: string): string | null;
+  relative: (url: string) => string | null;
 
-  match(url: string): [string, FourzeMiddleware][];
+  match: (url: string) => [string, FourzeMiddleware][];
 
-  service(context: FourzeContextOptions, fallback?: FourzeHandle): Promise<FourzeServiceContext>;
+  service: (context: FourzeContextOptions, fallback?: FourzeHandle) => Promise<FourzeServiceContext>;
 
-  ready(): Promise<void>;
+  ready: () => Promise<void>;
 
-  reset(): Promise<void>;
+  reset: () => Promise<void>;
 
   readonly meta: FourzeAppMeta;
 

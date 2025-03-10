@@ -86,8 +86,8 @@ server.listen(7609);
 ## Middleware Mode
 
 ```ts
-import express from "express";
 import { createServer } from "@fourze/server";
+import express from "express";
 const middleware = createServer({
   base: "/api"
 });

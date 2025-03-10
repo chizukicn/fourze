@@ -21,10 +21,10 @@ import {
   isSymbol,
   isTrue,
   isTruthy,
-  isURL,
   isUint8Array,
   isUndef,
   isUndefined,
+  isURL,
   toRawType
 } from "../../src/utils/is";
 

@@ -14,32 +14,31 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/module.d.ts",
-      "import": "./dist/module.mjs",
-      "require": "./dist/module.cjs"
+      "types": "./dist/types.d.mts",
+      "default": "./dist/module.mjs"
     }
   },
-  "main": "./dist/module.cjs",
-  "module": "dist/module.mjs",
-  "types": "./dist/types.d.ts",
+  "main": "dist/module.mjs",
+  "types": "./dist/module.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "nuxt-module-build",
-    "stub": "nuxt-module-build --stub"
+    "prepack": "nuxt-module-build prepare",
+    "build": "nuxt-module-build build",
+    "stub": "nuxt-module-build build --stub"
   },
   "dependencies": {
     "@fourze/server": "workspace:*",
+    "@fourze/unplugin": "workspace:*",
     "@fourze/vite": "workspace:*",
-    "@nuxt/kit": "^3.10.0",
-    "dedent": "^1.5.1",
-    "pathe": "^1.1.2"
+    "@nuxt/kit": "^3.16.0",
+    "dedent": "^1.5.3",
+    "pathe": "^2.0.3"
   },
   "devDependencies": {
-    "@nuxt/module-builder": "^0.5.5",
-    "@nuxt/schema": "^3.10.0",
+    "@nuxt/module-builder": "^0.8.4",
     "@types/dedent": "^0.7.2",
-    "nuxt": "^3.10.0"
+    "nuxt": "^3.16.0"
   }
 }

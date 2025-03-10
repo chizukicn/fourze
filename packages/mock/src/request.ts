@@ -1,3 +1,4 @@
+import type { FourzeLogger, FourzeResponse } from "@fourze/core";
 import type {
   ClientRequest,
   ClientRequestArgs,
@@ -6,6 +7,7 @@ import type {
 } from "node:http";
 import type http from "node:http";
 import type https from "node:https";
+import type { FourzeMockApp } from "./shared";
 import {
   assert,
   createLogger,
@@ -13,12 +15,10 @@ import {
   getHeaderValue,
   isFunction,
   isString,
-  isURL,
   isUint8Array,
+  isURL,
   normalizeRoute
 } from "@fourze/core";
-import type { FourzeLogger, FourzeResponse } from "@fourze/core";
-import type { FourzeMockApp } from "./shared";
 
 type RequestCallback = (res: IncomingMessage) => void;
 

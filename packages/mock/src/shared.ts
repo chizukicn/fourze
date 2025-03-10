@@ -1,6 +1,6 @@
+import type { DelayMsType, FourzeApp, FourzeAppOptions } from "@fourze/core";
 import type http from "node:http";
 import type https from "node:https";
-import type { DelayMsType, FourzeApp, FourzeAppOptions } from "@fourze/core";
 
 export type FourzeMockRequestMode = "xhr" | "fetch" | "request";
 
@@ -38,13 +38,9 @@ export interface FourzeMockApp extends FourzeApp {
 
   enabled: boolean;
 
-  enable(): this;
+  enable: (() => this) & ((modes: FourzeMockRequestMode[]) => this);
 
-  enable(modes: FourzeMockRequestMode[]): this;
-
-  disable(): this;
-
-  disable(modes: FourzeMockRequestMode[]): this;
+  disable: (() => this) & ((modes: FourzeMockRequestMode[]) => this);
 
   activeModes: FourzeMockRequestMode[];
 

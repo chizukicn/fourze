@@ -1,16 +1,17 @@
-import path from "pathe";
 import type { FourzeHandle, ObjectProps } from "@fourze/core";
+import { existsSync, mkdirSync } from "node:fs";
+import { readFile, writeFile } from "node:fs/promises";
 import {
-  PolyfillFile,
   createStorage,
   defineRouter,
   isNode,
+  PolyfillFile,
   randomArray,
   randomDate,
   randomInt,
   randomItem
 } from "@fourze/core";
-import { existsSync, mkdirSync, readFile, writeFile } from "fs-extra";
+import path from "pathe";
 import {
   slicePage
 } from "../utils/setup-mock";
@@ -92,18 +93,18 @@ export default defineRouter((router) => {
   const data = isNode() ? createData("server") : createData("mock");
 
   const handleSearch: FourzeHandle<
-  PagingData<UserInfo>,
-  ObjectProps<Pagination>,
-  any
-> = async (req) => {
-  const {
-    page = 1,
-    pageSize = 10,
-    keyword = ""
-  } = req.query as unknown as Pagination & { keyword?: string };
-  const items = data.filter(item => item.username.includes(keyword));
-  return slicePage(items, { page, pageSize });
-};
+    PagingData<UserInfo>,
+    ObjectProps<Pagination>,
+    any
+  > = async (req) => {
+    const {
+      page = 1,
+      pageSize = 10,
+      keyword = ""
+    } = req.query as unknown as Pagination & { keyword?: string };
+    const items = data.filter((item) => item.username.includes(keyword));
+    return slicePage(items, { page, pageSize });
+  };
 
   router.post("/search/{id}", handleSearch);
 

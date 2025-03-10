@@ -15,7 +15,7 @@ export declare type ExtractPropTypes<O> = {
 
 export type ExtractPropTypesWithIn<
   O,
-In extends PropIn
+  In extends PropIn
 > = ExtractPropTypes<Pick<O, InKeys<O, In>>>;
 
 export type ExtractDefaultPropTypes<P extends Record<string, any>> = {
@@ -146,8 +146,8 @@ export interface PropOptions<Type = any, Default = Type> {
   type: PropType<Type>;
   required?: boolean;
   default?: Default | DefaultFactory<Default> | null | undefined | object;
-  validator?(value: unknown): boolean;
-  transform?(value: unknown): Type;
+  validator?: (value: unknown) => boolean;
+  transform?: (value: unknown) => Type;
   meta?: Record<string, any>;
   in?: PropIn;
 }
@@ -167,12 +167,12 @@ export type PropType<T> = PropConstructor<T> | PropConstructor<T>[];
 
 export function isExtends(types: PropType<any>, value: PropType<any>): boolean {
   if (Array.isArray(types)) {
-    return types.some(e => isExtends(e, value));
+    return types.some((e) => isExtends(e, value));
   }
   return value === types;
 }
 
-const simpleCheckRE = /^(String|Number|Boolean|Function|Symbol|BigInt)$/;
+const simpleCheckRE = /^(?:String|Number|Boolean|Function|Symbol|BigInt)$/;
 const functionTypeCheckRE = /^\s*function (\w+)/;
 
 /**
@@ -193,7 +193,7 @@ function getType(fn: PropType<any>) {
  */
 export function isInstanceOf<D = any>(type: PropType<D> | PropType<D>[], value: any): value is D {
   if (Array.isArray(type)) {
-    return type.some(e => isInstanceOf(e, value));
+    return type.some((e) => isInstanceOf(e, value));
   }
   const expectedType = getType(type);
   let valid = true;
@@ -211,7 +211,7 @@ export function isInstanceOf<D = any>(type: PropType<D> | PropType<D>[], value: 
   } else {
     try {
       valid = value instanceof type;
-    } catch (e: any) {
+    } catch {
       valid = false;
     }
   }
@@ -240,7 +240,7 @@ export function normalizeProps<T>(
       result[key] = {
         type: prop,
         in: "query",
-        required: prop.some(p => isExtends(p as PropType<any>, Boolean)),
+        required: prop.some((p) => isExtends(p as PropType<any>, Boolean)),
         meta: {}
       };
       continue;
@@ -263,9 +263,9 @@ export function normalizeProps<T>(
 
 export function withDefaults<
   T = Record<string, any>,
-P extends ObjectProps<T> = ObjectProps<T>,
-D = ExtractPropTypes<P>,
-Defaults = ExtractDefaultPropTypes<P>
+  P extends ObjectProps<T> = ObjectProps<T>,
+  D = ExtractPropTypes<P>,
+  Defaults = ExtractDefaultPropTypes<P>
 >(props: Partial<Defaults> & Omit<D, keyof Defaults>, propsOptions: P, propIn?: PropIn): D {
   if (Array.isArray(propsOptions)) {
     return props as D;
@@ -291,7 +291,7 @@ Defaults = ExtractDefaultPropTypes<P>
       if (propIn) {
         continue;
       }
-      if (opt.some(e => isExtends(e, Boolean))) {
+      if (opt.some((e) => isExtends(e, Boolean))) {
         rs[k] = false as D[typeof k];
       }
       continue;

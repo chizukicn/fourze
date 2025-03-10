@@ -1,5 +1,18 @@
 import type { MaybePromise, MaybeRegex } from "maybe-types";
-import { withBase, withTrailingSlash, withoutBase, withoutTrailingSlash } from "ufo";
+import type {
+  FourzeApp,
+  FourzeAppMeta,
+  FourzeContextOptions,
+  FourzeHandle,
+  FourzeMiddleware,
+  FourzeModule,
+  FourzeNext,
+  FourzePlugin
+} from "./shared";
+import { withBase, withoutBase, withoutTrailingSlash, withTrailingSlash } from "ufo";
+import { createLogger } from "./logger";
+import { createServiceContext, FOURZE_VERSION } from "./shared";
+import { injectMeta } from "./shared/meta";
 import {
   createSingletonPromise,
   deleteBy,
@@ -11,19 +24,6 @@ import {
   isUndef,
   restoreArray
 } from "./utils";
-import { createLogger } from "./logger";
-import type {
-  FourzeApp,
-  FourzeAppMeta,
-  FourzeContextOptions,
-  FourzeHandle,
-  FourzeMiddleware,
-  FourzeModule,
-  FourzeNext,
-  FourzePlugin
-} from "./shared";
-import { FOURZE_VERSION, createServiceContext } from "./shared";
-import { injectMeta } from "./shared/meta";
 
 export type FourzeAppSetup = (
   app: FourzeApp
@@ -131,8 +131,8 @@ export function createApp(
     if (url) {
       return middlewareStore
         .sort((a, b) => a.order - b.order)
-        .filter(r => url.match(r.path))
-        .map(r => [r.path, r.middleware] as [string, FourzeMiddleware]);
+        .filter((r) => url.match(r.path))
+        .map((r) => [r.path, r.middleware] as [string, FourzeMiddleware]);
     }
     return [];
   };
@@ -175,8 +175,8 @@ export function createApp(
 
   app.remove = function (arg: FourzeMiddleware | string) {
     if (isString(arg)) {
-      deleteBy(middlewareStore, r => r.middleware.name === arg);
-      deleteBy(persistenceMiddlewareStore, r => r.middleware.name === arg);
+      deleteBy(middlewareStore, (r) => r.middleware.name === arg);
+      deleteBy(persistenceMiddlewareStore, (r) => r.middleware.name === arg);
     }
     return this;
   };
@@ -291,7 +291,7 @@ export function createApp(
   Object.defineProperties(app, {
     middlewares: {
       get() {
-        return middlewareStore.map(r => r.middleware);
+        return middlewareStore.map((r) => r.middleware);
       },
       enumerable: true
     },

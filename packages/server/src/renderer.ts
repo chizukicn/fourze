@@ -1,6 +1,3 @@
-import fs from "node:fs";
-import path from "node:path";
-import process from "node:process";
 import type {
   FourzeComponent,
   FourzeLogger,
@@ -9,6 +6,9 @@ import type {
   FourzeRequest,
   FourzeResponse
 } from "@fourze/core";
+import fs from "node:fs";
+import path from "node:path";
+import process from "node:process";
 import {
   createFilter,
   createLogger,
@@ -116,7 +116,7 @@ export function renderFile(
   let p: string | undefined = context.file;
   const extensions = ["html", "htm"];
   const maybes = [p].concat(
-    extensions.map(ext => path.normalize(`${p}/index.${ext}`))
+    extensions.map((ext) => path.normalize(`${p}/index.${ext}`))
   );
   do {
     p = maybes.shift();
@@ -144,7 +144,7 @@ export async function renderTsx(
 
   const maybes = file.match(/\.[jt|]sx$/) ? [file] : [];
   maybes.push(
-    ...["index.tsx", "index.jsx"].map(ext => path.normalize(`${file}/${ext}`))
+    ...["index.tsx", "index.jsx"].map((ext) => path.normalize(`${file}/${ext}`))
   );
 
   for (const maybe of maybes) {
@@ -182,7 +182,7 @@ export function createRenderer(
   const isOptions = isObject(options);
   const dir
     = (isOptions ? options.dir : options)
-    ?? process.cwd();
+      ?? process.cwd();
 
   const templates = (isOptions
     ? options.templates
@@ -191,7 +191,7 @@ export function createRenderer(
   const _fallbacks
     = (isOptions ? options.fallbacks : []) ?? [];
   const fallbacks = Array.isArray(_fallbacks)
-    ? _fallbacks.map(f => [f, f])
+    ? _fallbacks.map((f) => [f, f])
     : Object.entries(_fallbacks);
 
   const logger = createLogger("@fourze/renderer");

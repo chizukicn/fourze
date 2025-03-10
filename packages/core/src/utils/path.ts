@@ -1,15 +1,15 @@
 import type { MaybeRegex } from "maybe-types";
-import { hasProtocol, isEmptyURL, isRelative, joinURL, normalizeURL, withLeadingSlash, withTrailingSlash, withoutBase, withoutLeadingSlash, withoutTrailingSlash } from "ufo";
+import { hasProtocol, isEmptyURL, isRelative, joinURL, normalizeURL, withLeadingSlash, withoutBase, withoutLeadingSlash, withoutTrailingSlash, withTrailingSlash } from "ufo";
 
 export function createFilter(
   include: MaybeRegex[],
   exclude: MaybeRegex[]
 ): (id: string) => boolean {
   return (id: string) => {
-    if (exclude.some(p => id.match(p))) {
+    if (exclude.some((p) => id.match(p))) {
       return false;
     };
-    return include.length === 0 || include.some(p => id.match(p));
+    return include.length === 0 || include.some((p) => id.match(p));
   };
 }
 
@@ -29,4 +29,4 @@ export function withBase(input: string, base: string, trailingSlash = true) {
   return joinURL(_base, input);
 }
 
-export { withoutBase, normalizeURL, isEmptyURL, isRelative, joinURL, hasProtocol, withTrailingSlash, withoutTrailingSlash, withLeadingSlash, withoutLeadingSlash };
+export { hasProtocol, isEmptyURL, isRelative, joinURL, normalizeURL, withLeadingSlash, withoutBase, withoutLeadingSlash, withoutTrailingSlash, withTrailingSlash };

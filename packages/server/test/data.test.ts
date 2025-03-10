@@ -51,7 +51,8 @@ it("mock-data", async () => {
           name: req.body.name
         };
       }
-    ).get("/avatar.jpg", (req, res) => {
+    )
+    .get("/avatar.jpg", (req, res) => {
       res.image(Buffer.from([0, 0, 0, 0]));
     });
 
@@ -65,10 +66,10 @@ it("mock-data", async () => {
 
   const { name } = await axiosInstance
     .post<typeof testData>("/hello", testData)
-    .then(r => r.data);
+    .then((r) => r.data);
 
   expect(name).toEqual(testData.name);
 
-  const contentType = await axiosInstance("/avatar.jpg").then(r => r.headers["content-type"]);
+  const contentType = await axiosInstance("/avatar.jpg").then((r) => r.headers["content-type"]);
   expect(contentType).toEqual("image/jpeg");
 });

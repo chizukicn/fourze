@@ -1,15 +1,15 @@
 import type { FourzeResponse } from "@fourze/core";
+import type { FourzeMockApp } from "./shared";
 import {
-  PolyfillHeaders,
   createLogger,
   flatHeaders,
   getHeaderValue,
   isString,
   isURL,
   normalizeRoute,
-  parseJson
+  parseJson,
+  PolyfillHeaders
 } from "@fourze/core";
-import type { FourzeMockApp } from "./shared";
 
 class ProxyFetchResponse implements Response {
   readonly url: string;

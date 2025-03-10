@@ -110,8 +110,8 @@ export function getHeaderRawValue(
 ): string | undefined {
   if (Array.isArray(value)) {
     return value
-      .map(v => getHeaderRawValue(v, options))
-      .filter(r => !!r)
+      .map((v) => getHeaderRawValue(v, options))
+      .filter((r) => !!r)
       .join(options.separator ?? ", ");
   }
   return value ? String(value) : undefined;

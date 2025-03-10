@@ -47,7 +47,7 @@ export function list(extra = false) {
         : null;
       return null;
     })
-    .filter(c => c);
+    .filter((c) => c);
 }
 export function info(module: string) {
   return packages[module];

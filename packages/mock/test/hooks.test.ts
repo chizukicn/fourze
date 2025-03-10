@@ -1,7 +1,7 @@
 import { defineRouter } from "@fourze/core";
 import { createMockApp } from "@fourze/mock";
-import { expect, it } from "vitest";
 import nodeFetch from "node-fetch";
+import { expect, it } from "vitest";
 
 it("test-hooks", async () => {
   globalThis.fetch = nodeFetch as unknown as typeof globalThis.fetch;
@@ -20,19 +20,22 @@ it("test-hooks", async () => {
       }
       res.setHeader("token", data.token);
       await next();
-    }).use("/api/test", async (req, res, next) => {
+    })
+    .use("/api/test", async (req, res, next) => {
       if (req.method === "delete") {
         res.send("delete");
         return;
       }
       await next();
-    }).use("/api/test", async (req, res, next) => {
+    })
+    .use("/api/test", async (req, res, next) => {
       if (req.method === "post") {
         res.send("post");
         return;
       }
       await next();
-    }).use("/api/test", async (req, res, next) => {
+    })
+    .use("/api/test", async (req, res, next) => {
       if (req.method === "post") {
         res.send("post");
         return;

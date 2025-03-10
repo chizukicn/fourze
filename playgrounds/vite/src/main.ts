@@ -1,5 +1,5 @@
 import { createApp } from "vue";
-import { RouterView, createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, RouterView } from "vue-router";
 import "uno.css";
 
 createApp(RouterView)

@@ -1,17 +1,17 @@
+import type { RequestMethod } from "./request";
 import { lru } from "tiny-lru";
 import { assert } from "../utils";
 import { FourzeError } from "./error";
-import type { RequestMethod } from "./request";
 
 interface RouteMatcher<T = any> {
 
-  add(path: string, method: RequestMethod | "all", payload: T): this;
+  add: (path: string, method: RequestMethod | "all", payload: T) => this;
 
-  match(path: string, method: RequestMethod | "all"): [T | null, Record<string, string> | null];
+  match: (path: string, method: RequestMethod | "all") => [T | null, Record<string, string> | null];
 
-  remove(path: string, method?: RequestMethod): boolean;
+  remove: (path: string, method?: RequestMethod) => boolean;
 
-  traverse(callback: (payload: T, path: string, method: RequestMethod | "all") => void): void;
+  traverse: (callback: (payload: T, path: string, method: RequestMethod | "all") => void) => void;
 }
 
 const NODE_TYPES = {
@@ -239,7 +239,7 @@ export function createRouteMatcher<T>(options: RouteMatcherOptions = {}): RouteM
   };
 }
 
-const PARAM_KEY_REGEX = /^{.*}$/;
+const PARAM_KEY_REGEX = /^\{.*\}$/;
 
 function getNodeType(path: string) {
   if (path.startsWith("**")) {

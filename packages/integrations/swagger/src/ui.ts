@@ -60,7 +60,7 @@ window.onload = function() {
 
 function stringifyOptions(obj: Record<string, any>): string {
   const placeholder = "____FUNCTION_PLACEHOLDER____";
-  const fns: Function[] = [];
+  const fns: (() => any)[] = [];
   let json = JSON.stringify(
     obj,
     (key, value) => {

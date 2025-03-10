@@ -48,7 +48,7 @@ export function parseFakerDynamic(
   val: string,
   context: Record<string, any>
 ): BaseValueType {
-  if (/^\d+(-\d+)?$/g.test(val)) {
+  if (/^\d+(?:-\d+)?$/.test(val)) {
     return parseFakerNumber(val);
   }
   if (val === "true") {
@@ -63,7 +63,7 @@ export function parseFakerDynamic(
   if (val === "undefined") {
     return undefined;
   }
-  if (/(\w+)(\|(\w+))+/g.test(val)) {
+  if (/\w+(?:\|\w+)+/.test(val)) {
     const value = val.split("|");
     return parseFakerDynamic(randomItem(value), context);
   }
@@ -72,15 +72,15 @@ export function parseFakerDynamic(
     return field;
   }
 
-  if (/^'[^']*'$/g.test(val)) {
+  if (/^'[^']*'$/.test(val)) {
     return val.slice(1, -1);
   }
 
-  if (/^"[^"]*"$/g.test(val)) {
+  if (/^"[^"]*"$/.test(val)) {
     return val.slice(1, -1);
   }
 
-  if (/^`[^`]*`$/g.test(val)) {
+  if (/^`[^`]*`$/.test(val)) {
     return val.slice(1, -1);
   }
 
@@ -92,11 +92,11 @@ export function parseFakerValue(
   context: any = {}
 ) {
   if (isString(val)) {
-    if (val.match(/^{[^}]*}$/g)) {
+    if (val.match(/^\{[^}]*\}$/g)) {
       return parseFakerDynamic(val.slice(1, -1), context);
     }
 
-    const matches = val.match(/{[^}]*}/g);
+    const matches = val.match(/\{[^}]*\}/g);
     if (matches) {
       for (const match of matches) {
         const matchValue = match.slice(1, -1);
@@ -135,7 +135,7 @@ export function parseFakerObject(
   options.context = options.context ?? {};
 
   if (Array.isArray(obj)) {
-    return obj.map(v => parseFakerObject(v, options));
+    return obj.map((v) => parseFakerObject(v, options));
   }
 
   if (isPrimitive(obj)) {
@@ -145,7 +145,7 @@ export function parseFakerObject(
   return Object.fromEntries(
     Object.entries(obj).map(([k, v]) => {
       if (Array.isArray(v)) {
-        return [k, v.map(f => parseFakerObject(f, options))];
+        return [k, v.map((f) => parseFakerObject(f, options))];
       }
       return [k, parseFakerObject(v, options)];
     })

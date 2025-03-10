@@ -37,7 +37,7 @@
     "stub": "unbuild --stub"
   },
   "peerDependencies": {
-    "vite": "^4.5.0 || ^5.0.0"
+    "vite": "^4.5.0 || ^5.0.0 || ^6.0.0"
   },
   "peerDependenciesMeta": {
     "vite": {
@@ -49,10 +49,11 @@
     "@fourze/mock": "workspace:*",
     "@fourze/server": "workspace:*",
     "@fourze/swagger-middleware": "workspace:*",
-    "fs-extra": "^11.2.0",
-    "swagger-ui-dist": "^5.11.2"
+    "fs-extra": "^11.3.0",
+    "swagger-ui-dist": "^5.20.0"
   },
   "devDependencies": {
-    "@types/swagger-ui-dist": "^3.30.4"
+    "@types/swagger-ui-dist": "^3.30.5",
+    "vite": "^6.2.1"
   }
 }

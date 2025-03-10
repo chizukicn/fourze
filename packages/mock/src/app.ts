@@ -1,24 +1,24 @@
-import type http from "node:http";
 import type { FourzeContextOptions } from "@fourze/core";
-import {
-  FOURZE_VERSION,
-  createApp,
-  createLogger,
-  defineMiddleware,
-  isArray,
-  isDef,
-  isNode
-} from "@fourze/core";
-import { createDelayMiddleware, createTimeoutMiddleware } from "@fourze/middlewares";
-import { createProxyRequest } from "./request";
-
+import type http from "node:http";
 import type {
   FourzeMockApp,
   FourzeMockAppOptions,
   FourzeMockRequestMode
 } from "./shared";
-import { FourzeMockAppFlag } from "./shared";
+import {
+  createApp,
+  createLogger,
+  defineMiddleware,
+  FOURZE_VERSION,
+  isArray,
+  isDef,
+  isNode
+} from "@fourze/core";
+import { createDelayMiddleware, createTimeoutMiddleware } from "@fourze/middlewares";
+
 import { createProxyFetch } from "./fetch";
+import { createProxyRequest } from "./request";
+import { FourzeMockAppFlag } from "./shared";
 import { createProxyXMLHttpRequest } from "./xhr";
 
 export function createMockApp(
@@ -135,7 +135,7 @@ export function createMockApp(
 
   app.enable = (_mode?: FourzeMockRequestMode[]) => {
     _mode = _mode ?? Array.from(mode);
-    _mode.forEach(m => activeMode.add(m));
+    _mode.forEach((m) => activeMode.add(m));
 
     if (injectGlobal) {
       if (_mode.includes("xhr")) {
@@ -157,7 +157,7 @@ export function createMockApp(
 
   app.disable = function (_mode?: FourzeMockRequestMode[]) {
     _mode = _mode ?? Array.from(mode);
-    _mode.forEach(m => activeMode.delete(m));
+    _mode.forEach((m) => activeMode.delete(m));
     if (injectGlobal) {
       if (_mode.includes("xhr")) {
         globalThis.XMLHttpRequest = app.originalXMLHttpRequest;

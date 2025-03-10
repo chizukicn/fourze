@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
-import type { Events, defineComponent } from "vue";
+import type { defineComponent, Events } from "vue";
 
 declare module "*.vue" {
   const component: ReturnType<typeof defineComponent>;

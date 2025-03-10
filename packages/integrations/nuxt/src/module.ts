@@ -1,4 +1,4 @@
-import type { UnpluginFourzeOptions } from "@fourze/vite";
+import type { UnpluginFourzeOptions } from "@fourze/unplugin";
 import { createFourzeVitePlugin } from "@fourze/vite";
 import {
   addServerHandler,
@@ -6,7 +6,6 @@ import {
   addVitePlugin,
   defineNuxtModule
 } from "@nuxt/kit";
-import "@nuxt/schema";
 import dedent from "dedent";
 import { join } from "pathe";
 

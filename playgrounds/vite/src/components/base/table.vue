@@ -1,7 +1,7 @@
 <script lang="tsx">
 import type { VNodeChild } from "vue";
-import { defineComponent, renderList } from "vue";
 import type { TableColumn } from "../hooks/table";
+import { defineComponent, renderList } from "vue";
 import { tableProps } from "../hooks/table";
 
 export default defineComponent({
@@ -55,13 +55,13 @@ export default defineComponent({
               <td class="border-solid outline-none p-4"></td>
 
               {renderList(
-                props.columns.filter(r => !!r),
+                props.columns.filter((r) => !!r),
                 (column) => {
                   const content = column.render
                     ? column.render({
-                      record,
-                      rowIndex
-                    })
+                        record,
+                        rowIndex
+                      })
                     : record[column.dataIndex];
 
                   return (
@@ -100,7 +100,7 @@ export default defineComponent({
         <thead class={props.headerClass}>
           <tr class={getRowClass()}>
             <th></th>
-            {renderList(props.columns, column => (
+            {renderList(props.columns, (column) => (
               <th class={getTdClass(column, null)}>{column.title}</th>
             ))}
           </tr>
@@ -112,9 +112,9 @@ export default defineComponent({
                 renderRow(props.data)
               )
             : (
-              <tr>
-                <td colspan={24}></td>
-              </tr>
+                <tr>
+                  <td colspan={24}></td>
+                </tr>
               )}
         </tbody>
       </table>

@@ -1,7 +1,7 @@
+import type { BaseType } from "../hooks/types";
+import { HiSelection, selectionProps } from "hoci";
 import { computed, defineComponent, renderSlot } from "vue";
 import { useRouter } from "vue-router";
-import { HiSelection, selectionProps } from "hoci";
-import type { BaseType } from "../hooks/types";
 
 export default defineComponent({
   props: {

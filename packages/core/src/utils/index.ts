@@ -1,5 +1,8 @@
 export * from "./array";
+export * from "./error";
+export * from "./events";
 export * from "./faker";
+export * from "./html";
 export * from "./is";
 export * from "./object";
 export * from "./overload";
@@ -7,7 +10,4 @@ export * from "./path";
 export * from "./promise";
 export * from "./random";
 export * from "./storage";
-export * from "./html";
 export * from "./string";
-export * from "./events";
-export * from "./error";
