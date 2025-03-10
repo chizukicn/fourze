@@ -345,8 +345,8 @@ importers:
         specifier: workspace:*
         version: link:../core
       chokidar:
-        specifier: ^3.6.0
-        version: 3.6.0
+        specifier: ^4.0.3
+        version: 4.0.3
       create-require:
         specifier: ^1.1.1
         version: 1.1.1
