@@ -20,6 +20,7 @@ import {
 } from "@fourze/core";
 import mime from "mime";
 import { createImporter } from "./importer";
+import { filename } from "./utils";
 
 export interface FourzeRendererOptions {
   /**
@@ -133,7 +134,9 @@ export async function renderTsx(
 ) {
   const file = path.normalize(context.file);
 
-  const _import = createImporter(__filename, {
+  const _filename = filename(import.meta);
+
+  const _import = createImporter(_filename, {
     esbuild: {
       jsxFactory: "h",
       jsxFragment: "'fragment'",

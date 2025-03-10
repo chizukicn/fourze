@@ -4,7 +4,9 @@ import { promises as dns } from "node:dns";
 import net from "node:net";
 
 import os from "node:os";
-import path from "node:path";
+import path, { dirname as pathDirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { isNumber, isString, normalizeURL } from "@fourze/core";
 import { loopbackHosts, wildcardHosts } from "./constants";
 
@@ -180,4 +182,23 @@ export function normalizeAddress(address: AddressInfo | string | null, options: 
     }
   }
   return null;
+}
+
+/**
+ * @see https://github.com/rhysd/dirname-filename-esm/blob/master/index.js
+ * @param importMeta
+ * @returns
+ */
+export function dirname(importMeta: ImportMeta) {
+  const file = filename(importMeta);
+  return file !== "" ? pathDirname(file) : "";
+}
+
+/**
+ * @see https://github.com/rhysd/dirname-filename-esm/blob/master/index.js
+ * @param importMeta
+ * @returns
+ */
+export function filename(importMeta: ImportMeta) {
+  return importMeta.url ? fileURLToPath(importMeta.url) : "";
 }
