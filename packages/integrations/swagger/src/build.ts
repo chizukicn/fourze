@@ -1,7 +1,8 @@
 import type { FourzeHmrApp } from "@fourze/server";
 import type { SwaggerOptions } from "@fourze/swagger-middleware";
-import type { InlineConfig } from "vite";
+import type { CopyFilterSync } from "fs-extra";
 
+import type { InlineConfig } from "vite";
 import path from "node:path";
 import process from "node:process";
 import { withBase } from "@fourze/core";
@@ -98,7 +99,7 @@ export async function build(app: FourzeHmrApp, options: SwaggerUIBuildOptions = 
     ]
   }));
 
-  const filter: fs.CopyFilterSync = options.assetsFilter ?? ((src) => {
+  const filter: CopyFilterSync = options.assetsFilter ?? ((src) => {
     const filename = path.relative(swaggerFsPath, src);
     return filename === "" || swaggerAssetFiles.includes(filename);
   });

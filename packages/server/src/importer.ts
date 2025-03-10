@@ -1,5 +1,6 @@
 import type { Loader, TransformOptions } from "esbuild";
 import type { PackageJson } from "pkg-types";
+import { readFileSync } from "node:fs";
 import { builtinModules, Module } from "node:module";
 import { platform } from "node:os";
 import { pathToFileURL } from "node:url";
@@ -7,7 +8,6 @@ import { runInThisContext } from "node:vm";
 import { createLogger, escapeStringRegexp, parseJson } from "@fourze/core";
 import createRequire from "create-require";
 import { transformSync } from "esbuild";
-import { readFileSync } from "fs-extra";
 import { fileURLToPath, hasESMSyntax, interopDefault, resolvePathSync } from "mlly";
 
 import { dirname, extname, join } from "pathe";

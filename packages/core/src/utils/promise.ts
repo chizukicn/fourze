@@ -5,7 +5,7 @@ import type {
   MaybeNumeric
 } from "maybe-types";
 import { parseFakerNumber } from "./faker";
-import { isFunction } from "./is";
+import { isDef, isFunction } from "./is";
 
 export type DelayMsType = MaybeFunction<MaybeArray<MaybeNumeric>>;
 
@@ -154,7 +154,9 @@ export function memoize<R, P extends any[], K extends string | number | symbol =
     cache.set(key, value);
     if (options.maxCount && cache.size > options.maxCount) {
       const first = cache.keys().next().value;
-      cache.delete(first);
+      if (isDef(first)) {
+        cache.delete(first);
+      }
     }
   };
 

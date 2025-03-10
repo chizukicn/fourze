@@ -7,6 +7,8 @@ import type {
   PropType
 } from "@fourze/core";
 import type { FSWatcher } from "chokidar";
+import { existsSync } from "node:fs";
+import { stat as fsStat } from "node:fs/promises";
 import process from "node:process";
 import {
   createApp,
@@ -17,10 +19,11 @@ import {
   overload
 } from "@fourze/core";
 import glob from "fast-glob";
-import fs from "fs-extra";
 import micromatch from "micromatch";
 import { basename, extname, join, normalize, resolve } from "pathe";
 import { createImporter } from "./importer";
+
+;
 
 export interface FourzeHmrOptions extends Exclude<FourzeAppOptions, "setup"> {
 
@@ -96,8 +99,8 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
   };
 
   async function load(moduleName: string = rootDir): Promise<boolean> {
-    if (fs.existsSync(moduleName)) {
-      const stat = await fs.promises.stat(moduleName);
+    if (existsSync(moduleName)) {
+      const stat = await fsStat(moduleName);
       if (stat.isDirectory()) {
         const files = await glob(fsInclude, { cwd: moduleName, onlyFiles: false, markDirectories: true });
         const tasks = files.map((name) => load(join(moduleName, name)));

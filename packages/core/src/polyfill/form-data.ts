@@ -1,3 +1,4 @@
+import { isString } from "@fourze/core";
 import { isFormData } from "../utils";
 
 export type PolyfillDataValue = string | Buffer | Uint8Array;
@@ -59,7 +60,7 @@ export function decodeFormData(
     return rs;
   }
 
-  data = Buffer.from(data).toString("binary");
+  data = (isString(data) ? Buffer.from(data, "utf-8") : Buffer.from(data)).toString("binary");
 
   data = data.replace(`--${boundary}--\r\n`, "");
 

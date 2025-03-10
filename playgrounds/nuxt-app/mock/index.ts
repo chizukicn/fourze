@@ -1,4 +1,6 @@
 import type { FourzeHandle, ObjectProps } from "@fourze/core";
+import { existsSync, mkdirSync } from "node:fs";
+import { readFile, writeFile } from "node:fs/promises";
 import {
   createStorage,
   defineRouter,
@@ -9,7 +11,6 @@ import {
   randomInt,
   randomItem
 } from "@fourze/core";
-import { existsSync, mkdirSync, readFile, writeFile } from "fs-extra";
 import path from "pathe";
 import {
   slicePage

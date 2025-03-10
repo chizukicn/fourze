@@ -1,5 +1,8 @@
-import { createFourzePlugin, UnpluginFourzeOptions } from "@fourze/unplugin";
+import type { UnpluginFourzeOptions } from "@fourze/unplugin";
+import { createFourzePlugin } from "@fourze/unplugin";
 
 const createFourzeVitePlugin = createFourzePlugin.vite;
 
-export { createFourzeVitePlugin, createFourzeVitePlugin as default, UnpluginFourzeOptions };
+export type { UnpluginFourzeOptions };
+
+export { createFourzeVitePlugin, createFourzeVitePlugin as default };

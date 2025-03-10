@@ -17,18 +17,18 @@
     "autocannon-compare": "^0.4.0",
     "cli-table": "^0.3.11",
     "connect": "^3.7.0",
-    "consola": "^3.2.3",
-    "express": "^4.18.2",
-    "fastify": "^4.26.0",
-    "h3": "^1.10.1",
-    "inquirer": "^9.2.13",
-    "koa": "^2.15.0"
+    "consola": "^3.4.0",
+    "express": "^4.21.2",
+    "fastify": "^5.2.1",
+    "h3": "^1.15.1",
+    "inquirer": "^12.4.3",
+    "koa": "^2.16.0"
   },
   "devDependencies": {
-    "@types/autocannon": "^7.12.5",
+    "@types/autocannon": "^7.12.6",
     "@types/cli-table": "^0.3.4",
     "@types/inquirer": "^9.0.7",
-    "@types/koa": "^2.14.0",
-    "tsx": "^4.7.0"
+    "@types/koa": "^2.15.0",
+    "tsx": "^4.19.3"
   }
 }
