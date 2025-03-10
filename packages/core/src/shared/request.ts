@@ -1,15 +1,15 @@
-import type { IncomingMessage } from "node:http";
-import { getQuery, parseQuery, parseURL, withoutBase } from "ufo";
 import type { MaybeRegex } from "maybe-types";
-import { safeParse } from "fast-content-type-parse";
+import type { IncomingMessage } from "node:http";
 import type { PolyfillHeaderInit } from "../polyfill";
+import type { FourzeApp } from "./interface";
+import type { FourzeRouteMeta } from "./meta";
+import type { DefaultData, ExtractPropTypes, ExtractPropTypesWithIn, ObjectProps } from "./props";
+import type { FourzeRoute } from "./route";
+import { safeParse } from "fast-content-type-parse";
+import { getQuery, parseQuery, parseURL, withoutBase } from "ufo";
 import { decodeFormData, flatHeaders, getHeaderValue } from "../polyfill";
 import { isString, isUint8Array, parseJson } from "../utils";
-import type { DefaultData, ExtractPropTypes, ExtractPropTypesWithIn, ObjectProps } from "./props";
 import { validateProps, withDefaults } from "./props";
-import type { FourzeRoute } from "./route";
-import type { FourzeRouteMeta } from "./meta";
-import type { FourzeApp } from "./interface";
 
 const FourzeRequestFlag = "__isFourzeRequest";
 
@@ -41,11 +41,11 @@ export interface FourzeRequestOptions {
 
 export interface FourzeRequest<
   Props extends ObjectProps = DefaultData,
-Meta = FourzeRouteMeta,
-Data = ExtractPropTypes<Props>,
-Query = ExtractPropTypesWithIn<Props, "query">,
-Body = ExtractPropTypesWithIn<Props, "body">,
-Params = ExtractPropTypesWithIn<Props, "path">
+  Meta = FourzeRouteMeta,
+  Data = ExtractPropTypes<Props>,
+  Query = ExtractPropTypesWithIn<Props, "query">,
+  Body = ExtractPropTypesWithIn<Props, "body">,
+  Params = ExtractPropTypesWithIn<Props, "path">
 > extends IncomingMessage {
   url: string;
   method: string;
@@ -59,9 +59,9 @@ Params = ExtractPropTypesWithIn<Props, "path">
 
   contextPath: string;
 
-  setRoute(route: FourzeRoute, matchParams?: Record<string, any> | null): void;
+  setRoute: (route: FourzeRoute, matchParams?: Record<string, any> | null) => void;
 
-  withScope(scope: string): FourzeRequest<Props, Meta, Data, Query, Body, Params>;
+  withScope: (scope: string) => FourzeRequest<Props, Meta, Data, Query, Body, Params>;
 
   readonly contentType: string;
 

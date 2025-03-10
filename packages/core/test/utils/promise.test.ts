@@ -1,5 +1,5 @@
-import { expect, it } from "vitest";
 import type { DelayMsType } from "../../src/utils/promise";
+import { expect, it } from "vitest";
 import { createSingletonPromise, delay, memoize } from "../../src/utils/promise";
 import { randomInt } from "../../src/utils/random";
 
@@ -29,7 +29,7 @@ it("test-utils-promise-createSingletonPromise", async () => {
   fn.reset();
 
   const [r0, r1] = await Promise.all(
-    [delayFn(300), delayFn("200-700")].map(r => r())
+    [delayFn(300), delayFn("200-700")].map((r) => r())
   );
 
   expect(r0).not.toBe(r);

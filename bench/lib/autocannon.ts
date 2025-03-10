@@ -27,7 +27,7 @@ export async function fire(
   if (save) {
     try {
       await access(resultsDirectory);
-    } catch (e) {
+    } catch {
       await mkdir(resultsDirectory);
     }
 

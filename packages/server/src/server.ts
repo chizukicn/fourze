@@ -1,16 +1,3 @@
-import type EventEmitter from "node:events";
-import type { IncomingMessage, OutgoingMessage, Server } from "node:http";
-import http from "node:http";
-import https from "node:https";
-import process from "node:process";
-import {
-  FOURZE_VERSION,
-  createApp,
-  createLogger,
-  createServiceContext,
-  injectEventEmitter,
-  overload
-} from "@fourze/core";
 import type {
   CommonMiddleware,
   FourzeApp,
@@ -18,8 +5,21 @@ import type {
   FourzeMiddleware,
   FourzeMiddlewareHandler,
   FourzeModule,
-  FourzeServiceContext
-  , PropType
+  FourzeServiceContext,
+  PropType
+} from "@fourze/core";
+import type EventEmitter from "node:events";
+import type { IncomingMessage, OutgoingMessage, Server } from "node:http";
+import http from "node:http";
+import https from "node:https";
+import process from "node:process";
+import {
+  createApp,
+  createLogger,
+  createServiceContext,
+  FOURZE_VERSION,
+  injectEventEmitter,
+  overload
 } from "@fourze/core";
 import { isAddressInfo, normalizeAddress } from "./utils";
 
@@ -42,13 +42,11 @@ export interface FourzeServer extends EventEmitter, CommonMiddleware {
 
   readonly protocol: "http" | "https";
 
-  listen(port?: number, host?: string): Promise<Server>;
+  listen: (port?: number, host?: string) => Promise<Server>;
 
-  use(path: string, ...modules: FourzeModule[]): this;
+  use: ((path: string, ...modules: FourzeModule[]) => this) & ((...modules: FourzeModule[]) => this);
 
-  use(...modules: FourzeModule[]): this;
-
-  close(): Promise<void>;
+  close: () => Promise<void>;
 }
 
 export function createServer(): FourzeServer;

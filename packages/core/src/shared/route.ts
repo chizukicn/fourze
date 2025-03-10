@@ -1,9 +1,9 @@
-import { withBase } from "../utils";
+import type { FourzeHandle } from "./interface";
+import type { FourzeRouteMeta } from "./meta";
 import type { DefaultData, ObjectProps } from "./props";
 import type { RequestMethod } from "./request";
+import { withBase } from "../utils";
 import { FOURZE_METHODS } from "./request";
-import type { FourzeRouteMeta } from "./meta";
-import type { FourzeHandle } from "./interface";
 
 const FourzeRouteFlag = "__isFourzeRoute";
 
@@ -15,8 +15,8 @@ export interface FourzeRouteOptions<Props extends ObjectProps = ObjectProps, Met
 
 export interface FourzeBaseRoute<
   Result = unknown,
-Props extends ObjectProps = DefaultData,
-Meta = FourzeRouteMeta
+  Props extends ObjectProps = DefaultData,
+  Meta = FourzeRouteMeta
 > {
   path: string;
   method?: RequestMethod;
@@ -27,8 +27,8 @@ Meta = FourzeRouteMeta
 
 export interface FourzeRoute<
   Result = unknown,
-Props extends ObjectProps = DefaultData,
-Meta = FourzeRouteMeta
+  Props extends ObjectProps = DefaultData,
+  Meta = FourzeRouteMeta
 > extends FourzeBaseRoute<Result, Props, Meta> {
   readonly [FourzeRouteFlag]: true;
   readonly props: Props;
@@ -39,8 +39,8 @@ export type FourzeRouteGenerator<This> = {
   [K in RequestMethod]: {
     <
       Result = any,
-Props extends ObjectProps = DefaultData,
-Meta = FourzeRouteMeta
+      Props extends ObjectProps = DefaultData,
+      Meta = FourzeRouteMeta
     >(
       path: string,
       options: FourzeRouteOptions<Props, Meta>,
@@ -67,8 +67,8 @@ export function defineRouteProps<Props extends ObjectProps = DefaultData>(
 
 export function defineRoute<
   Result = unknown,
-Props extends ObjectProps = DefaultData,
-Meta = FourzeRouteMeta
+  Props extends ObjectProps = DefaultData,
+  Meta = FourzeRouteMeta
 >(
   route: FourzeBaseRoute<Result, Props, Meta> & { base?: string }
 ): FourzeRoute<Result, Props, Meta> {

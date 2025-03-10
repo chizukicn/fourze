@@ -3,12 +3,12 @@ import { parseJson } from "./string";
 
 export interface Storage {
   readonly length: number;
-  clear(): void;
-  getItem(key: string): any;
-  key(index: number): string | null;
-  removeItem(key: string): void;
-  setItem(key: string, value: any): void;
-  hasItem(key: string): boolean;
+  clear: () => void;
+  getItem: (key: string) => any;
+  key: (index: number) => string | null;
+  removeItem: (key: string) => void;
+  setItem: (key: string, value: any) => void;
+  hasItem: (key: string) => boolean;
   [name: string]: any;
 }
 
@@ -54,7 +54,7 @@ export function createStorage(options: StorageOptions = {}): Storage {
           };
         case "clear":
           return () => {
-            Object.keys(target).forEach(key =>
+            Object.keys(target).forEach((key) =>
               Reflect.deleteProperty(target, key)
             );
             emitChange();

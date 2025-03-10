@@ -6,9 +6,9 @@ import {
   addVitePlugin,
   defineNuxtModule
 } from "@nuxt/kit";
-import "@nuxt/schema";
 import dedent from "dedent";
 import { join } from "pathe";
+import "@nuxt/schema";
 
 export type ModuleOptions = UnpluginFourzeOptions;
 

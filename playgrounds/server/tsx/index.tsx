@@ -17,7 +17,7 @@ export default () => {
 
         <div class={"w-4 ".concat("h-4").concat(" m-4")}>
           <div>Hello,World</div>
-          {list.map(item => (
+          {list.map((item) => (
             <span class="mr-2">{item}</span>
           ))}
           <div></div>

@@ -1,7 +1,7 @@
 import type { IncomingMessage, OutgoingMessage } from "node:http";
 import type { FourzeRequest } from "./request";
-import { createRequest } from "./request";
 import type { FourzeResponse } from "./response";
+import { createRequest } from "./request";
 import { createResponse } from "./response";
 
 export interface FourzeContextOptions {

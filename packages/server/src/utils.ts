@@ -1,10 +1,10 @@
-import os from "node:os";
-import path from "node:path";
+import type { Server } from "node:http";
+import type { AddressInfo } from "node:net";
 import { promises as dns } from "node:dns";
 import net from "node:net";
 
-import type { AddressInfo } from "node:net";
-import type { Server } from "node:http";
+import os from "node:os";
+import path from "node:path";
 import { isNumber, isString, normalizeURL } from "@fourze/core";
 import { loopbackHosts, wildcardHosts } from "./constants";
 
@@ -36,7 +36,7 @@ string | undefined
   ]);
   const isSame
     = nodeResult.family === dnsResult.family
-    && nodeResult.address === dnsResult.address;
+      && nodeResult.address === dnsResult.address;
   return isSame ? undefined : nodeResult.address;
 }
 
@@ -118,13 +118,14 @@ export async function resolveServerUrls(server: Server, options: ResolveServerOp
     local.push(`${protocol}://${hostnameName}:${port}`);
   } else {
     Object.values(os.networkInterfaces())
-      .flatMap(nInterface => nInterface ?? [])
+      .flatMap((nInterface) => nInterface ?? [])
       .filter((detail) => {
         return detail
           && detail.address
           && ((isString(detail.family) && detail.family === "IPv4")
-          || (isNumber(detail.family) && detail.family === 4));
-      }).forEach((detail) => {
+            || (isNumber(detail.family) && detail.family === 4));
+      })
+      .forEach((detail) => {
         let host = detail.address.replace("127.0.0.1", hostname.name);
         // ipv6 host
         if (net.isIPv6(host)) {

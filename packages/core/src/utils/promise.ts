@@ -12,7 +12,7 @@ export type DelayMsType = MaybeFunction<MaybeArray<MaybeNumeric>>;
 export function delay(ms: DelayMsType) {
   ms = isFunction(ms) ? ms() : ms;
   const tmp = parseFakerNumber(ms);
-  return new Promise<number>(resolve => setTimeout(() => resolve(tmp), tmp));
+  return new Promise<number>((resolve) => setTimeout(() => resolve(tmp), tmp));
 }
 
 export interface SingletonPromiseReturn<T> {
@@ -79,15 +79,15 @@ export interface MemoizeReturn<R, P extends any[], K> {
    * @param key
    * @param value
    */
-  set(key: K | P, value: R): void;
+  set: (key: K | P, value: R) => void;
 
   /**
    * Get cache by key
    * @param key
    */
-  get(key: K | P): R | undefined;
+  get: (key: K | P) => R | undefined;
 
-  delete(key: K | P): boolean;
+  delete: (key: K | P) => boolean;
 
   /**
    * Clear cache

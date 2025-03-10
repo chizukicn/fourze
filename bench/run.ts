@@ -1,8 +1,8 @@
 import process from "node:process";
-import inquirer from "inquirer";
 import { program } from "commander";
-import { choices, list } from "./lib/packages";
+import inquirer from "inquirer";
 import bench from "./lib/bench";
+import { choices, list } from "./lib/packages";
 
 let argv: string[] = [];
 
@@ -26,7 +26,9 @@ argv = program
     } else {
       return run();
     }
-  }).parse(process.argv).args;
+  })
+  .parse(process.argv)
+  .args;
 
 async function parseArgv() {
   const [all, connections, pipelining, duration] = argv;

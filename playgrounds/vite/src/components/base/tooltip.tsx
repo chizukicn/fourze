@@ -5,7 +5,7 @@
  * @Last Modified time: 2021/11/17 18:49:42
  */
 import type { CSSProperties, PropType } from "vue";
-import { Teleport, Transition, computed, defineComponent, nextTick, reactive, ref, renderSlot, watch } from "vue";
+import { computed, defineComponent, nextTick, reactive, ref, renderSlot, Teleport, Transition, watch } from "vue";
 
 export const tooltipProps = {
   popClass: {

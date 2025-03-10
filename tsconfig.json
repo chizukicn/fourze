@@ -4,7 +4,7 @@
     "jsx": "preserve",
     "lib": ["esnext", "DOM"],
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "paths": {
       "@fourze/core": ["./packages/core/src/index.ts"],
       "@fourze/mock": ["./packages/mock/src/index.ts"],

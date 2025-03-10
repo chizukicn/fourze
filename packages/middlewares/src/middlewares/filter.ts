@@ -1,5 +1,5 @@
-import type { MaybeRegex } from "maybe-types";
 import type { FourzeMiddleware } from "@fourze/core";
+import type { MaybeRegex } from "maybe-types";
 import { createFilter, defineMiddleware } from "@fourze/core";
 
 interface MatchMiddlewareOptions {

@@ -1,20 +1,20 @@
+import type { FourzeHandle, ObjectProps } from "@fourze/core";
 import fs from "node:fs";
 import path from "node:path";
-import type { FourzeHandle, ObjectProps } from "@fourze/core";
 import {
-  PolyfillFile,
+  slicePage
+} from "@/utils/setup-mock";
+import {
   createStorage,
   defineRouter,
   isNode,
+  PolyfillFile,
   randomArray,
   randomDate,
   randomInt,
   randomItem
 } from "@fourze/core";
 import { DELAY_HEADER, RESOLVE_HEADER } from "@fourze/middlewares";
-import {
-  slicePage
-} from "@/utils/setup-mock";
 
 interface Pagination {
   page: number;
@@ -94,18 +94,18 @@ export default defineRouter((router) => {
   const data = isNode() ? createData("server") : createData("mock");
 
   const handleSearch: FourzeHandle<
-  PagingData<UserInfo>,
-  ObjectProps<Pagination>,
-  any
-> = async (req) => {
-  const {
-    page = 1,
-    pageSize = 10,
-    keyword = ""
-  } = req.query as unknown as Pagination & { keyword?: string };
-  const items = data.filter(item => item.username.includes(keyword));
-  return slicePage(items, { page, pageSize });
-};
+    PagingData<UserInfo>,
+    ObjectProps<Pagination>,
+    any
+  > = async (req) => {
+    const {
+      page = 1,
+      pageSize = 10,
+      keyword = ""
+    } = req.query as unknown as Pagination & { keyword?: string };
+    const items = data.filter((item) => item.username.includes(keyword));
+    return slicePage(items, { page, pageSize });
+  };
 
   router.get("/item/list", handleSearch);
 
@@ -144,7 +144,7 @@ export default defineRouter((router) => {
     }
   }, async (req) => {
     const { id } = req.params;
-    const index = data.findIndex(item => item.id === id);
+    const index = data.findIndex((item) => item.id === id);
     data.splice(index, 1);
     storage.setItem("fz_cache_data", data);
     return { result: true };
@@ -160,7 +160,7 @@ export default defineRouter((router) => {
     }
   }, (req) => {
     const id = req.params.id;
-    return data.find(item => item.id === id);
+    return data.find((item) => item.id === id);
   });
 
   router.route("/img/avatar.jpg", async (req, res) => {

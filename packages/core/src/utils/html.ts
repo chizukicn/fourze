@@ -65,7 +65,7 @@ export function renderElement(tag: string, props: any = {}, ...children: any[]) 
 
   function renderChildren(children: any[]): string {
     if (Array.isArray(children)) {
-      return children.map(c => (Array.isArray(c) ? renderChildren(c) : c)).join("");
+      return children.map((c) => (Array.isArray(c) ? renderChildren(c) : c)).join("");
     }
     return children;
   }
@@ -89,7 +89,7 @@ export function renderElement(tag: string, props: any = {}, ...children: any[]) 
 export function renderHtml(options: RenderHtmlOptions = {}) {
   const tags = options.tags ?? [];
 
-  const headTags: HtmlTag[] = [...tags.filter(r => r.in === "head"), ...options.head ?? []];
+  const headTags: HtmlTag[] = [...tags.filter((r) => r.in === "head"), ...options.head ?? []];
 
   if (options.title) {
     headTags.push({ tag: "title", content: options.title });
@@ -117,7 +117,7 @@ export function renderHtml(options: RenderHtmlOptions = {}) {
     }));
   }
 
-  const bodyTags: HtmlTag[] = [...tags.filter(r => r.in === "body"), ...options.body ?? []];
+  const bodyTags: HtmlTag[] = [...tags.filter((r) => r.in === "body"), ...options.body ?? []];
 
   if (options.script?.length) {
     bodyTags.push(...options.script.map((r) => {
@@ -129,8 +129,8 @@ export function renderHtml(options: RenderHtmlOptions = {}) {
   }
 
   return transformTemplate(htmlTemplateString, {
-    headTags: headTags.map(r => renderElement(r.tag, r.attributes, r.content ?? "")).join("\n"),
-    bodyTags: bodyTags.map(r => renderElement(r.tag, r.attributes, r.content ?? "")).join("\n"),
+    headTags: headTags.map((r) => renderElement(r.tag, r.attributes, r.content ?? "")).join("\n"),
+    bodyTags: bodyTags.map((r) => renderElement(r.tag, r.attributes, r.content ?? "")).join("\n"),
     favicon: "<meta></meta>"
   });
 }

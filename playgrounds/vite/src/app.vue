@@ -1,16 +1,16 @@
 <script setup lang="tsx">
+import type { TableColumns } from "./components/hooks/table";
+import HiButton from "@/components/base/button.vue";
 import { getGlobalMockApp } from "@fourze/mock";
 import { useAsyncState } from "@vueuse/core";
 import axios from "axios";
 import dayjs from "dayjs";
+import { HiItem, HiSelection } from "hoci";
 import $ from "jquery";
 import querystring from "query-string";
 import { computed, reactive, ref, watch } from "vue";
-import { HiItem, HiSelection } from "hoci";
 import Loading from "./components/base/loading.vue";
 import Table from "./components/base/table.vue";
-import type { TableColumns } from "./components/hooks/table";
-import HiButton from "@/components/base/button.vue";
 
 const _mockEnabled = ref(!!getGlobalMockApp()?.enabled);
 
@@ -96,19 +96,19 @@ async function request(options: RequestOptions) {
         }),
         data,
         method
-      }).then(r => r.data);
+      }).then((r) => r.data);
     case "axios":
       return axios(_url, {
         method,
         params,
         data
-      }).then(r => r.data.data);
+      }).then((r) => r.data.data);
     case "fetch":
     default:
       return await fetch(querystring.stringifyUrl({ url: _url, query: params }), {
         body: ["GET", "HEAD", "DELETE"].includes(method.toUpperCase()) ? undefined : JSON.stringify(data),
         method
-      }).then(r => r.json()).then(r => r.data);
+      }).then((r) => r.json()).then((r) => r.data);
   }
 }
 

@@ -31,10 +31,10 @@ export async function createElement(
     children: any[]
   ): Promise<string> {
     if (Array.isArray(children)) {
-      const tasks = children.map(async c =>
+      const tasks = children.map(async (c) =>
         Array.isArray(c) ? renderChildren(c) : resolveElement(c)
       );
-      return await Promise.all(tasks).then(r => r.join(""));
+      return await Promise.all(tasks).then((r) => r.join(""));
     }
     return children;
   }

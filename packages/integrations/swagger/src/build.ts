@@ -1,13 +1,13 @@
+import type { FourzeHmrApp } from "@fourze/server";
+import type { SwaggerOptions } from "@fourze/swagger-middleware";
+import type { InlineConfig } from "vite";
+
 import path from "node:path";
 import process from "node:process";
-import type { FourzeHmrApp } from "@fourze/server";
-
-import type { InlineConfig } from "vite";
-import { defineConfig, mergeConfig, build as viteBuild } from "vite";
-import fs from "fs-extra";
 import { withBase } from "@fourze/core";
 import { createMockClient } from "@fourze/mock";
-import type { SwaggerOptions } from "@fourze/swagger-middleware";
+import fs from "fs-extra";
+import { defineConfig, mergeConfig, build as viteBuild } from "vite";
 import { getSwaggerFSPath } from "./service";
 import { renderIndexHtml } from "./ui";
 

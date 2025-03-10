@@ -59,10 +59,10 @@ it("mock-query-2", async () => {
   const pets = [barley, boots, whiskers, daisy];
   const people = [magnus, terry, charlotte];
 
-  const query = createQuery(people).groupJoin(pets, "name", p => p.owner.name, (person, petCollection) => {
+  const query = createQuery(people).groupJoin(pets, "name", (p) => p.owner.name, (person, petCollection) => {
     return {
       name: person.name,
-      pets: petCollection.map(pet => pet.name)
+      pets: petCollection.map((pet) => pet.name)
     };
   });
 
@@ -91,7 +91,7 @@ it("mock-query-distinct", async () => {
 it("mock-query-where", async () => {
   const query = createQuery([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
-  expect(query.where(x => x > 5).select().length).toEqual(5);
+  expect(query.where((x) => x > 5).select().length).toEqual(5);
 
   query.sort().select();
 
@@ -101,8 +101,8 @@ it("mock-query-where", async () => {
 });
 
 it("mock-array-deleteBy", async () => {
-  expect(deleteBy([1, 2, 3, 4, 5, 6], r => r % 2 === 0)).toSatisfy((r: number[]) => {
-    return r.every(r => r % 2 === 1);
+  expect(deleteBy([1, 2, 3, 4, 5, 6], (r) => r % 2 === 0)).toSatisfy((r: number[]) => {
+    return r.every((r) => r % 2 === 1);
   });
 });
 

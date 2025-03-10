@@ -1,6 +1,6 @@
 /* eslint-disable ts/no-duplicate-enum-values */
-import { createConsola } from "consola/core";
 import type { ConsolaInstance } from "consola";
+import { createConsola } from "consola/core";
 
 export enum FourzeLogLevel {
   Fatal = 0,

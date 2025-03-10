@@ -1,6 +1,6 @@
 <script lang="tsx">
-import { onKeyStroke } from "@vueuse/core";
 import type { PropType } from "vue";
+import { onKeyStroke } from "@vueuse/core";
 import { computed, defineComponent, onUnmounted } from "vue";
 
 export default defineComponent({

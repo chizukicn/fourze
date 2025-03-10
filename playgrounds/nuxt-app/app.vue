@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useNow } from "@vueuse/core";
-import axios from "axios";
-
-import $ from "jquery";
 import type { MaybeAsyncFunction } from "maybe-types";
+import { useNow } from "@vueuse/core";
+
+import axios from "axios";
+import $ from "jquery";
 import { computed, ref } from "vue";
 
 export interface ResponseData {
@@ -83,7 +83,7 @@ const handleFetch = recoding(async () => {
       serverDelay.value = Number(r.headers.get("Fourze-Delay"));
       return r.json();
     })
-    .then(r => r.data);
+    .then((r) => r.data);
 });
 
 const handleAxios = recoding(async () => {

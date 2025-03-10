@@ -1,10 +1,10 @@
 import type { Server } from "node:http";
-import { connect, normalizeAddress } from "@fourze/server";
-import express from "express";
 import { createApp, defineRouter, randomInt, withBase } from "@fourze/core";
+import { connect, normalizeAddress } from "@fourze/server";
 import { service } from "@fourze/swagger";
-import { expect, it } from "vitest";
 import axios from "axios";
+import express from "express";
+import { expect, it } from "vitest";
 
 it("test-swagger", async () => {
   const app = createApp({

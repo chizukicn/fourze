@@ -59,7 +59,7 @@ export function randomItem<T, U = T>(
   source: T[],
   callback?: (value: T, index: number, array: T[]) => U
 ): U {
-  callback = callback ?? (value => value as any);
+  callback = callback ?? ((value) => value as any);
   const index = randomInt(source.length);
   return callback(source[index], index, source);
 }

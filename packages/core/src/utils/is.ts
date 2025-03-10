@@ -32,6 +32,7 @@ export function isPlainObject(obj: any): boolean {
   return _toString.call(obj) === "[object Object]";
 }
 
+// eslint-disable-next-line ts/no-unsafe-function-type
 export function isFunction<T extends Function>(value: any): value is T {
   return typeof value === "function";
 }

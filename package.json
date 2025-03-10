@@ -1,7 +1,9 @@
 {
   "name": "@fourze/monorepo",
+  "type": "module",
   "version": "0.30.2",
   "private": true,
+  "packageManager": "pnpm@9.15.0",
   "description": "a mock framework",
   "author": "Chizuki <chizukicn@outlook.com>",
   "license": "MIT",
@@ -40,7 +42,7 @@
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "devDependencies": {
-    "@curev/eslint-config": "^0.3.4",
+    "@curev/eslint-config": "^0.5.0",
     "@fourze/core": "workspace:*",
     "@fourze/mock": "workspace:*",
     "@fourze/server": "workspace:*",
@@ -52,7 +54,7 @@
     "autocannon": "^7.14.0",
     "bumpp": "^9.3.0",
     "chokidar": "^3.5.3",
-    "eslint": "^8.56.0",
+    "eslint": "^9.18.0",
     "eslint-formatter-mo": "^1.2.0",
     "jsdom": "^24.0.0",
     "lint-staged": "^15.2.0",

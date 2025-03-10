@@ -16,7 +16,7 @@ it("mock-base", async () => {
     });
   }));
   await app.ready();
-  const data = await app.fetch("/api/hello").then(r => r.json());
+  const data = await app.fetch("/api/hello").then((r) => r.json());
   expect(data).toEqual({
     name: "test"
   });

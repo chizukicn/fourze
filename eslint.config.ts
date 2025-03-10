@@ -1,9 +1,10 @@
-const { curev } = require("@curev/eslint-config");
+import { curev } from "@curev/eslint-config";
 
-module.exports = curev({
+export default curev({
   rules: {
     "ts/no-var-requires": "off",
     "ts/no-require-imports": "off",
     "node/prefer-global/buffer": "off"
-  }
+  },
+  unocss: false
 });

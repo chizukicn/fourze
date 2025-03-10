@@ -1,15 +1,15 @@
+import type { CommonMiddleware, FourzeRequest, FourzeResponse } from "@fourze/core";
+import type { FourzeRendererContext } from "@fourze/server";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { defineRouter } from "@fourze/core";
+import { createRenderer, createServer } from "@fourze/server";
+
 import comporession from "compression";
 import ejs from "ejs";
 import express from "express";
 import { createProxyMiddleware } from "http-proxy-middleware";
-
-import type { CommonMiddleware, FourzeRequest, FourzeResponse } from "@fourze/core";
-import { defineRouter } from "@fourze/core";
-import type { FourzeRendererContext } from "@fourze/server";
-import { createRenderer, createServer } from "@fourze/server";
 
 const router = defineRouter((router) => {
   router.route("/hello").get(() => {

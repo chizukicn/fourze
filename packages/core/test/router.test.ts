@@ -1,5 +1,5 @@
-import { expect, it } from "vitest";
 import { createApp, defineRouter } from "@fourze/core";
+import { expect, it } from "vitest";
 
 it("router-send", async () => {
   const app = createApp();
@@ -42,6 +42,6 @@ it("router-undefined", async () => {
   const { response } = await app.service({
     url: "/hello"
   });
-  expect(response.payload).undefined;
+  expect(response.payload).toBeUndefined();
   expect(response.sent).toBe(true);
 });

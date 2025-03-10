@@ -1,3 +1,4 @@
+import type { FourzeMockApp } from "./shared";
 import {
   appendHeader,
   createLogger,
@@ -9,7 +10,6 @@ import {
   toRawHeaders
 } from "@fourze/core";
 import { HTTP_STATUS_CODES } from "./code";
-import type { FourzeMockApp } from "./shared";
 
 const XHR_EVENTS
   = "readystatechange loadstart progress abort error load timeout loadend".split(
