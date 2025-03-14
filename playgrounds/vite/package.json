@@ -15,7 +15,7 @@
     "@fourze/core": "workspace:*",
     "@fourze/middlewares": "workspace:*",
     "@vueuse/core": "^13.0.0",
-    "axios": "^1.8.2",
+    "axios": "^1.8.3",
     "dayjs": "^1.11.13",
     "element-plus": "^2.9.6",
     "hoci": "^0.6.0",
@@ -36,7 +36,7 @@
     "typescript": "^5.8.2",
     "unocss": "^66.0.0",
     "unplugin-vue-components": "^28.4.1",
-    "vite": "^6.2.1",
+    "vite": "^6.2.2",
     "vite-plugin-inspect": "^11.0.0"
   }
 }
