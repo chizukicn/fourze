@@ -50,6 +50,7 @@
     "@fourze/server": "workspace:*",
     "@fourze/swagger-middleware": "workspace:*",
     "fs-extra": "^11.3.0",
+    "mlly": "^1.7.4",
     "swagger-ui-dist": "^5.20.1"
   },
   "devDependencies": {
