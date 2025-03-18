@@ -8,6 +8,7 @@ import process from "node:process";
 import { withBase } from "@fourze/core";
 import { createMockClient } from "@fourze/mock";
 import fs from "fs-extra";
+import { resolveSync } from "mlly";
 import { defineConfig, mergeConfig, build as viteBuild } from "vite";
 import { getSwaggerFSPath } from "./service";
 import { renderIndexHtml } from "./ui";
@@ -55,7 +56,7 @@ export function getModuleAlias() {
   return ["@fourze/core", "@fourze/mock", "@fourze/swagger", "@fourze/swagger-middleware"].map((r) => {
     return {
       find: r,
-      replacement: require.resolve(r)
+      replacement: resolveSync(r)
     };
   });
 }
