@@ -40,7 +40,7 @@ it("run-server", async () => {
 });
 
 it("run-connect", async () => {
-  const host = "localhost";
+  const host = "0.0.0.0";
   const port = 0;
 
   const app = express();
@@ -59,8 +59,8 @@ it("run-connect", async () => {
   app.use("/api/", connect(router));
 
   const server: Server = await new Promise((resolve) => {
-    const server = app.listen(port, host, () => {
-      resolve(server);
+    const s = app.listen(port, host, () => {
+      resolve(s);
     });
   });
 

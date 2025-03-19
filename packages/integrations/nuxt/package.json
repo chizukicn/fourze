@@ -1,7 +1,7 @@
 {
   "name": "@fourze/nuxt",
   "type": "module",
-  "version": "0.31.1",
+  "version": "0.31.2",
   "license": "MIT",
   "homepage": "https://github.com/chizukicn/fourze/tree/main/packages/nuxt#readme",
   "repository": {
