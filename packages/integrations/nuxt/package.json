@@ -32,13 +32,13 @@
     "@fourze/server": "workspace:*",
     "@fourze/unplugin": "workspace:*",
     "@fourze/vite": "workspace:*",
-    "@nuxt/kit": "^3.16.0",
+    "@nuxt/kit": "^3.16.1",
     "dedent": "^1.5.3",
     "pathe": "^2.0.3"
   },
   "devDependencies": {
     "@nuxt/module-builder": "^0.8.4",
     "@types/dedent": "^0.7.2",
-    "nuxt": "^3.16.0"
+    "nuxt": "^3.16.1"
   }
 }
