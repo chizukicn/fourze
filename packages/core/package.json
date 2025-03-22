@@ -32,7 +32,7 @@
     "stub": "unbuild --stub"
   },
   "dependencies": {
-    "consola": "^3.4.0",
+    "consola": "^3.4.2",
     "destr": "^2.0.3",
     "events": "^3.3.0",
     "fast-content-type-parse": "^3.0.0",

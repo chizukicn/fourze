@@ -17,11 +17,11 @@
     "autocannon-compare": "^0.4.0",
     "cli-table": "^0.3.11",
     "connect": "^3.7.0",
-    "consola": "^3.4.0",
+    "consola": "^3.4.2",
     "express": "^4.21.2",
     "fastify": "^5.2.1",
     "h3": "^1.15.1",
-    "inquirer": "^12.4.3",
+    "inquirer": "^12.5.0",
     "koa": "^2.16.0"
   },
   "devDependencies": {
