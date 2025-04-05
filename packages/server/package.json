@@ -32,10 +32,10 @@
     "@fourze/core": "workspace:*",
     "chokidar": "^3.6.0",
     "create-require": "^1.1.1",
-    "esbuild": "^0.25.1",
+    "esbuild": "^0.25.2",
     "fast-glob": "^3.3.3",
     "micromatch": "^4.0.8",
-    "mime": "^4.0.6",
+    "mime": "^4.0.7",
     "mlly": "^1.7.4",
     "pathe": "^2.0.3",
     "vm": "^0.1.0"

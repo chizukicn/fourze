@@ -19,7 +19,7 @@
     "@fourze/middlewares": "workspace:*",
     "@fourze/nuxt": "workspace:*",
     "@unocss/nuxt": "^66.0.0",
-    "nuxt": "3.16.1",
+    "nuxt": "3.16.2",
     "pathe": "^2.0.3"
   }
 }
