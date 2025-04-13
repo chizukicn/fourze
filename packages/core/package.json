@@ -33,11 +33,11 @@
   },
   "dependencies": {
     "consola": "^3.4.2",
-    "destr": "^2.0.3",
+    "destr": "^2.0.5",
     "events": "^3.3.0",
     "fast-content-type-parse": "^3.0.0",
     "maybe-types": "^0.2.0",
     "tiny-lru": "^11.2.11",
-    "ufo": "^1.5.4"
+    "ufo": "^1.6.1"
   }
 }
