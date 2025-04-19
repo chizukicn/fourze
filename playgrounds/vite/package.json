@@ -17,7 +17,7 @@
     "@vueuse/core": "^13.1.0",
     "axios": "^1.8.4",
     "dayjs": "^1.11.13",
-    "element-plus": "^2.9.7",
+    "element-plus": "^2.9.8",
     "hoci": "^0.6.0",
     "jquery": "^3.7.1",
     "query-string": "^9.1.1",
@@ -35,8 +35,8 @@
     "sass": "^1.86.3",
     "typescript": "^5.8.3",
     "unocss": "^66.0.0",
-    "unplugin-vue-components": "^28.4.1",
+    "unplugin-vue-components": "^28.5.0",
     "vite": "^6.2.2",
-    "vite-plugin-inspect": "^11.0.0"
+    "vite-plugin-inspect": "^11.0.1"
   }
 }
