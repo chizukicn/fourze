@@ -31,7 +31,7 @@
   "dependencies": {
     "@fourze/core": "workspace:*",
     "@fourze/middlewares": "workspace:*",
-    "dedent": "^1.5.3"
+    "dedent": "^1.6.0"
   },
   "devDependencies": {
     "@types/dedent": "^0.7.2"
