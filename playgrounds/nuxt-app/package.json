@@ -10,16 +10,16 @@
   },
   "dependencies": {
     "@vueuse/core": "^13.1.0",
-    "axios": "^1.8.4",
+    "axios": "^1.9.0",
     "dayjs": "^1.11.13",
     "jquery": "^3.7.1",
-    "query-string": "^9.1.1"
+    "query-string": "^9.1.2"
   },
   "devDependencies": {
     "@fourze/middlewares": "workspace:*",
     "@fourze/nuxt": "workspace:*",
-    "@unocss/nuxt": "^66.0.0",
-    "nuxt": "3.16.2",
+    "@unocss/nuxt": "^66.1.1",
+    "nuxt": "3.17.2",
     "pathe": "^2.0.3"
   }
 }

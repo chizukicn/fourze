@@ -12,16 +12,16 @@
     "@fourze/core": "workspace:*",
     "@fourze/server": "workspace:*",
     "@types/compression": "^1.7.5",
-    "axios": "^1.8.4",
+    "axios": "^1.9.0",
     "compression": "^1.8.0",
     "express": "^4.21.2",
-    "query-string": "^9.1.1"
+    "query-string": "^9.1.2"
   },
   "devDependencies": {
     "@types/ejs": "^3.1.5",
     "@types/express": "^5.0.1",
     "ejs": "^3.1.10",
-    "esbuild": "^0.25.2",
+    "esbuild": "^0.25.4",
     "http-proxy-middleware": "^3.0.5"
   }
 }
