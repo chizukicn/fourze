@@ -49,7 +49,7 @@
     "@fourze/swagger": "workspace:*",
     "dedent": "^1.6.0",
     "ufo": "^1.6.1",
-    "unplugin": "^2.3.2"
+    "unplugin": "^2.3.4"
   },
   "devDependencies": {
     "@types/webpack": "^5.28.5",

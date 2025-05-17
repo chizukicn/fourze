@@ -9,7 +9,7 @@
     "preview": "nuxt generate && nuxt preview"
   },
   "dependencies": {
-    "@vueuse/core": "^13.1.0",
+    "@vueuse/core": "^13.2.0",
     "axios": "^1.9.0",
     "dayjs": "^1.11.13",
     "jquery": "^3.7.1",
@@ -18,8 +18,8 @@
   "devDependencies": {
     "@fourze/middlewares": "workspace:*",
     "@fourze/nuxt": "workspace:*",
-    "@unocss/nuxt": "^66.1.1",
-    "nuxt": "3.17.2",
+    "@unocss/nuxt": "^66.1.2",
+    "nuxt": "3.17.3",
     "pathe": "^2.0.3"
   }
 }
