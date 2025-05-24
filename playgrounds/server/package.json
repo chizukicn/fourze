@@ -11,15 +11,15 @@
   "dependencies": {
     "@fourze/core": "workspace:*",
     "@fourze/server": "workspace:*",
-    "@types/compression": "^1.7.5",
+    "@types/compression": "^1.8.0",
     "axios": "^1.9.0",
     "compression": "^1.8.0",
     "express": "^4.21.2",
-    "query-string": "^9.1.2"
+    "query-string": "^9.2.0"
   },
   "devDependencies": {
     "@types/ejs": "^3.1.5",
-    "@types/express": "^5.0.1",
+    "@types/express": "^5.0.2",
     "ejs": "^3.1.10",
     "esbuild": "^0.25.4",
     "http-proxy-middleware": "^3.0.5"
