@@ -37,7 +37,7 @@
     "events": "^3.3.0",
     "fast-content-type-parse": "^3.0.0",
     "maybe-types": "^0.2.0",
-    "tiny-lru": "^11.2.11",
+    "tiny-lru": "^11.3.2",
     "ufo": "^1.6.1"
   }
 }
