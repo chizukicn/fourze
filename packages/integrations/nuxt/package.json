@@ -37,7 +37,7 @@
     "pathe": "^2.0.3"
   },
   "devDependencies": {
-    "@nuxt/module-builder": "^0.8.4",
+    "@nuxt/module-builder": "^1.0.1",
     "@types/dedent": "^0.7.2",
     "nuxt": "^3.17.5"
   }
