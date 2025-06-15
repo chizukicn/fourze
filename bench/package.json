@@ -29,6 +29,6 @@
     "@types/cli-table": "^0.3.4",
     "@types/inquirer": "^9.0.8",
     "@types/koa": "^2.15.0",
-    "tsx": "^4.20.1"
+    "tsx": "^4.20.3"
   }
 }
