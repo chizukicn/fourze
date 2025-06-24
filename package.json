@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.31.2",
   "private": true,
-  "packageManager": "pnpm@10.12.1",
+  "packageManager": "pnpm@10.12.2",
   "description": "a mock framework",
   "author": "Chizuki <chizukicn@outlook.com>",
   "license": "MIT",
@@ -48,11 +48,11 @@
     "@fourze/server": "workspace:*",
     "@fourze/swagger": "workspace:*",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^22.15.31",
-    "@vitest/coverage-v8": "^3.2.3",
-    "@vitest/ui": "^3.2.3",
+    "@types/node": "^22.15.32",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
     "autocannon": "^8.0.0",
-    "bumpp": "^10.1.1",
+    "bumpp": "^10.2.0",
     "chokidar": "^4.0.3",
     "eslint": "^9.29.0",
     "eslint-formatter-mo": "^2.3.0",
@@ -66,7 +66,7 @@
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "unbuild": "^3.5.0",
-    "vitest": "^3.2.3"
+    "vitest": "^3.2.4"
   },
   "pnpm": {
     "overrides": {
