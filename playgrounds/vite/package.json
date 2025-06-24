@@ -28,7 +28,7 @@
     "@fourze/mock": "workspace:*",
     "@fourze/vite": "workspace:*",
     "@types/jquery": "^3.5.32",
-    "@vitejs/plugin-vue": "^5.2.4",
+    "@vitejs/plugin-vue": "^6.0.0",
     "@vitejs/plugin-vue-jsx": "^4.2.0",
     "compression": "^1.8.0",
     "rollup-plugin-visualizer": "^5.14.0",
