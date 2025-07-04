@@ -4,21 +4,21 @@ import type {
   RequestMethod
 } from "@fourze/core";
 import type { FourzeMockAppOptions } from "@fourze/mock";
+import type { FSWatcher } from "chokidar";
 import type { InlineConfig } from "vite";
-import path from "node:path";
+
 import {
   createLogger,
   isBoolean,
   setLoggerLevel,
   withBase
 } from "@fourze/core";
-
 import {
   createDelayMiddleware,
   createTimeoutMiddleware
 } from "@fourze/middlewares";
-import { createMockClient } from "@fourze/mock";
 
+import { createMockClient } from "@fourze/mock";
 import {
   connect,
   createHmrApp,
@@ -292,14 +292,14 @@ const createFourzePlugin = createUnplugin<UnpluginFourzeOptions | undefined>(
               )
             });
             viteConfig.base = config.base;
-            viteConfig.envDir = path.resolve(config.root, config.envDir ?? "");
+            viteConfig.envDir = config.envDir;
             viteConfig.envPrefix = config.envPrefix;
             viteConfig.resolve = config.resolve;
           },
 
           configureServer({ middlewares, watcher }) {
             if (hmr) {
-              hmrApp.watch(watcher);
+              hmrApp.watch(watcher as unknown as FSWatcher);
             }
 
             if (options.swagger !== false) {

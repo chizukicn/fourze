@@ -56,7 +56,7 @@ export function getModuleAlias() {
   return ["@fourze/core", "@fourze/mock", "@fourze/swagger", "@fourze/swagger-middleware"].map((r) => {
     return {
       find: r,
-      replacement: resolveSync(r)
+      replacement: resolveSync(r, { url: import.meta.url })
     };
   });
 }
