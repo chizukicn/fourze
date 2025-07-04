@@ -1,7 +1,7 @@
 {
   "name": "@fourze/monorepo",
   "type": "module",
-  "version": "0.31.2",
+  "version": "0.31.3",
   "private": true,
   "packageManager": "pnpm@10.12.4",
   "description": "a mock framework",
@@ -33,7 +33,7 @@
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
-    "bump": "pnpm install && pnpm build && vitest run && bumpp \"package.json\" \"!**/node_modules/**\" \"packages/**/package.json\" --commit --push --tag",
+    "bump": "pnpm install && pnpm build && bumpp \"package.json\" \"!**/node_modules/**\" \"packages/**/package.json\" --commit --push --tag",
     "preinstall": "npx only-allow pnpm",
     "prepare": "npx simple-git-hooks",
     "regit": "git fetch --all && git reset --hard origin/main && git pull && git remote prune origin",

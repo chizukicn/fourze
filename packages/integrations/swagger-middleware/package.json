@@ -1,7 +1,7 @@
 {
   "name": "@fourze/swagger-middleware",
   "type": "module",
-  "version": "0.31.2",
+  "version": "0.31.3",
   "description": "",
   "author": "Chizuki <chizukicn@outlook.com>",
   "license": "MIT",
