@@ -1,4 +1,3 @@
-/* eslint-disable no-var */
 /* eslint-disable vars-on-top */
 import type { FourzeMockApp } from "./shared";
 

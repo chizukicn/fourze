@@ -7,10 +7,10 @@ function isHeader(headers: unknown): headers is Headers {
 
 export type PolyfillHeaderValue = string | string[] | number | undefined;
 
-export type PolyfillHeaderInit =
-  | Record<string, PolyfillHeaderValue>
-  | string[][]
-  | Headers;
+export type PolyfillHeaderInit
+  = | Record<string, PolyfillHeaderValue>
+    | string[][]
+    | Headers;
 
 export class PolyfillHeaders {
   readonly #headers: Record<string, string> = {};

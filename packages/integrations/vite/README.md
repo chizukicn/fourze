@@ -8,6 +8,7 @@ vite.config.ts
 
 ```ts
 import fourze from "@fourze/vite";
+
 export default defineConfig({
   plugins: [
     fourze({

@@ -117,8 +117,8 @@ export const isNode = () => typeof window === "undefined";
 
 export const isBrowser = () => !isNode();
 
-export type Constructor<T> =
-  | {
+export type Constructor<T>
+  = | {
     new (...args: any[]): NonNullable<T>;
   }
   | {

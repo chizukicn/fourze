@@ -7,6 +7,7 @@ create a router file `src/mock/example.ts`
 
 ```ts
 import { defineRouter } from "@fourze/core";
+
 export default defineRouter((router) => {
   router.get("/hello", () => {
     return "hello,world";
@@ -20,6 +21,7 @@ configure vite config
 
 ```ts
 import fourze from "@fourze/vite";
+
 export default defineConfig({
   plugins: [
     fourze({
@@ -88,6 +90,7 @@ server.listen(7609);
 ```ts
 import { createServer } from "@fourze/server";
 import express from "express";
+
 const middleware = createServer({
   base: "/api"
 });
@@ -102,6 +105,7 @@ src/mock/example.ts
 
 ```ts
 import { defineRouter } from "@fourze/core";
+
 export default defineRouter((router) => {
   // base = '/api'
   router.post("/user/{id}", (req) => {
