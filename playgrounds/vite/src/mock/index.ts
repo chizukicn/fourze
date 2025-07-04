@@ -2,9 +2,6 @@ import type { FourzeHandle, ObjectProps } from "@fourze/core";
 import fs from "node:fs";
 import path from "node:path";
 import {
-  slicePage
-} from "@/utils/setup-mock";
-import {
   createStorage,
   defineRouter,
   isNode,
@@ -15,6 +12,9 @@ import {
   randomItem
 } from "@fourze/core";
 import { DELAY_HEADER, RESOLVE_HEADER } from "@fourze/middlewares";
+import {
+  slicePage
+} from "@/utils/setup-mock";
 
 interface Pagination {
   page: number;

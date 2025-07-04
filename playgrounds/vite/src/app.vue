@@ -1,6 +1,5 @@
 <script setup lang="tsx">
 import type { TableColumns } from "./components/hooks/table";
-import HiButton from "@/components/base/button.vue";
 import { getGlobalMockApp } from "@fourze/mock";
 import { useAsyncState } from "@vueuse/core";
 import axios from "axios";
@@ -9,6 +8,7 @@ import { HiItem, HiSelection } from "hoci";
 import $ from "jquery";
 import querystring from "query-string";
 import { computed, reactive, ref, watch } from "vue";
+import HiButton from "@/components/base/button.vue";
 import Loading from "./components/base/loading.vue";
 import Table from "./components/base/table.vue";
 

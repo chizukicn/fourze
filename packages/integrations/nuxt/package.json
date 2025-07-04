@@ -15,11 +15,18 @@
   "exports": {
     ".": {
       "types": "./dist/types.d.mts",
-      "default": "./dist/module.mjs"
+      "import": "./dist/module.mjs"
     }
   },
   "main": "dist/module.mjs",
-  "types": "./dist/module.d.ts",
+  "types": "./dist/module.d.mts",
+  "typesVersions": {
+    "*": {
+      ".": [
+        "./dist/types.d.mts"
+      ]
+    }
+  },
   "files": [
     "dist"
   ],
@@ -32,13 +39,13 @@
     "@fourze/server": "workspace:*",
     "@fourze/unplugin": "workspace:*",
     "@fourze/vite": "workspace:*",
-    "@nuxt/kit": "^3.17.5",
+    "@nuxt/kit": "^3.17.6",
     "dedent": "^1.6.0",
     "pathe": "^2.0.3"
   },
   "devDependencies": {
-    "@nuxt/module-builder": "^0.8.4",
+    "@nuxt/module-builder": "^1.0.1",
     "@types/dedent": "^0.7.2",
-    "nuxt": "^3.17.5"
+    "nuxt": "^3.17.6"
   }
 }

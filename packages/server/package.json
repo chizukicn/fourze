@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@fourze/core": "workspace:*",
-    "chokidar": "^3.6.0",
+    "chokidar": "^4.0.3",
     "create-require": "^1.1.1",
     "esbuild": "^0.25.5",
     "fast-glob": "^3.3.3",
@@ -42,6 +42,6 @@
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.9",
-    "pkg-types": "^2.1.0"
+    "pkg-types": "^2.2.0"
   }
 }

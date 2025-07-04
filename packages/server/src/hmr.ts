@@ -22,7 +22,6 @@ import glob from "fast-glob";
 import micromatch from "micromatch";
 import { basename, extname, join, normalize, resolve } from "pathe";
 import { createImporter } from "./importer";
-import { filename } from "./utils";
 
 ;
 
@@ -83,7 +82,7 @@ export function createHmrApp(options: FourzeHmrOptions = {}): FourzeHmrApp {
     }
   }) as FourzeHmrApp;
 
-  const _filename = filename(import.meta);
+  const _filename = import.meta.url;
 
   const _import = createImporter(_filename);
 

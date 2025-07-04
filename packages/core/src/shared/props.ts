@@ -123,8 +123,8 @@ export type NormalizedObjectProps<P = Record<string, unknown>> = {
 
 type Prop<T, D = T> = PropOptions<T, D> | PropType<T>;
 
-type PropConstructor<T = any> =
-  | {
+type PropConstructor<T = any>
+  = | {
     new(...args: any[]): NonNullable<T>;
   }
   | {
