@@ -172,9 +172,6 @@ export function normalizeAddress(address: AddressInfo | string | null, options: 
     const port = address.port;
     let host = options.hostname ?? address.address;
     if (host) {
-      if (host.includes("::")) {
-        host = "127.0.0.1";
-      }
       if (net.isIPv6(host)) {
         host = `[${host}]`;
       }
