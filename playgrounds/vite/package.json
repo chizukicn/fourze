@@ -17,7 +17,7 @@
     "@vueuse/core": "^13.5.0",
     "axios": "^1.10.0",
     "dayjs": "^1.11.13",
-    "element-plus": "^2.10.3",
+    "element-plus": "^2.10.4",
     "hoci": "^0.8.0",
     "jquery": "^3.7.1",
     "query-string": "^9.2.2",
@@ -34,9 +34,9 @@
     "rollup-plugin-visualizer": "^6.0.3",
     "sass": "^1.89.2",
     "typescript": "^5.8.3",
-    "unocss": "^66.3.2",
+    "unocss": "^66.3.3",
     "unplugin-vue-components": "^28.8.0",
-    "vite": "^7.0.2",
+    "vite": "^7.0.4",
     "vite-plugin-inspect": "^11.3.0"
   }
 }

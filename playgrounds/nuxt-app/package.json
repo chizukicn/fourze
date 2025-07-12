@@ -18,7 +18,7 @@
   "devDependencies": {
     "@fourze/middlewares": "workspace:*",
     "@fourze/nuxt": "workspace:*",
-    "@unocss/nuxt": "^66.3.2",
+    "@unocss/nuxt": "^66.3.3",
     "nuxt": "3.17.6",
     "pathe": "^2.0.3"
   }
