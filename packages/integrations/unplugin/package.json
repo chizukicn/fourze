@@ -47,16 +47,16 @@
     "@fourze/mock": "workspace:*",
     "@fourze/server": "workspace:*",
     "@fourze/swagger": "workspace:*",
-    "dedent": "^1.6.0",
+    "dedent": "^1.7.0",
     "ufo": "^1.6.1",
-    "unplugin": "^2.3.5"
+    "unplugin": "^2.3.10"
   },
   "devDependencies": {
     "@types/webpack": "^5.28.5",
-    "esbuild": "^0.25.5",
-    "rollup": "^4.44.2",
-    "vite": "^7.0.2",
-    "webpack": "^5.99.9",
+    "esbuild": "^0.25.11",
+    "rollup": "^4.52.5",
+    "vite": "^7.1.12",
+    "webpack": "^5.102.1",
     "webpack-dev-server": "^5.2.2"
   }
 }
