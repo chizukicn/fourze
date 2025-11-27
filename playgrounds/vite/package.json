@@ -14,7 +14,7 @@
   "dependencies": {
     "@fourze/core": "workspace:*",
     "@fourze/middlewares": "workspace:*",
-    "@vueuse/core": "^13.5.0",
+    "@vueuse/core": "^14.1.0",
     "axios": "^1.10.0",
     "dayjs": "^1.11.13",
     "element-plus": "^2.10.3",
