@@ -49,12 +49,12 @@
     "@fourze/mock": "workspace:*",
     "@fourze/server": "workspace:*",
     "@fourze/swagger-middleware": "workspace:*",
-    "fs-extra": "^11.3.0",
-    "mlly": "^1.7.4",
-    "swagger-ui-dist": "^5.26.0"
+    "fs-extra": "^11.3.3",
+    "mlly": "^1.8.0",
+    "swagger-ui-dist": "^5.31.0"
   },
   "devDependencies": {
     "@types/swagger-ui-dist": "^3.30.6",
-    "vite": "^7.0.2"
+    "vite": "^7.3.0"
   }
 }
