@@ -28,7 +28,7 @@
     "@types/autocannon": "^7.12.7",
     "@types/cli-table": "^0.3.4",
     "@types/inquirer": "^9.0.8",
-    "@types/koa": "^2.15.0",
+    "@types/koa": "^3.0.1",
     "tsx": "^4.20.3"
   }
 }
