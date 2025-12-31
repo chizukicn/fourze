@@ -32,16 +32,16 @@
     "@fourze/core": "workspace:*",
     "chokidar": "^4.0.3",
     "create-require": "^1.1.1",
-    "esbuild": "^0.25.5",
+    "esbuild": "^0.27.2",
     "fast-glob": "^3.3.3",
     "micromatch": "^4.0.8",
-    "mime": "^4.0.7",
-    "mlly": "^1.7.4",
+    "mime": "^4.1.0",
+    "mlly": "^1.8.0",
     "pathe": "^2.0.3",
     "vm": "^0.1.0"
   },
   "devDependencies": {
-    "@types/micromatch": "^4.0.9",
-    "pkg-types": "^2.2.0"
+    "@types/micromatch": "^4.0.10",
+    "pkg-types": "^2.3.0"
   }
 }

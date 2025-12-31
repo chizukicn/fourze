@@ -9,17 +9,17 @@
     "preview": "nuxt generate && nuxt preview"
   },
   "dependencies": {
-    "@vueuse/core": "^13.5.0",
-    "axios": "^1.10.0",
-    "dayjs": "^1.11.13",
+    "@vueuse/core": "^13.9.0",
+    "axios": "^1.13.2",
+    "dayjs": "^1.11.19",
     "jquery": "^3.7.1",
-    "query-string": "^9.2.2"
+    "query-string": "^9.3.1"
   },
   "devDependencies": {
     "@fourze/middlewares": "workspace:*",
     "@fourze/nuxt": "workspace:*",
-    "@unocss/nuxt": "^66.3.2",
-    "nuxt": "3.19.0",
+    "@unocss/nuxt": "^66.5.12",
+    "nuxt": "3.20.2",
     "pathe": "^2.0.3"
   }
 }
