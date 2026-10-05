@@ -12,7 +12,7 @@
     "@vueuse/core": "^13.5.0",
     "axios": "^1.10.0",
     "dayjs": "^1.11.13",
-    "jquery": "^3.7.1",
+    "jquery": "^4.0.0",
     "query-string": "^9.2.2"
   },
   "devDependencies": {
